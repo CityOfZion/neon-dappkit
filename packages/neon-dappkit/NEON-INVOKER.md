@@ -144,6 +144,32 @@ const resp = await invoker.testInvoke({
 
 ```
 
+### Traverse iterator
+
+The traverseIterator method allows you to traverse an iterator returned by a SmartContract method.
+
+On the following example we are getting all the candidates from the
+[NEO token](https://dora.coz.io/contract/neo3/mainnet/ef4073a0f2b305a38ec4050e4d3d28bc40ea63f5) and then traversing the
+iterator to get the first 10 items.
+
+```ts
+const resp = await invoker.testInvoke({
+    invocations: [
+        {
+            operation: "getAllCandidates",
+            scriptHash: "ef4073a0f2b305a38ec4050e4d3d28bc40ea63f5", // neo token
+            args: [],
+        },
+    ],
+    signers: [{ scopes: "CalledByEntry" }],
+});
+
+const sessionId = resp.session as string;
+const iteratorId = resp.stack[0].id as string;
+
+const resp2 = await invoker.traverseIterator(sessionId, iteratorId, 10)
+```
+
 ### More Details
 
 For more details on the methods signature, check the auto-generated
