@@ -25,7 +25,7 @@ export class NeonEventListener implements Neo3EventListener {
 
   private readonly rpcClient: Neon.rpc.RPCClient
 
-  constructor(rpcUrl: string, private options: NeonEventListenerOptions | undefined) {
+  constructor(rpcUrl: string, private options: NeonEventListenerOptions | undefined = undefined) {
     this.rpcClient = new Neon.rpc.RPCClient(rpcUrl)
   }
 
@@ -45,9 +45,10 @@ export class NeonEventListener implements Neo3EventListener {
   removeEventListener(contract: string, eventname: string, callback: Neo3EventListenerCallback) {
     const listenersOfContract = this.listeners.get(contract)
     if (listenersOfContract) {
-      const listenersOfEvent = listenersOfContract.get(eventname)
+      let listenersOfEvent = listenersOfContract.get(eventname)
       if (listenersOfEvent) {
-        listenersOfContract.set(eventname, listenersOfEvent.filter(l => l !== callback))
+        listenersOfEvent = listenersOfEvent.filter(l => l !== callback)
+        listenersOfContract.set(eventname, listenersOfEvent)
         if (listenersOfEvent.length === 0) {
           listenersOfContract.delete(eventname)
           if (listenersOfContract.size === 0) {

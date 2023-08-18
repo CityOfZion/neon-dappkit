@@ -13,7 +13,7 @@ export declare class NeonEventListener implements Neo3EventListener {
     private blockPollingLoopActive;
     private listeners;
     private readonly rpcClient;
-    constructor(rpcUrl: string, options: NeonEventListenerOptions | undefined);
+    constructor(rpcUrl: string, options?: NeonEventListenerOptions | undefined);
     addEventListener(contract: string, eventname: string, callback: Neo3EventListenerCallback): void;
     removeEventListener(contract: string, eventname: string, callback: Neo3EventListenerCallback): void;
     removeAllEventListenersOfContract(contract: string): void;

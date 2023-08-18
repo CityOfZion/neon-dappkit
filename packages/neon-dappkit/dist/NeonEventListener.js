@@ -35,7 +35,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.NeonEventListener = void 0;
 const Neon = __importStar(require("@cityofzion/neon-core"));
 class NeonEventListener {
-    constructor(rpcUrl, options) {
+    constructor(rpcUrl, options = undefined) {
         this.options = options;
         this.blockPollingLoopActive = false;
         this.listeners = new Map();
@@ -58,9 +58,10 @@ class NeonEventListener {
     removeEventListener(contract, eventname, callback) {
         const listenersOfContract = this.listeners.get(contract);
         if (listenersOfContract) {
-            const listenersOfEvent = listenersOfContract.get(eventname);
+            let listenersOfEvent = listenersOfContract.get(eventname);
             if (listenersOfEvent) {
-                listenersOfContract.set(eventname, listenersOfEvent.filter(l => l !== callback));
+                listenersOfEvent = listenersOfEvent.filter(l => l !== callback);
+                listenersOfContract.set(eventname, listenersOfEvent);
                 if (listenersOfEvent.length === 0) {
                     listenersOfContract.delete(eventname);
                     if (listenersOfContract.size === 0) {
