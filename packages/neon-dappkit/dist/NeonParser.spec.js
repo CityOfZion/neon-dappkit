@@ -35,7 +35,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const _1 = require(".");
 const mocha_1 = require("mocha");
 const assert = __importStar(require("assert"));
-(0, mocha_1.describe)("Neon-Parser Tests", function () {
+(0, mocha_1.describe)("NeonParser", function () {
     this.timeout(60000);
     (0, mocha_1.it)("converts Base64 to Hex and revert it", () => __awaiter(this, void 0, void 0, function* () {
         assert.equal(_1.NeonParser.reverseHex(_1.NeonParser.base64ToHex("ateeXCdGd+AdYKWa5w8SikaAqlk=")), "59aa80468a120fe79aa5601de07746275c9ed76a");
@@ -43,9 +43,7 @@ const assert = __importStar(require("assert"));
     (0, mocha_1.it)("converts address to script hash", () => __awaiter(this, void 0, void 0, function* () {
         assert.equal(_1.NeonParser.accountInputToScripthash("NhGomBpYnKXArr55nHRQ5rzy79TwKVXZbr"), "857a247939db5c7cd3a7bb14791280c09e824bea");
     }));
-});
-(0, mocha_1.describe)("RPC Response Parser Tests", function () {
-    (0, mocha_1.it)("Parse Address", () => __awaiter(this, void 0, void 0, function* () {
+    (0, mocha_1.it)("parses Address", () => __awaiter(this, void 0, void 0, function* () {
         const rpcResponse = {
             type: "ByteString",
             value: _1.NeonParser.asciiToBase64("NNLi44dJNXtDNSBkofB48aTVYtb1zZrNEs")
@@ -53,7 +51,7 @@ const assert = __importStar(require("assert"));
         const address = _1.NeonParser.parseRpcResponse(rpcResponse, { type: "String", hint: "Address" });
         assert.deepEqual(address, "NNLi44dJNXtDNSBkofB48aTVYtb1zZrNEs");
     }));
-    (0, mocha_1.it)("Parse invalid Address", () => __awaiter(this, void 0, void 0, function* () {
+    (0, mocha_1.it)("parses invalid Address", () => __awaiter(this, void 0, void 0, function* () {
         const rpcResponse = {
             type: "ByteString",
             // Address will end up too short
@@ -70,7 +68,7 @@ const assert = __importStar(require("assert"));
         rpcResponse.value = _1.NeonParser.strToBase64("NNLI44dJNXtDNSBkofB48aTVYtb1zZrNEL");
         assert.throws(() => _1.NeonParser.parseRpcResponse(rpcResponse, { type: "String", hint: "Address" }));
     }));
-    (0, mocha_1.it)("Parse ScriptHash and ScriptHashLittleEndian", () => __awaiter(this, void 0, void 0, function* () {
+    (0, mocha_1.it)("parses ScriptHash and ScriptHashLittleEndian", () => __awaiter(this, void 0, void 0, function* () {
         const rpcResponse = {
             type: "ByteString",
             value: _1.NeonParser.hexToBase64("61479ab68fd5c2c04b254f382d84ddf2f5c67ced")
@@ -80,7 +78,7 @@ const assert = __importStar(require("assert"));
         const scriptHashLilEndian = _1.NeonParser.parseRpcResponse(rpcResponse, { type: "Hash160", hint: "ScriptHashLittleEndian" });
         assert.deepEqual(scriptHashLilEndian, "61479ab68fd5c2c04b254f382d84ddf2f5c67ced");
     }));
-    (0, mocha_1.it)("Parse invalid ScriptHash and ScriptHashLittleEndian", () => __awaiter(this, void 0, void 0, function* () {
+    (0, mocha_1.it)("parses invalid ScriptHash and ScriptHashLittleEndian", () => __awaiter(this, void 0, void 0, function* () {
         const rpcResponse = {
             type: "ByteString",
             // ScriptHash will end up too short
@@ -93,7 +91,7 @@ const assert = __importStar(require("assert"));
         assert.throws(() => _1.NeonParser.parseRpcResponse(rpcResponse, { type: "Hash160", hint: "ScriptHash" }));
         assert.throws(() => _1.NeonParser.parseRpcResponse(rpcResponse, { type: "Hash160", hint: "ScriptHashLittleEndian" }));
     }));
-    (0, mocha_1.it)("Parse BlockHash or TransactionId", () => __awaiter(this, void 0, void 0, function* () {
+    (0, mocha_1.it)("parses BlockHash or TransactionId", () => __awaiter(this, void 0, void 0, function* () {
         const rpcResponse = {
             type: "ByteString",
             value: _1.NeonParser.hexToBase64(_1.NeonParser.reverseHex("0x6c513de791b17ddadec205a07301229ac890d71c16c1d5a0320c655fb69214fc".substring(2)))
@@ -106,7 +104,7 @@ const assert = __importStar(require("assert"));
         const hash256 = _1.NeonParser.parseRpcResponse(rpcResponse, { type: "Hash256" });
         assert.deepEqual(hash256, blockHash);
     }));
-    (0, mocha_1.it)("Parse ByteString without parseConfig", () => __awaiter(this, void 0, void 0, function* () {
+    (0, mocha_1.it)("parses ByteString without parseConfig", () => __awaiter(this, void 0, void 0, function* () {
         const rpcResponse = {
             type: "ByteString",
             value: _1.NeonParser.asciiToBase64("Testing")
@@ -116,7 +114,7 @@ const assert = __importStar(require("assert"));
         const bytesValue = _1.NeonParser.parseRpcResponse(rpcResponse, { type: 'ByteArray' });
         assert.deepEqual(bytesValue, "54657374696e67");
     }));
-    (0, mocha_1.it)("Parse PublicKey", () => __awaiter(this, void 0, void 0, function* () {
+    (0, mocha_1.it)("parses PublicKey", () => __awaiter(this, void 0, void 0, function* () {
         const rpcResponse = {
             type: "ByteString",
             value: _1.NeonParser.hexToBase64("03cdb067d930fd5adaa6c68545016044aaddec64ba39e548250eaea551172e535c")
@@ -124,7 +122,7 @@ const assert = __importStar(require("assert"));
         const scriptHash = _1.NeonParser.parseRpcResponse(rpcResponse, { type: "PublicKey" });
         assert.deepEqual(scriptHash, "03cdb067d930fd5adaa6c68545016044aaddec64ba39e548250eaea551172e535c");
     }));
-    (0, mocha_1.it)("Parse Integer", () => __awaiter(this, void 0, void 0, function* () {
+    (0, mocha_1.it)("parses Integer", () => __awaiter(this, void 0, void 0, function* () {
         const rpcResponse = {
             type: "Integer",
             value: "18"
@@ -132,7 +130,7 @@ const assert = __importStar(require("assert"));
         const integer = _1.NeonParser.parseRpcResponse(rpcResponse);
         assert.deepEqual(integer, 18);
     }));
-    (0, mocha_1.it)("Parse single type Array", () => __awaiter(this, void 0, void 0, function* () {
+    (0, mocha_1.it)("parses single type Array", () => __awaiter(this, void 0, void 0, function* () {
         let rpcResponse = {
             type: "Array",
             value: [
@@ -193,7 +191,7 @@ const assert = __importStar(require("assert"));
         array = _1.NeonParser.parseRpcResponse(rpcResponse, { type: "Array", generic: { type: "ByteArray" } });
         assert.deepEqual(array, ["74657374", "6172726179", "72657475726e"]);
     }));
-    (0, mocha_1.it)("Parse Union", () => __awaiter(this, void 0, void 0, function* () {
+    (0, mocha_1.it)("parses Union", () => __awaiter(this, void 0, void 0, function* () {
         let rpcResponse = {
             type: "ByteString",
             value: _1.NeonParser.strToBase64("test")
@@ -213,7 +211,7 @@ const assert = __importStar(require("assert"));
         union = _1.NeonParser.parseRpcResponse(rpcResponse, { type: "Any", union: [{ type: "Hash160", hint: "ScriptHash" }, { type: "Integer" }] });
         assert.deepEqual(union, "0xed7cc6f5f2dd842d384f254bc0c2d58fb69a4761");
     }));
-    (0, mocha_1.it)("Try parse same internal types with Union", () => __awaiter(this, void 0, void 0, function* () {
+    (0, mocha_1.it)("parses same internal types with Union", () => __awaiter(this, void 0, void 0, function* () {
         let rpcResponse = {
             type: "ByteString",
             value: _1.NeonParser.strToBase64("test")
@@ -223,7 +221,7 @@ const assert = __importStar(require("assert"));
         const str = _1.NeonParser.parseRpcResponse(rpcResponse, { type: "Any", union: [{ type: "Hash160", hint: "ScriptHash" }, { type: "Hash256", hint: "BlockHash" }, { type: "Integer" }] });
         assert.deepEqual(str, "test");
     }));
-    (0, mocha_1.it)("Parse multiple types Array", () => __awaiter(this, void 0, void 0, function* () {
+    (0, mocha_1.it)("parses multiple types Array", () => __awaiter(this, void 0, void 0, function* () {
         let rpcResponse = {
             type: "Array",
             value: [
@@ -290,7 +288,7 @@ const assert = __importStar(require("assert"));
         });
         assert.deepEqual(array, [10, "NNLi44dJNXtDNSBkofB48aTVYtb1zZrNEs", "NZ3pqnc1hMN8EHW55ZnCnu8B2wooXJHCyr"]);
     }));
-    (0, mocha_1.it)("Parse single type Map", () => __awaiter(this, void 0, void 0, function* () {
+    (0, mocha_1.it)("parses single type Map", () => __awaiter(this, void 0, void 0, function* () {
         let rpcResponse = {
             type: "Map",
             value: [
@@ -324,7 +322,7 @@ const assert = __importStar(require("assert"));
         // Will also work if you don't send a parseConfig and expects the ByteString results to be a String
         assert.deepEqual(map, _1.NeonParser.parseRpcResponse(rpcResponse));
     }));
-    (0, mocha_1.it)("Parse multiple types Map", () => __awaiter(this, void 0, void 0, function* () {
+    (0, mocha_1.it)("parses multiple types Map", () => __awaiter(this, void 0, void 0, function* () {
         let rpcResponse = {
             type: "Map",
             value: [
@@ -367,7 +365,7 @@ const assert = __importStar(require("assert"));
         });
         assert.deepEqual(map, { unit: "test", neo: 123, 789: 123 });
     }));
-    (0, mocha_1.it)("Parse Boolean", () => __awaiter(this, void 0, void 0, function* () {
+    (0, mocha_1.it)("parses Boolean", () => __awaiter(this, void 0, void 0, function* () {
         let rpcResponse = {
             "type": "Boolean",
             "value": true
@@ -382,7 +380,7 @@ const assert = __importStar(require("assert"));
         bool = _1.NeonParser.parseRpcResponse(rpcResponse);
         assert.deepEqual(bool, false);
     }));
-    (0, mocha_1.it)("Parse Iterator", () => __awaiter(this, void 0, void 0, function* () {
+    (0, mocha_1.it)("parses Iterator", () => __awaiter(this, void 0, void 0, function* () {
         let rpcResponse = {
             "type": "InteropInterface",
             "interface": "IIterator",
@@ -392,7 +390,7 @@ const assert = __importStar(require("assert"));
         const iterator = _1.NeonParser.parseRpcResponse(rpcResponse);
         assert.deepEqual(iterator, undefined);
     }));
-    (0, mocha_1.it)("Parse Array inside Map", () => __awaiter(this, void 0, void 0, function* () {
+    (0, mocha_1.it)("parses Array inside Map", () => __awaiter(this, void 0, void 0, function* () {
         const rpcResponse = {
             type: "Map",
             value: [
@@ -431,7 +429,7 @@ const assert = __importStar(require("assert"));
         });
         assert.deepEqual(mapWithConfig, { test: ['616263', '646566', '676869'], neo: 123 });
     }));
-    (0, mocha_1.it)("Parse Map inside Array", () => __awaiter(this, void 0, void 0, function* () {
+    (0, mocha_1.it)("parses Map inside Array", () => __awaiter(this, void 0, void 0, function* () {
         const rpcResponseArray = {
             type: "Array",
             value: [
@@ -457,7 +455,7 @@ const assert = __importStar(require("assert"));
         });
         assert.deepEqual(array, ['abc', { neon: '706172736572', unit: '74657374' }, 'def']);
     }));
-    (0, mocha_1.it)("Parse raw when UTF8 parsing fails", () => __awaiter(this, void 0, void 0, function* () {
+    (0, mocha_1.it)("parses raw when UTF8 parsing fails", () => __awaiter(this, void 0, void 0, function* () {
         const rpcResponse = {
             "type": "Map",
             "value": [
@@ -485,8 +483,6 @@ const assert = __importStar(require("assert"));
         const parsed = _1.NeonParser.parseRpcResponse(rpcResponse);
         assert.deepEqual(parsed, { name: 'LIZARD', seed: 'dphNnS0kGxelyR4Q8ntrbA==' });
     }));
-});
-(0, mocha_1.describe)("RPC Arguments Parser Tests", function () {
     (0, mocha_1.it)("parses numbers", () => __awaiter(this, void 0, void 0, function* () {
         let numberArg = _1.NeonParser.formatRpcArgument(0);
         let expectedResult = { type: 'Integer', value: '0' };

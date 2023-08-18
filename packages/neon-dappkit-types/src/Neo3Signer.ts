@@ -1,8 +1,8 @@
 /**
  * A version enum that indicates how a message should be signed
  */
-export enum Version {
-  LEGACY = 1,
+export enum SignMessageVersion {
+  CLASSIC = 1,
   DEFAULT,
   WITHOUT_SALT
 }
@@ -12,7 +12,7 @@ export enum Version {
  */
 export type SignMessagePayload = {
   message: string,
-  version?: Version
+  version?: SignMessageVersion
 }
 
 /**

@@ -1,15 +1,34 @@
-import { NeonSigner, Version } from './index'
+import { NeonSigner, SignMessageVersion } from './index'
 import * as Neon from '@cityofzion/neon-core'
 import assert from 'assert'
 
-describe('Neon Tests', function () {
+describe('NeonSigner', function () {
 
   it("can sign and verify", async () => {
     const acc = new Neon.wallet.Account('fb1f57cc1347ae5b6251dc8bae761362d2ecaafec4c87f4dc9e97fef6dd75014')
     const signer = new NeonSigner(acc)
 
     const signed = await signer.signMessage({
-      version: Version.DEFAULT,
+      version: SignMessageVersion.DEFAULT,
+      message: 'my random message'
+    })
+
+    assert(signed.salt.length > 0)
+    assert(signed.messageHex.length > 0)
+    assert(signed.data.length > 0)
+    assert(signed.publicKey.length > 0)
+
+    const verified = await signer.verifyMessage(signed)
+
+    assert(verified)
+  })
+
+  it("can sign using classic version and verify", async () => {
+    const acc = new Neon.wallet.Account('fb1f57cc1347ae5b6251dc8bae761362d2ecaafec4c87f4dc9e97fef6dd75014')
+    const signer = new NeonSigner(acc)
+
+    const signed = await signer.signMessage({
+      version: SignMessageVersion.CLASSIC,
       message: 'my random message'
     })
 
@@ -28,7 +47,7 @@ describe('Neon Tests', function () {
     const signer = new NeonSigner(acc)
 
     const signed = await signer.signMessage({
-      version: Version.WITHOUT_SALT,
+      version: SignMessageVersion.WITHOUT_SALT,
       message: 'my random message'
     })
 
@@ -54,7 +73,7 @@ describe('Neon Tests', function () {
     assert(verified)
   })
 
-  it("can verify it fails", async () => {
+  it("can verify when failing", async () => {
     const signer = new NeonSigner()
     const verified = await signer.verifyMessage({
       publicKey: '031757edb62014dea820a0b33a156f6a59fc12bd966202f0e49357c81f26f5de34',
