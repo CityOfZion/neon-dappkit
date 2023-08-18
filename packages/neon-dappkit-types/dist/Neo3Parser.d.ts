@@ -1,4 +1,4 @@
-import { Arg, RpcResponseStackItem } from '../src/Neo3Invoker';
+import { Arg, RpcResponseStackItem } from './Neo3Involker';
 export interface Neo3Parser {
     /**
      * Converts an ArrayBuffer to an ASCII string.

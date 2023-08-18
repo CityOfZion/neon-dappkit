@@ -38,12 +38,26 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const index_1 = require("./index");
 const Neon = __importStar(require("@cityofzion/neon-core"));
 const assert_1 = __importDefault(require("assert"));
-describe('Neon Tests', function () {
+describe('NeonSigner', function () {
     it("can sign and verify", () => __awaiter(this, void 0, void 0, function* () {
         const acc = new Neon.wallet.Account('fb1f57cc1347ae5b6251dc8bae761362d2ecaafec4c87f4dc9e97fef6dd75014');
         const signer = new index_1.NeonSigner(acc);
         const signed = yield signer.signMessage({
-            version: index_1.Version.DEFAULT,
+            version: index_1.SignMessageVersion.DEFAULT,
+            message: 'my random message'
+        });
+        (0, assert_1.default)(signed.salt.length > 0);
+        (0, assert_1.default)(signed.messageHex.length > 0);
+        (0, assert_1.default)(signed.data.length > 0);
+        (0, assert_1.default)(signed.publicKey.length > 0);
+        const verified = yield signer.verifyMessage(signed);
+        (0, assert_1.default)(verified);
+    }));
+    it("can sign using classic version and verify", () => __awaiter(this, void 0, void 0, function* () {
+        const acc = new Neon.wallet.Account('fb1f57cc1347ae5b6251dc8bae761362d2ecaafec4c87f4dc9e97fef6dd75014');
+        const signer = new index_1.NeonSigner(acc);
+        const signed = yield signer.signMessage({
+            version: index_1.SignMessageVersion.CLASSIC,
             message: 'my random message'
         });
         (0, assert_1.default)(signed.salt.length > 0);
@@ -57,7 +71,7 @@ describe('Neon Tests', function () {
         const acc = new Neon.wallet.Account('fb1f57cc1347ae5b6251dc8bae761362d2ecaafec4c87f4dc9e97fef6dd75014');
         const signer = new index_1.NeonSigner(acc);
         const signed = yield signer.signMessage({
-            version: index_1.Version.WITHOUT_SALT,
+            version: index_1.SignMessageVersion.WITHOUT_SALT,
             message: 'my random message'
         });
         (0, assert_1.default)(signed.salt === undefined);
@@ -77,7 +91,7 @@ describe('Neon Tests', function () {
         });
         (0, assert_1.default)(verified);
     }));
-    it("can verify it fails", () => __awaiter(this, void 0, void 0, function* () {
+    it("can verify when failing", () => __awaiter(this, void 0, void 0, function* () {
         const signer = new index_1.NeonSigner();
         const verified = yield signer.verifyMessage({
             publicKey: '031757edb62014dea820a0b33a156f6a59fc12bd966202f0e49357c81f26f5de34',

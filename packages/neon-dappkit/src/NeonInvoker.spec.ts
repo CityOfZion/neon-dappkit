@@ -3,10 +3,10 @@ import { NeonInvoker, typeChecker } from './index'
 import { wallet, tx } from '@cityofzion/neon-core'
 import assert from 'assert'
 
-describe('Neon Tests', function () {
+describe('NeonInvoker', function () {
   this.timeout(60000)
 
-  it('can transfer', async () => {
+  it('does invokeFuncion', async () => {
     const account = new wallet.Account('fb1f57cc1347ae5b6251dc8bae761362d2ecaafec4c87f4dc9e97fef6dd75014')
     const invoker = await NeonInvoker.init({
       rpcAddress: NeonInvoker.TESTNET,
@@ -39,7 +39,7 @@ describe('Neon Tests', function () {
     return true
   })
 
-  it('can calculate fees', async () => {
+  it('does calculateFee', async () => {
     const account = new wallet.Account('fb1f57cc1347ae5b6251dc8bae761362d2ecaafec4c87f4dc9e97fef6dd75014')
     const invoker = await NeonInvoker.init({
       rpcAddress: NeonInvoker.TESTNET,
@@ -93,7 +93,7 @@ describe('Neon Tests', function () {
     assert(Number(systemFeeExtra) === Number(systemFee) + 10000, 'has systemFee overridden')
   })
 
-  it('check symbol', async () => {
+  it('does testInvoke', async () => {
     const invoker = await NeonInvoker.init({
       rpcAddress: NeonInvoker.TESTNET,
     })
@@ -114,12 +114,8 @@ describe('Neon Tests', function () {
       assert.fail('stack return is not ByteString')
     }
   })
-})
 
-
-describe('Invoke return type and value tests', function () {
-
-  it('tests integer return', async () => {
+  it('handles integer return', async () => {
     const invoker = await NeonInvoker.init({
       rpcAddress: NeonInvoker.TESTNET,
     })
@@ -153,7 +149,7 @@ describe('Invoke return type and value tests', function () {
     }
   })
 
-  it('tests boolean return', async () => {
+  it('handles boolean return', async () => {
     const invoker = await NeonInvoker.init({
       rpcAddress: NeonInvoker.TESTNET,
     })
@@ -206,7 +202,7 @@ describe('Invoke return type and value tests', function () {
     }
   })
 
-  it('tests boolean return', async () => {
+  it('handles boolean return (again)', async () => {
     const invoker = await NeonInvoker.init({
       rpcAddress: NeonInvoker.TESTNET,
     })
@@ -259,7 +255,7 @@ describe('Invoke return type and value tests', function () {
     }
   })
 
-  it('tests array return', async () => {
+  it('handles array return', async () => {
     const invoker = await NeonInvoker.init({
       rpcAddress: NeonInvoker.TESTNET,
     })
@@ -299,7 +295,7 @@ describe('Invoke return type and value tests', function () {
     }
   })
 
-  it('tests bytestring return', async () => {
+  it('handles bytestring return', async () => {
     const invoker = await NeonInvoker.init({
       rpcAddress: NeonInvoker.TESTNET,
     })
@@ -333,7 +329,7 @@ describe('Invoke return type and value tests', function () {
     }
   })
 
-  it('tests array return', async () => {
+  it('handles array return (again)', async () => {
     const invoker = await NeonInvoker.init({
       rpcAddress: NeonInvoker.TESTNET,
     })
@@ -373,7 +369,7 @@ describe('Invoke return type and value tests', function () {
     }
   })
 
-  it('tests map return', async () => {
+  it('handles map return', async () => {
     const invoker = await NeonInvoker.init({
       rpcAddress: NeonInvoker.TESTNET,
     })

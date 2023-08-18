@@ -4,7 +4,7 @@ import * as assert from "assert"
 import { RpcResponseStackItem } from '@cityofzion/neon-dappkit-types'
 
 
-describe("Neon-Parser Tests", function () {
+describe("NeonParser", function () {
   this.timeout(60000)
 
   it("converts Base64 to Hex and revert it", async () => {
@@ -15,11 +15,7 @@ describe("Neon-Parser Tests", function () {
     assert.equal(NeonParser.accountInputToScripthash("NhGomBpYnKXArr55nHRQ5rzy79TwKVXZbr"), "857a247939db5c7cd3a7bb14791280c09e824bea")
   })
 
-})
-
-describe("RPC Response Parser Tests", function () {
-
-  it("Parse Address", async () => {
+  it("parses Address", async () => {
     const rpcResponse: RpcResponseStackItem = {
       type: "ByteString",
       value: NeonParser.asciiToBase64("NNLi44dJNXtDNSBkofB48aTVYtb1zZrNEs")
@@ -29,7 +25,7 @@ describe("RPC Response Parser Tests", function () {
     assert.deepEqual(address, "NNLi44dJNXtDNSBkofB48aTVYtb1zZrNEs")
   })
 
-  it("Parse invalid Address", async () => {
+  it("parses invalid Address", async () => {
     const rpcResponse: RpcResponseStackItem = {
       type: "ByteString",
       // Address will end up too short
@@ -50,7 +46,7 @@ describe("RPC Response Parser Tests", function () {
     assert.throws(() => NeonParser.parseRpcResponse(rpcResponse, {type: "String", hint: "Address"}))
   })
 
-  it("Parse ScriptHash and ScriptHashLittleEndian", async () => {
+  it("parses ScriptHash and ScriptHashLittleEndian", async () => {
     const rpcResponse: RpcResponseStackItem = {
       type: "ByteString",
       value: NeonParser.hexToBase64("61479ab68fd5c2c04b254f382d84ddf2f5c67ced")
@@ -63,7 +59,7 @@ describe("RPC Response Parser Tests", function () {
     assert.deepEqual(scriptHashLilEndian, "61479ab68fd5c2c04b254f382d84ddf2f5c67ced")
   })
 
-  it("Parse invalid ScriptHash and ScriptHashLittleEndian", async () => {
+  it("parses invalid ScriptHash and ScriptHashLittleEndian", async () => {
     const rpcResponse: RpcResponseStackItem = {
       type: "ByteString",
       // ScriptHash will end up too short
@@ -78,7 +74,7 @@ describe("RPC Response Parser Tests", function () {
     assert.throws(() => NeonParser.parseRpcResponse(rpcResponse, {type: "Hash160", hint: "ScriptHashLittleEndian"}))
   })
 
-  it("Parse BlockHash or TransactionId", async () => {
+  it("parses BlockHash or TransactionId", async () => {
     const rpcResponse: RpcResponseStackItem = {
       type: "ByteString",
       value: NeonParser.hexToBase64(
@@ -96,7 +92,7 @@ describe("RPC Response Parser Tests", function () {
     assert.deepEqual(hash256, blockHash)
   })
 
-  it("Parse ByteString without parseConfig", async () => {
+  it("parses ByteString without parseConfig", async () => {
     const rpcResponse: RpcResponseStackItem = {
       type: "ByteString",
       value: NeonParser.asciiToBase64("Testing")
@@ -109,7 +105,7 @@ describe("RPC Response Parser Tests", function () {
     assert.deepEqual(bytesValue, "54657374696e67")
   })
 
-  it("Parse PublicKey", async () => {
+  it("parses PublicKey", async () => {
     const rpcResponse: RpcResponseStackItem = {
       type: "ByteString",
       value: NeonParser.hexToBase64("03cdb067d930fd5adaa6c68545016044aaddec64ba39e548250eaea551172e535c")
@@ -120,7 +116,7 @@ describe("RPC Response Parser Tests", function () {
   })
 
 
-  it("Parse Integer", async () => {
+  it("parses Integer", async () => {
     const rpcResponse: RpcResponseStackItem = {
       type: "Integer",
       value: "18"
@@ -130,7 +126,7 @@ describe("RPC Response Parser Tests", function () {
     assert.deepEqual(integer, 18)
   })
 
-  it("Parse single type Array", async () => {
+  it("parses single type Array", async () => {
     let rpcResponse: RpcResponseStackItem = {
       type: "Array",
       value: [
@@ -195,7 +191,7 @@ describe("RPC Response Parser Tests", function () {
     assert.deepEqual(array, ["74657374", "6172726179", "72657475726e"])
   })
 
-  it("Parse Union", async () => {
+  it("parses Union", async () => {
     let rpcResponse: RpcResponseStackItem = {
       type: "ByteString",
       value: NeonParser.strToBase64("test")
@@ -218,7 +214,7 @@ describe("RPC Response Parser Tests", function () {
     assert.deepEqual(union, "0xed7cc6f5f2dd842d384f254bc0c2d58fb69a4761")
   })
 
-  it("Try parse same internal types with Union", async () => {
+  it("parses same internal types with Union", async () => {
     let rpcResponse: RpcResponseStackItem = {
       type: "ByteString",
       value: NeonParser.strToBase64("test")
@@ -230,7 +226,7 @@ describe("RPC Response Parser Tests", function () {
     assert.deepEqual(str, "test")
   })
 
-  it("Parse multiple types Array", async () => {
+  it("parses multiple types Array", async () => {
     let rpcResponse: RpcResponseStackItem = {
       type: "Array",
       value: [
@@ -302,7 +298,7 @@ describe("RPC Response Parser Tests", function () {
     assert.deepEqual(array, [10, "NNLi44dJNXtDNSBkofB48aTVYtb1zZrNEs", "NZ3pqnc1hMN8EHW55ZnCnu8B2wooXJHCyr"])
   })
 
-  it("Parse single type Map", async () => {
+  it("parses single type Map", async () => {
     let rpcResponse: RpcResponseStackItem = {
       type: "Map",
       value: [
@@ -339,7 +335,7 @@ describe("RPC Response Parser Tests", function () {
     assert.deepEqual(map, NeonParser.parseRpcResponse(rpcResponse))
   })
 
-  it("Parse multiple types Map", async () => {
+  it("parses multiple types Map", async () => {
     let rpcResponse: RpcResponseStackItem = {
       type: "Map",
       value: [
@@ -385,7 +381,7 @@ describe("RPC Response Parser Tests", function () {
     assert.deepEqual(map, { unit: "test", neo: 123 , 789: 123 })
   })
 
-  it("Parse Boolean", async () => {
+  it("parses Boolean", async () => {
     let rpcResponse: RpcResponseStackItem = {
       "type": "Boolean",
       "value": true
@@ -403,7 +399,7 @@ describe("RPC Response Parser Tests", function () {
     assert.deepEqual(bool, false)
   })
 
-  it("Parse Iterator", async () => {
+  it("parses Iterator", async () => {
     let rpcResponse: RpcResponseStackItem = {
       "type": "InteropInterface",
       "interface": "IIterator",
@@ -415,7 +411,7 @@ describe("RPC Response Parser Tests", function () {
     assert.deepEqual(iterator, undefined)
   })
 
-  it("Parse Array inside Map", async () => {
+  it("parses Array inside Map", async () => {
     const rpcResponse: RpcResponseStackItem = {
       type: "Map",
       value: [
@@ -459,7 +455,7 @@ describe("RPC Response Parser Tests", function () {
     assert.deepEqual(mapWithConfig, {test: ['616263', '646566', '676869'], neo: 123})
   })
 
-  it("Parse Map inside Array", async () => {
+  it("parses Map inside Array", async () => {
     const rpcResponseArray: RpcResponseStackItem = {
       type: "Array",
       value: [
@@ -487,7 +483,7 @@ describe("RPC Response Parser Tests", function () {
     assert.deepEqual(array, ['abc', { neon: '706172736572', unit: '74657374' }, 'def'])
   })
 
-  it("Parse raw when UTF8 parsing fails", async () => {
+  it("parses raw when UTF8 parsing fails", async () => {
     const rpcResponse: RpcResponseStackItem = {
       "type": "Map",
       "value": [
@@ -517,9 +513,6 @@ describe("RPC Response Parser Tests", function () {
     assert.deepEqual(parsed, { name: 'LIZARD', seed: 'dphNnS0kGxelyR4Q8ntrbA==' })
 
   })
-})
-
-describe("RPC Arguments Parser Tests", function () {
 
   it("parses numbers", async () => {
     let numberArg = NeonParser.formatRpcArgument(0)

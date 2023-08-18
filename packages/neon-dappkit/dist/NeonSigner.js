@@ -35,9 +35,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.NeonSigner = exports.Version = void 0;
+exports.NeonSigner = exports.SignMessageVersion = void 0;
 const neon_dappkit_types_1 = require("@cityofzion/neon-dappkit-types");
-Object.defineProperty(exports, "Version", { enumerable: true, get: function () { return neon_dappkit_types_1.Version; } });
+Object.defineProperty(exports, "SignMessageVersion", { enumerable: true, get: function () { return neon_dappkit_types_1.SignMessageVersion; } });
 const neon_core_1 = require("@cityofzion/neon-core");
 const randombytes_1 = __importDefault(require("randombytes"));
 const elliptic = __importStar(require("elliptic"));
@@ -48,10 +48,13 @@ class NeonSigner {
     }
     signMessage(message) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (message.version === neon_dappkit_types_1.Version.LEGACY) {
-                return this.signMessageLegacy(message.message);
+            if (!this.account) {
+                throw new Error('No account provided');
             }
-            else if (message.version === neon_dappkit_types_1.Version.WITHOUT_SALT) {
+            if (message.version === neon_dappkit_types_1.SignMessageVersion.CLASSIC) {
+                return this.signMessageClassic(message.message);
+            }
+            else if (message.version === neon_dappkit_types_1.SignMessageVersion.WITHOUT_SALT) {
                 return this.signMessageWithoutSalt(message.message);
             }
             else {
@@ -59,14 +62,9 @@ class NeonSigner {
             }
         });
     }
-    signMessageLegacy(message) {
-        if (!this.account) {
-            throw new Error('No account provided');
-        }
+    signMessageClassic(message) {
         const salt = (0, randombytes_1.default)(16).toString('hex');
-        const parameterHexString = neon_core_1.u.str2hexstring(salt + message);
-        const lengthHex = neon_core_1.u.num2VarInt(parameterHexString.length / 2);
-        const messageHex = `010001f0${lengthHex}${parameterHexString}0000`;
+        const messageHex = this.classicFormat(`${salt}${message}`);
         return {
             publicKey: this.account.publicKey,
             data: neon_core_1.wallet.sign(messageHex, this.account.privateKey),
@@ -75,9 +73,6 @@ class NeonSigner {
         };
     }
     signMessageDefault(message) {
-        if (!this.account) {
-            throw new Error('No account provided');
-        }
         const salt = (0, randombytes_1.default)(16).toString('hex');
         const messageHex = neon_core_1.u.str2hexstring(message);
         return {
@@ -88,15 +83,17 @@ class NeonSigner {
         };
     }
     signMessageWithoutSalt(message) {
-        if (!this.account) {
-            throw new Error('No account provided');
-        }
-        const messageHex = neon_core_1.u.str2hexstring(message);
+        const messageHex = this.classicFormat(message);
         return {
             publicKey: this.account.publicKey,
             data: neon_core_1.wallet.sign(messageHex, this.account.privateKey),
-            messageHex
+            messageHex,
         };
+    }
+    classicFormat(message) {
+        const parameterHexString = neon_core_1.u.str2hexstring(message);
+        const lengthHex = neon_core_1.u.num2VarInt(parameterHexString.length / 2);
+        return `010001f0${lengthHex}${parameterHexString}0000`;
     }
     verifyMessage(verifyArgs) {
         return __awaiter(this, void 0, void 0, function* () {

@@ -15,9 +15,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const index_1 = require("./index");
 const neon_core_1 = require("@cityofzion/neon-core");
 const assert_1 = __importDefault(require("assert"));
-describe('Neon Tests', function () {
+describe('NeonInvoker', function () {
     this.timeout(60000);
-    it('can transfer', () => __awaiter(this, void 0, void 0, function* () {
+    it('does invokeFuncion', () => __awaiter(this, void 0, void 0, function* () {
         const account = new neon_core_1.wallet.Account('fb1f57cc1347ae5b6251dc8bae761362d2ecaafec4c87f4dc9e97fef6dd75014');
         const invoker = yield index_1.NeonInvoker.init({
             rpcAddress: index_1.NeonInvoker.TESTNET,
@@ -47,7 +47,7 @@ describe('Neon Tests', function () {
         (0, assert_1.default)(txId.length > 0, 'has txId');
         return true;
     }));
-    it('can calculate fees', () => __awaiter(this, void 0, void 0, function* () {
+    it('does calculateFee', () => __awaiter(this, void 0, void 0, function* () {
         const account = new neon_core_1.wallet.Account('fb1f57cc1347ae5b6251dc8bae761362d2ecaafec4c87f4dc9e97fef6dd75014');
         const invoker = yield index_1.NeonInvoker.init({
             rpcAddress: index_1.NeonInvoker.TESTNET,
@@ -85,7 +85,7 @@ describe('Neon Tests', function () {
         (0, assert_1.default)(Number(networkFeeExtra) === Number(networkFee) + 20000, 'has networkFee overridden');
         (0, assert_1.default)(Number(systemFeeExtra) === Number(systemFee) + 10000, 'has systemFee overridden');
     }));
-    it('check symbol', () => __awaiter(this, void 0, void 0, function* () {
+    it('does testInvoke', () => __awaiter(this, void 0, void 0, function* () {
         const invoker = yield index_1.NeonInvoker.init({
             rpcAddress: index_1.NeonInvoker.TESTNET,
         });
@@ -105,9 +105,7 @@ describe('Neon Tests', function () {
             assert_1.default.fail('stack return is not ByteString');
         }
     }));
-});
-describe('Invoke return type and value tests', function () {
-    it('tests integer return', () => __awaiter(this, void 0, void 0, function* () {
+    it('handles integer return', () => __awaiter(this, void 0, void 0, function* () {
         const invoker = yield index_1.NeonInvoker.init({
             rpcAddress: index_1.NeonInvoker.TESTNET,
         });
@@ -139,7 +137,7 @@ describe('Invoke return type and value tests', function () {
             assert_1.default.fail('stack return is not Integer');
         }
     }));
-    it('tests boolean return', () => __awaiter(this, void 0, void 0, function* () {
+    it('handles boolean return', () => __awaiter(this, void 0, void 0, function* () {
         const invoker = yield index_1.NeonInvoker.init({
             rpcAddress: index_1.NeonInvoker.TESTNET,
         });
@@ -193,7 +191,7 @@ describe('Invoke return type and value tests', function () {
             assert_1.default.fail('stack return is not Boolean');
         }
     }));
-    it('tests boolean return', () => __awaiter(this, void 0, void 0, function* () {
+    it('handles boolean return (again)', () => __awaiter(this, void 0, void 0, function* () {
         const invoker = yield index_1.NeonInvoker.init({
             rpcAddress: index_1.NeonInvoker.TESTNET,
         });
@@ -247,7 +245,7 @@ describe('Invoke return type and value tests', function () {
             assert_1.default.fail('stack return is not Boolean');
         }
     }));
-    it('tests array return', () => __awaiter(this, void 0, void 0, function* () {
+    it('handles array return', () => __awaiter(this, void 0, void 0, function* () {
         const invoker = yield index_1.NeonInvoker.init({
             rpcAddress: index_1.NeonInvoker.TESTNET,
         });
@@ -285,7 +283,7 @@ describe('Invoke return type and value tests', function () {
             assert_1.default.fail('stack return is not Array');
         }
     }));
-    it('tests bytestring return', () => __awaiter(this, void 0, void 0, function* () {
+    it('handles bytestring return', () => __awaiter(this, void 0, void 0, function* () {
         const invoker = yield index_1.NeonInvoker.init({
             rpcAddress: index_1.NeonInvoker.TESTNET,
         });
@@ -317,7 +315,7 @@ describe('Invoke return type and value tests', function () {
             assert_1.default.fail('stack return is not ByteString');
         }
     }));
-    it('tests array return', () => __awaiter(this, void 0, void 0, function* () {
+    it('handles array return (again)', () => __awaiter(this, void 0, void 0, function* () {
         const invoker = yield index_1.NeonInvoker.init({
             rpcAddress: index_1.NeonInvoker.TESTNET,
         });
@@ -355,7 +353,7 @@ describe('Invoke return type and value tests', function () {
             assert_1.default.fail('stack return is not Array');
         }
     }));
-    it('tests map return', () => __awaiter(this, void 0, void 0, function* () {
+    it('handles map return', () => __awaiter(this, void 0, void 0, function* () {
         const invoker = yield index_1.NeonInvoker.init({
             rpcAddress: index_1.NeonInvoker.TESTNET,
         });
