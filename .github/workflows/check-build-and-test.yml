@@ -1,0 +1,40 @@
+name: Check Build and Test
+on:
+  pull_request:
+    branches:
+      - main
+
+env:
+  NODE_VERSION: 16.x
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 2
+      - name: Setup Node Version ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - name: Install PNPM
+        run: npm install -g pnpm
+      - name: Install RushJS
+        run: npm install -g @microsoft/rush
+      - name: Verify Change Logs
+        run: rush change --verify
+      - name: Install Dependencies
+        run: rush update
+      - name: Build Projects
+        run: rush rebuild --verbose
+      - name: Run Tests
+        run: cd packages/neon-dappkit && pnpm test
+      - name: Notify Test Reporter
+        uses: dorny/test-reporter@v1.6.0
+        with:
+          name: Unit Tests
+          reporter: mocha-json
+          path: mocha-results.json
+          fail-on-error: true

@@ -10,7 +10,7 @@
   "scripts": {
     "build": "tsc",
     "lint": "eslint --fix",
-    "test": "ts-mocha src/**/*.spec.ts"
+    "test": "ts-mocha --reporter json > ../../mocha-results.json src/**/*.spec.ts"
   },
   "dependencies": {
     "@cityofzion/neon-js": "5.5.0",
