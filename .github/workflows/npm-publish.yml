@@ -1,0 +1,62 @@
+name: Publish neon-dappkit-types and neon-dappkit on NPM
+
+on: workflow_dispatch
+
+env:
+  NODE_VERSION: 16.x
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment: release
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 2
+      - name: Setup Node Version ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - name: Install RushJS
+        run: npm install -g @microsoft/rush
+      - name: Install dependencies
+        run: rush update
+      - name: Build Projects
+        run: rush rebuild
+      - name: Publishing neon-dappkit-types
+        id: dappkit_type
+        uses: JS-DevTools/npm-publish@v2
+        with:
+          token: ${{ secrets.NPM_TOKEN }}
+          package: ./packages/neon-dappkit-types
+      - name: Publishing neon-dappkit
+        id: dappkit
+        uses: JS-DevTools/npm-publish@v2
+        with:
+          token: ${{ secrets.NPM_TOKEN }}
+          package: ./packages/neon-dappkit
+      - name: Notify packages releases (Github Actions Annotations)
+        run: |
+          # Get the values from workflow outputs
+          hasPublishedDappkit="${{ steps.dappkit.outputs.type }}"
+          hasPublishedDappkitType="${{ steps.dappkit_type.outputs.type }}"
+        
+          if [[ ! "$hasPublishedDappkitType" && ! "$hasPublishedDappkit" ]]; then
+            # Both packages failed to publish
+            echo "::error ::NPM release error: Both packages failed to publish. Please review the package.json version and try again."
+            exit 1
+          elif [[ ! "$hasPublishedDappkitType" ]]; then
+            # Package DappkitType failed to publish
+            echo "::error ::No changes have been detected in dappkitType. Please check the package.json version."
+            echo "::warning ::A new release was made in dappkit. The new version ${{ steps.dappkit.outputs.version }} was released."
+          elif [[ ! "$hasPublishedDappkit" ]]; then
+            # Package Dappkit failed to publish
+            echo "::error ::No changes have been detected in dappkit. Please check the package.json version."
+            echo "::warning ::A new release was made in dappkit_type. The new version ${{ steps.dappkit_type.outputs.version }} was released."
+          else
+            # Both packages were published successfully
+            echo "::warning ::A new release was made in dappkit_type. The new version ${{ steps.dappkit_type.outputs.version }} was released."
+            echo "::warning ::A new release was made in dappkit. The new version ${{ steps.dappkit.outputs.version }} was released."
+          fi
+          exit 0
