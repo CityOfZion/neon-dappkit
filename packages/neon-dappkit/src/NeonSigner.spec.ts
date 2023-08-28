@@ -90,8 +90,8 @@ describe('NeonSigner', function () {
     const signer = new NeonSigner(account)
     const messageOriginal = "Some plaintext for encryption"
 
-    const messageEncrypted = signer.encrypt(messageOriginal, [account.publicKey])
-    const messageDecrypted = signer.decrypt(messageEncrypted[0])
+    const messageEncrypted = await signer.encrypt(messageOriginal, [account.publicKey])
+    const messageDecrypted = await signer.decrypt(messageEncrypted[0])
 
     for (const value of Object.values(messageEncrypted[0])) {
       assert(!messageOriginal.includes(value))
@@ -119,14 +119,14 @@ describe('NeonSigner', function () {
     const messageOriginal = "Some plaintext for encryption"
     const publicKeys = [anotherAccount3.publicKey, anotherAccount2.publicKey, anotherAccount1.publicKey, account.publicKey]
 
-    const messageEncrypted = signer.encrypt(messageOriginal, publicKeys)
-    const messageDecrypted = signer.decryptFromArray(messageEncrypted)
+    const messageEncrypted = await signer.encrypt(messageOriginal, publicKeys)
+    const messageDecrypted = await signer.decryptFromArray(messageEncrypted)
 
     assert(messageDecrypted.message === messageOriginal)
     assert(messageDecrypted.keyIndex === publicKeys.length - 1)
 
     const anotherSigner = new NeonSigner(anotherAccount1)
-    const anotherMessageDecrypted = anotherSigner.decryptFromArray(messageEncrypted)
+    const anotherMessageDecrypted = await anotherSigner.decryptFromArray(messageEncrypted)
     assert(anotherMessageDecrypted.message === messageOriginal)
     assert(anotherMessageDecrypted.keyIndex !== messageDecrypted.keyIndex)
     assert(anotherMessageDecrypted.keyIndex === publicKeys.length - 2)
@@ -142,7 +142,7 @@ describe('NeonSigner', function () {
     const messageOriginal = "Some plaintext for encryption"
     const publicKeys = [anotherAccount3.publicKey, anotherAccount2.publicKey, anotherAccount1.publicKey]
 
-    const messageEncrypted = signer.encrypt(messageOriginal, publicKeys)
+    const messageEncrypted = await signer.encrypt(messageOriginal, publicKeys)
 
     assert.throws(() => signer.decryptFromArray(messageEncrypted))
   })
