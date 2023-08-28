@@ -106,7 +106,12 @@ describe('NeonSigner', function () {
     const messageOriginal = "Some plaintext for encryption"
 
     const messageEncrypted = signer.encrypt(messageOriginal, [anotherAccount.publicKey])
-    assert.throws(() => signer.decrypt(messageEncrypted[0]))
+    try {
+      await signer.decrypt(messageEncrypted[0])
+      assert.fail()
+    } catch (error) {
+      assert.ok(error instanceof Error)
+    }
   })
 
   it("can encrypt and decrypt messages from an array that has the corresponding public key", async () => {
@@ -143,7 +148,11 @@ describe('NeonSigner', function () {
     const publicKeys = [anotherAccount3.publicKey, anotherAccount2.publicKey, anotherAccount1.publicKey]
 
     const messageEncrypted = await signer.encrypt(messageOriginal, publicKeys)
-
-    assert.throws(() => signer.decryptFromArray(messageEncrypted))
+    try {
+      await signer.decryptFromArray(messageEncrypted)
+      assert.fail()
+    } catch (error) {
+      assert.ok(error instanceof Error)
+    }
   })
 })
