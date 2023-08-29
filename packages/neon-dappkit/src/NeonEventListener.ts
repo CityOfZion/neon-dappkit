@@ -13,7 +13,8 @@ export type NeonEventListenerOptions = {
   waitForApplicationLog?: {
     maxAttempts?: number | undefined
     waitMs?: number | undefined
-  } | undefined
+  } | undefined,
+  waitForEventMs?: number | undefined
 }
 
 export class NeonEventListener implements Neo3EventListener {
@@ -144,7 +145,7 @@ export class NeonEventListener implements Neo3EventListener {
     let height = await this.rpcClient.getBlockCount()
 
     while (this.blockPollingLoopActive) {
-      await this.wait(4000)
+      await this.wait(this.options?.waitForEventMs ?? 4000)
 
       try {
         this.options?.debug && console.log('Checking block ' + height)
