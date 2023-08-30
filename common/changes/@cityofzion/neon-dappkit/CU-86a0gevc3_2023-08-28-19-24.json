@@ -2,7 +2,7 @@
   "changes": [
     {
       "packageName": "@cityofzion/neon-dappkit",
-      "comment": "Change WalletConnectSDK to use neon-dappkit - added Promise to type return on methods encrypt, descrypt and decryptFromArray",
+      "comment": "Adapt the implementation to the new signature of neon-dappkit-types to return Promises on encrypt, descrypt and decryptFromArray methods",
       "type": "patch"
     }
   ],

@@ -106,12 +106,11 @@ describe('NeonSigner', function () {
     const messageOriginal = "Some plaintext for encryption"
 
     const messageEncrypted = signer.encrypt(messageOriginal, [anotherAccount.publicKey])
-    try {
-      await signer.decrypt(messageEncrypted[0])
-      assert.fail()
-    } catch (error) {
-      assert.ok(error instanceof Error)
-    }
+    assert.rejects(
+      async () => await signer.decrypt(messageEncrypted[0]),
+      /Decrypt failed. Event not found in string result/,
+      'Decrypt failed'
+    )
   })
 
   it("can encrypt and decrypt messages from an array that has the corresponding public key", async () => {
@@ -148,11 +147,11 @@ describe('NeonSigner', function () {
     const publicKeys = [anotherAccount3.publicKey, anotherAccount2.publicKey, anotherAccount1.publicKey]
 
     const messageEncrypted = await signer.encrypt(messageOriginal, publicKeys)
-    try {
-      await signer.decryptFromArray(messageEncrypted)
-      assert.fail()
-    } catch (error) {
-      assert.ok(error instanceof Error)
-    }
+
+    assert.rejects(
+      async () => await signer.decryptFromArray(messageEncrypted),
+      /Decrypt failed. Event not found in decryptFromArray result/,
+      'Decrypt failed'
+    )
   })
 })

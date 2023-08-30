@@ -15,7 +15,7 @@
   "dependencies": {
     "@cityofzion/neon-js": "5.5.0",
     "@cityofzion/neon-core": "5.5.0",
-    "@cityofzion/neon-dappkit-types": "workspace:*",
+    "@cityofzion/neon-dappkit-types": "0.0.3",
     "crypto-js": "^4.1.1",
     "elliptic": "^6.5.4",
     "randombytes": "^2.1.0"
