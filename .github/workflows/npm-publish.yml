@@ -9,6 +9,8 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     environment: release
+    permissions:
+      contents: write
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -18,8 +20,16 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NODE_VERSION }}
+      - name: Config Git Properties
+        run: |
+          git config --global user.email ${{ secrets.EMAIL }}
+          git config --global user.name ${{ secrets.AUTO_PUSH_NAME }}
       - name: Install RushJS
         run: npm install -g @microsoft/rush
+      - name: Verify Change Logs
+        run: rush change --verify
+      - name: Update package.json version(s)
+        run: rush version --bump
       - name: Install dependencies
         run: rush update
       - name: Build Projects
@@ -60,3 +70,8 @@ jobs:
             echo "::warning ::A new release was made in dappkit. The new version ${{ steps.dappkit.outputs.version }} was released."
           fi
           exit 0
+      - name: Commit and Push package.json version update
+        run: |
+          git add .
+          git commit -m "Update package.json version(s)"
+          git push
