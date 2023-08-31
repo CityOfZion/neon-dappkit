@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@cityofzion/neon-dappkit-types",
+      "comment": "Return Promises on encrypt, descrypt and decryptFromArray methods",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@cityofzion/neon-dappkit-types"
+}

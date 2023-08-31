@@ -1,4 +1,4 @@
-import { Neo3Signer, SignMessagePayload, SignedMessage, SignMessageVersion, EncryptedPayload } from '@cityofzion/neon-dappkit-types';
+import { Neo3Signer, SignMessagePayload, SignedMessage, SignMessageVersion, EncryptedPayload, DecryptFromArrayResult } from '@cityofzion/neon-dappkit-types';
 import { wallet } from '@cityofzion/neon-core';
 export { SignMessageVersion };
 export declare class NeonSigner implements Neo3Signer {
@@ -14,10 +14,7 @@ export declare class NeonSigner implements Neo3Signer {
      * returns the address of the account
      */
     getAccountAddress(): string | null;
-    encrypt(message: string, publicKeys: string[]): EncryptedPayload[];
-    decrypt(payload: EncryptedPayload): string;
-    decryptFromArray(payloads: EncryptedPayload[]): {
-        message: string;
-        keyIndex: number;
-    };
+    encrypt(message: string, publicKeys: string[]): Promise<EncryptedPayload[]>;
+    decrypt(payload: EncryptedPayload): Promise<string>;
+    decryptFromArray(payloads: EncryptedPayload[]): Promise<DecryptFromArrayResult>;
 }

@@ -105,8 +105,8 @@ describe('NeonSigner', function () {
         const account = new Neon.wallet.Account();
         const signer = new index_1.NeonSigner(account);
         const messageOriginal = "Some plaintext for encryption";
-        const messageEncrypted = signer.encrypt(messageOriginal, [account.publicKey]);
-        const messageDecrypted = signer.decrypt(messageEncrypted[0]);
+        const messageEncrypted = yield signer.encrypt(messageOriginal, [account.publicKey]);
+        const messageDecrypted = yield signer.decrypt(messageEncrypted[0]);
         for (const value of Object.values(messageEncrypted[0])) {
             (0, assert_1.default)(!messageOriginal.includes(value));
         }
@@ -118,7 +118,7 @@ describe('NeonSigner', function () {
         const signer = new index_1.NeonSigner(account);
         const messageOriginal = "Some plaintext for encryption";
         const messageEncrypted = signer.encrypt(messageOriginal, [anotherAccount.publicKey]);
-        assert_1.default.throws(() => signer.decrypt(messageEncrypted[0]));
+        assert_1.default.rejects(() => __awaiter(this, void 0, void 0, function* () { return yield signer.decrypt(messageEncrypted[0]); }), /Decrypt failed. Event not found in string result/, 'Decrypt failed');
     }));
     it("can encrypt and decrypt messages from an array that has the corresponding public key", () => __awaiter(this, void 0, void 0, function* () {
         const account = new Neon.wallet.Account();
@@ -128,12 +128,12 @@ describe('NeonSigner', function () {
         const signer = new index_1.NeonSigner(account);
         const messageOriginal = "Some plaintext for encryption";
         const publicKeys = [anotherAccount3.publicKey, anotherAccount2.publicKey, anotherAccount1.publicKey, account.publicKey];
-        const messageEncrypted = signer.encrypt(messageOriginal, publicKeys);
-        const messageDecrypted = signer.decryptFromArray(messageEncrypted);
+        const messageEncrypted = yield signer.encrypt(messageOriginal, publicKeys);
+        const messageDecrypted = yield signer.decryptFromArray(messageEncrypted);
         (0, assert_1.default)(messageDecrypted.message === messageOriginal);
         (0, assert_1.default)(messageDecrypted.keyIndex === publicKeys.length - 1);
         const anotherSigner = new index_1.NeonSigner(anotherAccount1);
-        const anotherMessageDecrypted = anotherSigner.decryptFromArray(messageEncrypted);
+        const anotherMessageDecrypted = yield anotherSigner.decryptFromArray(messageEncrypted);
         (0, assert_1.default)(anotherMessageDecrypted.message === messageOriginal);
         (0, assert_1.default)(anotherMessageDecrypted.keyIndex !== messageDecrypted.keyIndex);
         (0, assert_1.default)(anotherMessageDecrypted.keyIndex === publicKeys.length - 2);
@@ -146,7 +146,7 @@ describe('NeonSigner', function () {
         const signer = new index_1.NeonSigner(account);
         const messageOriginal = "Some plaintext for encryption";
         const publicKeys = [anotherAccount3.publicKey, anotherAccount2.publicKey, anotherAccount1.publicKey];
-        const messageEncrypted = signer.encrypt(messageOriginal, publicKeys);
-        assert_1.default.throws(() => signer.decryptFromArray(messageEncrypted));
+        const messageEncrypted = yield signer.encrypt(messageOriginal, publicKeys);
+        assert_1.default.rejects(() => __awaiter(this, void 0, void 0, function* () { return yield signer.decryptFromArray(messageEncrypted); }), /Decrypt failed. Event not found in decryptFromArray result/, 'Decrypt failed');
     }));
 });

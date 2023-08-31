@@ -1,6 +1,6 @@
 {
   "name": "@cityofzion/neon-dappkit",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "license": "MIT",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -15,7 +15,7 @@
   "dependencies": {
     "@cityofzion/neon-js": "5.5.0",
     "@cityofzion/neon-core": "5.5.0",
-    "@cityofzion/neon-dappkit-types": "0.0.1",
+    "@cityofzion/neon-dappkit-types": "workspace:*",
     "crypto-js": "^4.1.1",
     "elliptic": "^6.5.4",
     "randombytes": "^2.1.0"

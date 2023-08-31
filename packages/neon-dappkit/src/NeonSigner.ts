@@ -3,7 +3,8 @@ import {
   SignMessagePayload,
   SignedMessage,
   SignMessageVersion,
-  EncryptedPayload
+  EncryptedPayload,
+  DecryptFromArrayResult
 } from '@cityofzion/neon-dappkit-types'
 import { wallet, u } from '@cityofzion/neon-core'
 import randomBytes from 'randombytes'
@@ -81,7 +82,7 @@ export class NeonSigner implements Neo3Signer {
     return this.account?.address ?? null
   }
 
-  encrypt(message: string, publicKeys: string[]) : EncryptedPayload[]{
+  async encrypt(message: string, publicKeys: string[]) : Promise<EncryptedPayload[]>{
     const curve = new elliptic.ec('p256')
 
     const messageBuffer = new TextEncoder().encode(message)
@@ -122,7 +123,7 @@ export class NeonSigner implements Neo3Signer {
     })
   }
 
-  decrypt(payload: EncryptedPayload) : string {
+  async decrypt(payload: EncryptedPayload) : Promise<string> {
     if (!this.account) {
       throw new Error('No account provided')
     }
@@ -151,10 +152,10 @@ export class NeonSigner implements Neo3Signer {
     return new TextDecoder().decode(Buffer.concat([firstChunk, secondChunk]))
   }
 
-  decryptFromArray(payloads: EncryptedPayload[]) : { message: string, keyIndex: number } {
+  async decryptFromArray(payloads: EncryptedPayload[]) : Promise<DecryptFromArrayResult> {
     for (let [index, payload] of payloads.entries()) {
       try {
-        const message = this.decrypt(payload)
+        const message = await this.decrypt(payload)
         return { message, keyIndex: index }
       } catch (e) {
         // do nothing
