@@ -51,7 +51,7 @@ jobs:
           # Get the values from workflow outputs
           hasPublishedDappkit="${{ steps.dappkit.outputs.type }}"
           hasPublishedDappkitType="${{ steps.dappkit_type.outputs.type }}"
-        
+
           if [[ ! "$hasPublishedDappkitType" && ! "$hasPublishedDappkit" ]]; then
             # Both packages failed to publish
             echo "::error ::NPM release error: Both packages failed to publish. Please review the package.json version and try again."

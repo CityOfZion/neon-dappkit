@@ -2,15 +2,15 @@
  * An interface that defines the event contract and event name
  */
 export interface Neo3Event {
-  contract: string;
-  eventname: string;
+  contract: string
+  eventname: string
 }
 
 /**
  * An interface that defines the event contract, event name and the state of the event
  */
 export interface Neo3EventWithState extends Neo3Event {
-  state: Neo3StackItem;
+  state: Neo3StackItem
 }
 
 /**
@@ -22,22 +22,22 @@ export type Neo3EventListenerCallback = (event: Neo3EventWithState) => void
  * An interface that defines the stack item format
  */
 export interface Neo3StackItem {
-  type: string;
-  value?: string | boolean | number | Neo3StackItem[];
+  type: string
+  value?: string | boolean | number | Neo3StackItem[]
 }
 
 /**
  * An interface that defines the application log format
  */
 export interface Neo3ApplicationLog {
-  txid: string;
+  txid: string
   executions: {
-    trigger: string;
-    vmstate: string;
-    gasconsumed: string;
-    stack?: Neo3StackItem[];
-    notifications: Neo3EventWithState[];
-  }[];
+    trigger: string
+    vmstate: string
+    gasconsumed: string
+    stack?: Neo3StackItem[]
+    notifications: Neo3EventWithState[]
+  }[]
 }
 
 /**
@@ -73,5 +73,9 @@ export interface Neo3EventListener {
    * @param eventToCheck the Neo3Event object to check if it is present in the application log
    * @param confirmStackTrue if true, checks if the stack contains true as the first element
    */
-  confirmTransaction(txResult: Neo3ApplicationLog, eventToCheck?: Neo3Event | undefined, confirmStackTrue?: boolean | undefined)
+  confirmTransaction(
+    txResult: Neo3ApplicationLog,
+    eventToCheck?: Neo3Event | undefined,
+    confirmStackTrue?: boolean | undefined,
+  )
 }

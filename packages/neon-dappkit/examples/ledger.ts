@@ -4,6 +4,7 @@ import * as NeonLedger from '@cityofzion/neon-ledger'
 
 const account = Neon.create.account('NKuyBkoGdZZSLyPbJEetheRhMjeznFZszf')
 
+/* eslint "@typescript-eslint/no-unused-vars": "off" */
 const invoker = await NeonInvoker.init({
   rpcAddress: NeonInvoker.MAINNET,
   account,
@@ -13,7 +14,7 @@ const invoker = await NeonInvoker.init({
       const publicKey = await ledger.getPublicKey(account)
       const scriptHashLedger = Neon.wallet.getScriptHashFromPublicKey(publicKey.key)
       const scriptHashWitness = Neon.wallet.getScriptHashFromVerificationScript(
-        transactionClass.witnesses[witnessIndex].verificationScript.toString()
+        transactionClass.witnesses[witnessIndex].verificationScript.toString(),
       )
 
       if (scriptHashLedger !== scriptHashWitness) {

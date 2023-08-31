@@ -1,0 +1,15 @@
+.DS_Store
+node_modules
+/build
+/dist
+/docs
+/package
+/examples
+.env
+.env.*
+!.env.example
+*.md
+*.html
+
+# Ignore files for NPM lock file
+package-lock.json

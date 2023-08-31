@@ -9,11 +9,13 @@ import {
 import * as Neon from '@cityofzion/neon-core'
 
 export type NeonEventListenerOptions = {
-  debug?: boolean | undefined,
-  waitForApplicationLog?: {
-    maxAttempts?: number | undefined
-    waitMs?: number | undefined
-  } | undefined,
+  debug?: boolean | undefined
+  waitForApplicationLog?:
+    | {
+        maxAttempts?: number | undefined
+        waitMs?: number | undefined
+      }
+    | undefined
   waitForEventMs?: number | undefined
 }
 
@@ -26,7 +28,10 @@ export class NeonEventListener implements Neo3EventListener {
 
   private readonly rpcClient: Neon.rpc.RPCClient
 
-  constructor(rpcUrl: string, private options: NeonEventListenerOptions | undefined = undefined) {
+  constructor(
+    rpcUrl: string,
+    private options: NeonEventListenerOptions | undefined = undefined,
+  ) {
     this.rpcClient = new Neon.rpc.RPCClient(rpcUrl)
   }
 
@@ -48,7 +53,7 @@ export class NeonEventListener implements Neo3EventListener {
     if (listenersOfContract) {
       let listenersOfEvent = listenersOfContract.get(eventname)
       if (listenersOfEvent) {
-        listenersOfEvent = listenersOfEvent.filter(l => l !== callback)
+        listenersOfEvent = listenersOfEvent.filter((l) => l !== callback)
         listenersOfContract.set(eventname, listenersOfEvent)
         if (listenersOfEvent.length === 0) {
           listenersOfContract.delete(eventname)
@@ -83,9 +88,7 @@ export class NeonEventListener implements Neo3EventListener {
     }
   }
 
-  async waitForApplicationLog(
-    txId: string
-  ): Promise<Neo3ApplicationLog> {
+  async waitForApplicationLog(txId: string): Promise<Neo3ApplicationLog> {
     const maxAttempts = this.options?.waitForApplicationLog?.maxAttempts ?? 30
     const waitMs = this.options?.waitForApplicationLog?.waitMs ?? 1000
 
@@ -105,11 +108,18 @@ export class NeonEventListener implements Neo3EventListener {
   }
 
   confirmHalt(txResult: Neo3ApplicationLog) {
-    if (txResult?.executions[0]?.vmstate !== 'HALT') throw new Error('Transaction failed. VMState: ' + txResult?.executions[0]?.vmstate)
+    if (txResult?.executions[0]?.vmstate !== 'HALT')
+      throw new Error('Transaction failed. VMState: ' + txResult?.executions[0]?.vmstate)
   }
 
   confirmStackTrue(txResult: Neo3ApplicationLog) {
-    if (!txResult || !txResult.executions || txResult.executions.length === 0 || !txResult.executions[0].stack || txResult.executions[0].stack.length === 0) {
+    if (
+      !txResult ||
+      !txResult.executions ||
+      txResult.executions.length === 0 ||
+      !txResult.executions[0].stack ||
+      txResult.executions[0].stack.length === 0
+    ) {
       throw new Error('Transaction failed. No stack found in transaction result')
     }
     const stack: Neo3StackItem = txResult.executions[0].stack[0]
@@ -119,16 +129,12 @@ export class NeonEventListener implements Neo3EventListener {
   }
 
   getNotificationState(txResult: Neo3ApplicationLog, eventToCheck: Neo3Event): Neo3EventWithState | undefined {
-    return txResult?.executions[0].notifications.find(e => {
+    return txResult?.executions[0].notifications.find((e) => {
       return e.contract === eventToCheck.contract && e.eventname === eventToCheck.eventname
     })
   }
 
-  confirmTransaction(
-    txResult: Neo3ApplicationLog,
-    eventToCheck?: Neo3Event | undefined,
-    confirmStackTrue = false,
-  ) {
+  confirmTransaction(txResult: Neo3ApplicationLog, eventToCheck?: Neo3Event | undefined, confirmStackTrue = false) {
     this.confirmHalt(txResult)
     if (confirmStackTrue) {
       this.confirmStackTrue(txResult)
@@ -150,7 +156,7 @@ export class NeonEventListener implements Neo3EventListener {
       try {
         this.options?.debug && console.log('Checking block ' + height)
 
-        if (height > await this.rpcClient.getBlockCount()) {
+        if (height > (await this.rpcClient.getBlockCount())) {
           this.options?.debug && console.log('Block height is ahead of node. Waiting for node to catch up...')
           continue
         }
@@ -190,7 +196,6 @@ export class NeonEventListener implements Neo3EventListener {
         }
 
         height++ // this is important to avoid skipping blocks when the code throws exceptions
-
       } catch (error) {
         this.options?.debug && console.error(error)
       }
@@ -200,6 +205,6 @@ export class NeonEventListener implements Neo3EventListener {
   }
 
   private wait(ms: number) {
-    return new Promise(resolve => setTimeout(resolve, ms))
+    return new Promise((resolve) => setTimeout(resolve, ms))
   }
 }

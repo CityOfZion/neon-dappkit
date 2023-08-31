@@ -104,7 +104,7 @@ export type Hash160ArgType = { type: 'Hash160'; value: string }
 export type Hash256ArgType = { type: 'Hash256'; value: string }
 export type IntegerArgType = { type: 'Integer'; value: string }
 export type ArrayArgType = { type: 'Array'; value: Arg[] }
-export type MapArgType = { type: 'Map'; value: { key: Arg; value: Arg}[] }
+export type MapArgType = { type: 'Map'; value: { key: Arg; value: Arg }[] }
 export type ByteArrayArgType = { type: 'ByteArray'; value: string }
 
 export type Arg =
@@ -172,20 +172,20 @@ export type ContractInvocationMulti = {
 }
 
 export type ArrayResponseArgType = { type: 'Array'; value: RpcResponseStackItem[] }
-export type MapResponseArgType = { type: 'Map'; value: { key: RpcResponseStackItem; value: RpcResponseStackItem}[] }
+export type MapResponseArgType = { type: 'Map'; value: { key: RpcResponseStackItem; value: RpcResponseStackItem }[] }
 export type ByteStringArgType = { type: 'ByteString'; value: string }
 export type InteropInterfaceArgType = { type: 'InteropInterface'; interface: string; id: string }
 export type PointerArgType = { type: 'Pointer'; value: string }
 export type BufferArgType = { type: 'Buffer'; value: string }
 export type StructArgType = { type: 'Struct'; value: RpcResponseStackItem[] }
 
-export type RpcResponseStackItem = 
+export type RpcResponseStackItem =
   | AnyArgType
   | BooleanArgType
   | IntegerArgType
-  | ArrayResponseArgType 
-  | MapResponseArgType 
-  | ByteStringArgType 
+  | ArrayResponseArgType
+  | MapResponseArgType
+  | ByteStringArgType
   | InteropInterfaceArgType
   | PointerArgType
   | BufferArgType
