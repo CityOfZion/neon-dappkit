@@ -5,6 +5,7 @@ export type NeonEventListenerOptions = {
         maxAttempts?: number | undefined;
         waitMs?: number | undefined;
     } | undefined;
+    waitForEventMs?: number | undefined;
 };
 export declare class NeonEventListener implements Neo3EventListener {
     private options;

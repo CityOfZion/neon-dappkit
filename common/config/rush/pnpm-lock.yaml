@@ -8,7 +8,7 @@ importers:
   ../../packages/neon-dappkit:
     specifiers:
       '@cityofzion/neon-core': 5.5.0
-      '@cityofzion/neon-dappkit-types': workspace:*
+      '@cityofzion/neon-dappkit-types': 0.0.5
       '@cityofzion/neon-js': 5.5.0
       '@types/elliptic': 6.4.14
       '@types/expect': ^24.3.0
@@ -23,7 +23,7 @@ importers:
       typescript: ^4.3.2
     dependencies:
       '@cityofzion/neon-core': 5.5.0
-      '@cityofzion/neon-dappkit-types': link:../neon-dappkit-types
+      '@cityofzion/neon-dappkit-types': 0.0.5
       '@cityofzion/neon-js': 5.5.0
       crypto-js: 4.1.1
       elliptic: 6.5.4
@@ -94,6 +94,10 @@ packages:
       loglevel-plugin-prefix: 0.8.4
     transitivePeerDependencies:
       - encoding
+    dev: false
+
+  /@cityofzion/neon-dappkit-types/0.0.5:
+    resolution: {integrity: sha512-SRjmfzgI1aNhXdKby4gRrJBveFeSAdttSaLwNfQ/Xq19VwM2NOf2NATg7wDrtTY4sQLKwCyPjPaAePZwKLP8Xw==}
     dev: false
 
   /@cityofzion/neon-js/5.5.0:
