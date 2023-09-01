@@ -39,6 +39,7 @@ exports.NeonSigner = exports.SignMessageVersion = void 0;
 const neon_dappkit_types_1 = require("@cityofzion/neon-dappkit-types");
 Object.defineProperty(exports, "SignMessageVersion", { enumerable: true, get: function () { return neon_dappkit_types_1.SignMessageVersion; } });
 const neon_core_1 = require("@cityofzion/neon-core");
+// @ts-ignore
 const randombytes_1 = __importDefault(require("randombytes"));
 const elliptic = __importStar(require("elliptic"));
 const crypto = __importStar(require("crypto"));
@@ -69,7 +70,7 @@ class NeonSigner {
             publicKey: this.account.publicKey,
             data: neon_core_1.wallet.sign(messageHex, this.account.privateKey),
             salt,
-            messageHex
+            messageHex,
         };
     }
     signMessageDefault(message) {
@@ -79,7 +80,7 @@ class NeonSigner {
             publicKey: this.account.publicKey,
             data: neon_core_1.wallet.sign(messageHex, this.account.privateKey, salt),
             salt,
-            messageHex
+            messageHex,
         };
     }
     signMessageWithoutSalt(message) {
@@ -134,7 +135,7 @@ class NeonSigner {
                     randomVector: iv.toString('hex'),
                     cipherText: ciphertext.toString('hex'),
                     dataTag: mac.toString('hex'),
-                    ephemPublicKey
+                    ephemPublicKey,
                 };
             });
         });
@@ -152,7 +153,11 @@ class NeonSigner {
             const encryptionKey = hash.subarray(0, 32);
             // verify the hmac
             const macKey = hash.subarray(32);
-            const dataToMac = Buffer.concat([Buffer.from(payload.randomVector, 'hex'), Buffer.from(payload.ephemPublicKey, 'hex'), Buffer.from(payload.cipherText, 'hex')]);
+            const dataToMac = Buffer.concat([
+                Buffer.from(payload.randomVector, 'hex'),
+                Buffer.from(payload.ephemPublicKey, 'hex'),
+                Buffer.from(payload.cipherText, 'hex'),
+            ]);
             const realMac = crypto.createHmac('sha256', macKey).update(dataToMac).digest();
             if (payload.dataTag !== realMac.toString('hex')) {
                 throw new Error('invalid payload: hmac misalignment');
@@ -165,7 +170,7 @@ class NeonSigner {
     }
     decryptFromArray(payloads) {
         return __awaiter(this, void 0, void 0, function* () {
-            for (let [index, payload] of payloads.entries()) {
+            for (const [index, payload] of payloads.entries()) {
                 try {
                     const message = yield this.decrypt(payload);
                     return { message, keyIndex: index };

@@ -4,6 +4,7 @@
     "target": "es2015",
     "declaration": true,
     "skipLibCheck": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "noImplicitAny": true
   }
 }

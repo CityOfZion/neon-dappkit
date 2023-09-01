@@ -692,7 +692,7 @@ describe('NeonParser', function () {
     let mapArgNoConfig = NeonParser.formatRpcArgument({})
     let expectedResult = {
       type: 'Map',
-      value: [],
+      value: [] as any[],
     }
     assert.deepStrictEqual(mapArg, expectedResult)
     assert.deepStrictEqual(mapArg, mapArgNoConfig)

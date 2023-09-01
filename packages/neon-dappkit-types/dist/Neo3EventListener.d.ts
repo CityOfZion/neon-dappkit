@@ -45,14 +45,14 @@ export interface Neo3EventListener {
      * @param eventname
      * @param callback
      */
-    addEventListener(contract: string, eventname: string, callback: Neo3EventListenerCallback): any;
+    addEventListener(contract: string, eventname: string, callback: Neo3EventListenerCallback): undefined;
     /**
      * Removes an event listener for the specified contract and event name
      * @param contract
      * @param eventname
      * @param callback
      */
-    removeEventListener(contract: string, eventname: string, callback: Neo3EventListenerCallback): any;
+    removeEventListener(contract: string, eventname: string, callback: Neo3EventListenerCallback): undefined;
     /**
      * Waits for the transaction to be completed and returns the application log
      * @param txId id od the transaction
@@ -65,5 +65,5 @@ export interface Neo3EventListener {
      * @param eventToCheck the Neo3Event object to check if it is present in the application log
      * @param confirmStackTrue if true, checks if the stack contains true as the first element
      */
-    confirmTransaction(txResult: Neo3ApplicationLog, eventToCheck?: Neo3Event | undefined, confirmStackTrue?: boolean | undefined): any;
+    confirmTransaction(txResult: Neo3ApplicationLog, eventToCheck?: Neo3Event | undefined, confirmStackTrue?: boolean | undefined): undefined;
 }

@@ -171,30 +171,30 @@ const NeonParser: Neo3Parser = {
   },
 }
 
-function verifyParseConfigUnion(field: RpcResponseStackItem, parseConfig?: ParseConfig) {
+function verifyParseConfigUnion(field: RpcResponseStackItem, parseConfig?: ParseConfig): ParseConfig | undefined {
   if (parseConfig?.type === 'Any' && parseConfig?.union) {
-    const configs = parseConfig?.union.filter((config) => {
-      return ABI_TYPES[config.type.toUpperCase()].internal.toUpperCase() === field.type.toUpperCase()
+    const configs: ParseConfig[] = parseConfig?.union.filter((config) => {
+      const abiType = ABI_TYPES[config.type.toUpperCase() as keyof typeof ABI_TYPES] as any
+      return abiType.internal?.toUpperCase() === field.type.toUpperCase()
     })
-    let newParseConfig
 
     if (configs.length > 0) {
       if (field.type === 'Array' && configs[0].type === 'Array') {
-        newParseConfig = { type: 'Array', generic: configs[0].generic }
+        return { type: 'Array', generic: configs[0].generic }
       } else if (field.type === 'Map' && configs[0].type === 'Map') {
-        newParseConfig = { type: 'Map', genericKey: configs[0].genericKey, genericItem: configs[0].genericItem }
+        return { type: 'Map', genericKey: configs[0].genericKey, genericItem: configs[0].genericItem }
       } else if (field.type === 'ByteString') {
         if (configs.length === 1) {
-          newParseConfig = configs[0]
+          return configs[0]
         } else {
-          newParseConfig = { type: 'String' }
+          return { type: 'String' }
         }
       } else {
-        newParseConfig = configs[0]
+        return configs[0]
       }
     }
 
-    return newParseConfig
+    return undefined
   }
 
   return parseConfig

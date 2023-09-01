@@ -114,12 +114,12 @@ describe('NeonInvoker', function () {
                 {
                     scriptHash: '0x7346e59b3b3516467390a11c390679ab46b37af3',
                     operation: 'negative_number',
-                    args: []
+                    args: [],
                 },
                 {
                     scriptHash: '0x7346e59b3b3516467390a11c390679ab46b37af3',
                     operation: 'return_same_int',
-                    args: [{ type: 'Integer', value: '1234' }]
+                    args: [{ type: 'Integer', value: '1234' }],
                 },
             ],
         });
@@ -146,22 +146,22 @@ describe('NeonInvoker', function () {
                 {
                     scriptHash: '0x7346e59b3b3516467390a11c390679ab46b37af3',
                     operation: 'bool_true',
-                    args: []
+                    args: [],
                 },
                 {
                     scriptHash: '0x7346e59b3b3516467390a11c390679ab46b37af3',
                     operation: 'bool_false',
-                    args: []
+                    args: [],
                 },
                 {
                     scriptHash: '0x7346e59b3b3516467390a11c390679ab46b37af3',
                     operation: 'return_same_bool',
-                    args: [{ type: 'Boolean', value: true }]
+                    args: [{ type: 'Boolean', value: true }],
                 },
                 {
                     scriptHash: '0x7346e59b3b3516467390a11c390679ab46b37af3',
                     operation: 'return_same_bool',
-                    args: [{ type: 'Boolean', value: false }]
+                    args: [{ type: 'Boolean', value: false }],
                 },
             ],
         });
@@ -200,22 +200,22 @@ describe('NeonInvoker', function () {
                 {
                     scriptHash: '0x7346e59b3b3516467390a11c390679ab46b37af3',
                     operation: 'bool_true',
-                    args: []
+                    args: [],
                 },
                 {
                     scriptHash: '0x7346e59b3b3516467390a11c390679ab46b37af3',
                     operation: 'bool_false',
-                    args: []
+                    args: [],
                 },
                 {
                     scriptHash: '0x7346e59b3b3516467390a11c390679ab46b37af3',
                     operation: 'return_same_bool',
-                    args: [{ type: 'Boolean', value: true }]
+                    args: [{ type: 'Boolean', value: true }],
                 },
                 {
                     scriptHash: '0x7346e59b3b3516467390a11c390679ab46b37af3',
                     operation: 'return_same_bool',
-                    args: [{ type: 'Boolean', value: false }]
+                    args: [{ type: 'Boolean', value: false }],
                 },
             ],
         });
@@ -254,7 +254,7 @@ describe('NeonInvoker', function () {
                 {
                     scriptHash: '0x7346e59b3b3516467390a11c390679ab46b37af3',
                     operation: 'positive_numbers',
-                    args: []
+                    args: [],
                 },
             ],
         });
@@ -262,21 +262,21 @@ describe('NeonInvoker', function () {
         if (index_1.typeChecker.isStackTypeArray(resp.stack[0])) {
             assert_1.default.deepEqual(resp.stack[0].value, [
                 {
-                    "type": "Integer",
-                    "value": "1"
+                    type: 'Integer',
+                    value: '1',
                 },
                 {
-                    "type": "Integer",
-                    "value": "20"
+                    type: 'Integer',
+                    value: '20',
                 },
                 {
-                    "type": "Integer",
-                    "value": "100"
+                    type: 'Integer',
+                    value: '100',
                 },
                 {
-                    "type": "Integer",
-                    "value": "123"
-                }
+                    type: 'Integer',
+                    value: '123',
+                },
             ]);
         }
         else {
@@ -292,12 +292,12 @@ describe('NeonInvoker', function () {
                 {
                     scriptHash: '0x7346e59b3b3516467390a11c390679ab46b37af3',
                     operation: 'return_str',
-                    args: []
+                    args: [],
                 },
                 {
                     scriptHash: '0x7346e59b3b3516467390a11c390679ab46b37af3',
                     operation: 'return_bytes',
-                    args: []
+                    args: [],
                 },
             ],
         });
@@ -324,7 +324,7 @@ describe('NeonInvoker', function () {
                 {
                     scriptHash: '0x7346e59b3b3516467390a11c390679ab46b37af3',
                     operation: 'positive_numbers',
-                    args: []
+                    args: [],
                 },
             ],
         });
@@ -332,21 +332,21 @@ describe('NeonInvoker', function () {
         if (index_1.typeChecker.isStackTypeArray(resp.stack[0])) {
             assert_1.default.deepEqual(resp.stack[0].value, [
                 {
-                    "type": "Integer",
-                    "value": "1"
+                    type: 'Integer',
+                    value: '1',
                 },
                 {
-                    "type": "Integer",
-                    "value": "20"
+                    type: 'Integer',
+                    value: '20',
                 },
                 {
-                    "type": "Integer",
-                    "value": "100"
+                    type: 'Integer',
+                    value: '100',
                 },
                 {
-                    "type": "Integer",
-                    "value": "123"
-                }
+                    type: 'Integer',
+                    value: '123',
+                },
             ]);
         }
         else {
@@ -362,7 +362,7 @@ describe('NeonInvoker', function () {
                 {
                     scriptHash: '0x8b43ab0c83b7d12cf35a0e780072bc314a688796',
                     operation: 'main',
-                    args: []
+                    args: [],
                 },
             ],
         });
@@ -371,24 +371,24 @@ describe('NeonInvoker', function () {
             assert_1.default.deepEqual(resp.stack[0].value, [
                 {
                     key: {
-                        type: "ByteString",
-                        value: "YQ=="
+                        type: 'ByteString',
+                        value: 'YQ==',
                     },
                     value: {
-                        type: "Integer",
-                        value: "4"
-                    }
+                        type: 'Integer',
+                        value: '4',
+                    },
                 },
                 {
                     key: {
-                        type: "Integer",
-                        value: "13"
+                        type: 'Integer',
+                        value: '13',
                     },
                     value: {
-                        type: "Integer",
-                        value: "3"
-                    }
-                }
+                        type: 'Integer',
+                        value: '3',
+                    },
+                },
             ]);
         }
         else {

@@ -156,7 +156,7 @@ class NeonInvoker {
     }
     static buildScriptBuilder(cim) {
         const sb = new neon_js_1.sc.ScriptBuilder();
-        cim.invocations.forEach(c => {
+        cim.invocations.forEach((c) => {
             sb.emitContractCall({
                 scriptHash: c.scriptHash,
                 operation: c.operation,
@@ -169,7 +169,7 @@ class NeonInvoker {
         return sb.build();
     }
     static convertParams(args) {
-        return (args !== null && args !== void 0 ? args : []).map(a => {
+        return (args !== null && args !== void 0 ? args : []).map((a) => {
             if (a.type === undefined)
                 throw new Error('Invalid argument type');
             if (a.value === undefined)
@@ -195,7 +195,10 @@ class NeonInvoker {
                 case 'Array':
                     return neon_js_1.sc.ContractParam.array(...this.convertParams(a.value));
                 case 'Map':
-                    return neon_js_1.sc.ContractParam.map(...a.value.map(map => ({ key: this.convertParams([map.key])[0], value: this.convertParams([map.value])[0] })));
+                    return neon_js_1.sc.ContractParam.map(...a.value.map((map) => ({
+                        key: this.convertParams([map.key])[0],
+                        value: this.convertParams([map.value])[0],
+                    })));
                 case 'ByteArray':
                     return neon_js_1.sc.ContractParam.byteArray(neon_js_1.u.hex2base64(a.value));
             }
