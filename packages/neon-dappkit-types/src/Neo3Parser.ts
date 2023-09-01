@@ -1,7 +1,4 @@
-import {
-  Arg,
-  RpcResponseStackItem
-} from './Neo3Involker'
+import { Arg, RpcResponseStackItem } from './Neo3Involker'
 
 export interface Neo3Parser {
   /**
@@ -111,12 +108,12 @@ export interface Neo3Parser {
 
 export type AnyConfigArgType = { type: 'Any'; union?: ParseConfig[] }
 export type StringConfigArgType = { type: 'String'; hint?: string }
-export type BooleanConfigArgType = { type: 'Boolean';  }
-export type ByteArrayConfigArgType = { type: 'ByteArray';  }
+export type BooleanConfigArgType = { type: 'Boolean' }
+export type ByteArrayConfigArgType = { type: 'ByteArray' }
 export type PublicKeyConfigArgType = { type: 'PublicKey'; hint?: string }
 export type Hash160ConfigArgType = { type: 'Hash160'; hint?: string }
 export type Hash256ConfigArgType = { type: 'Hash256'; hint?: string }
-export type IntegerConfigArgType = { type: 'Integer';  }
+export type IntegerConfigArgType = { type: 'Integer' }
 export type ArrayConfigArgType = { type: 'Array'; generic?: ParseConfig }
 export type MapConfigArgType = { type: 'Map'; genericKey?: ParseConfig; genericItem?: ParseConfig }
 export type InteropInterfaceConfigArgType = { type: 'InteropInterface'; hint?: string }
@@ -135,41 +132,41 @@ export type ParseConfig =
   | InteropInterfaceConfigArgType
 
 export const INTERNAL_TYPES = {
-  ARRAY: "Array",
-  BYTESTRING: "ByteString",
-  BUFFER: "Buffer",
-  INTEGER: "Integer",
-  INTEROPINTERFACE: "InteropInterface",
-  BOOLEAN: "Boolean",
-  MAP: "Map",
-  NULL: "Null",
-  POINTER: "Pointer",
-  STRUCT: "Struct",
+  ARRAY: 'Array',
+  BYTESTRING: 'ByteString',
+  BUFFER: 'Buffer',
+  INTEGER: 'Integer',
+  INTEROPINTERFACE: 'InteropInterface',
+  BOOLEAN: 'Boolean',
+  MAP: 'Map',
+  NULL: 'Null',
+  POINTER: 'Pointer',
+  STRUCT: 'Struct',
 }
 
 export const ABI_TYPES = {
-  ANY: {name: "Any"},
-  SIGNATURE: {name: "Signature", internal: INTERNAL_TYPES.BYTESTRING},
-  BOOLEAN: {name: "Boolean", internal: INTERNAL_TYPES.BOOLEAN},
-  INTEGER: {name: "Integer", internal: INTERNAL_TYPES.INTEGER},
-  HASH160: {name: "Hash160", internal: INTERNAL_TYPES.BYTESTRING},
-  HASH256: {name: "Hash256", internal: INTERNAL_TYPES.BYTESTRING},
-  BYTEARRAY: {name: "ByteArray", internal: INTERNAL_TYPES.BYTESTRING},
-  PUBLICKEY: {name: "PublicKey", internal: INTERNAL_TYPES.BYTESTRING},
-  STRING: {name: "String", internal: INTERNAL_TYPES.BYTESTRING},
-  ARRAY: {name: "Array", internal: INTERNAL_TYPES.ARRAY},
-  MAP: {name: "Map", internal: INTERNAL_TYPES.MAP},
-  INTEROPINTERFACE: {name: "InteropInterface", internal: INTERNAL_TYPES.INTEROPINTERFACE},
-  VOID: {name: "Void", internal: INTERNAL_TYPES.NULL},
+  ANY: { name: 'Any' },
+  SIGNATURE: { name: 'Signature', internal: INTERNAL_TYPES.BYTESTRING },
+  BOOLEAN: { name: 'Boolean', internal: INTERNAL_TYPES.BOOLEAN },
+  INTEGER: { name: 'Integer', internal: INTERNAL_TYPES.INTEGER },
+  HASH160: { name: 'Hash160', internal: INTERNAL_TYPES.BYTESTRING },
+  HASH256: { name: 'Hash256', internal: INTERNAL_TYPES.BYTESTRING },
+  BYTEARRAY: { name: 'ByteArray', internal: INTERNAL_TYPES.BYTESTRING },
+  PUBLICKEY: { name: 'PublicKey', internal: INTERNAL_TYPES.BYTESTRING },
+  STRING: { name: 'String', internal: INTERNAL_TYPES.BYTESTRING },
+  ARRAY: { name: 'Array', internal: INTERNAL_TYPES.ARRAY },
+  MAP: { name: 'Map', internal: INTERNAL_TYPES.MAP },
+  INTEROPINTERFACE: { name: 'InteropInterface', internal: INTERNAL_TYPES.INTEROPINTERFACE },
+  VOID: { name: 'Void', internal: INTERNAL_TYPES.NULL },
 }
 
 export const HINT_TYPES = {
-  ADDRESS: { name: "Address", abi: ABI_TYPES.STRING },
-  PUBLICKEY:  { name: "PublicKey", abi: ABI_TYPES.PUBLICKEY },
-  SCRIPTHASH: { name: "ScriptHash", abi: ABI_TYPES.HASH160 },
-  SCRIPTHASHLITTLEENDING: { name: "ScriptHashLittleEndian", abi: ABI_TYPES.HASH160 },
-  BLOCKHASH: { name: "BlockHash", abi: ABI_TYPES.HASH256 },
-  TRANSACTIONID: { name: "TransactionId", abi: ABI_TYPES.HASH256 },
-  STORAGECONTEXT: { name: "StorageContext", abi: ABI_TYPES.INTEROPINTERFACE },
-  ITERATOR: { name: "Iterator", abi: ABI_TYPES.INTEROPINTERFACE },
+  ADDRESS: { name: 'Address', abi: ABI_TYPES.STRING },
+  PUBLICKEY: { name: 'PublicKey', abi: ABI_TYPES.PUBLICKEY },
+  SCRIPTHASH: { name: 'ScriptHash', abi: ABI_TYPES.HASH160 },
+  SCRIPTHASHLITTLEENDING: { name: 'ScriptHashLittleEndian', abi: ABI_TYPES.HASH160 },
+  BLOCKHASH: { name: 'BlockHash', abi: ABI_TYPES.HASH256 },
+  TRANSACTIONID: { name: 'TransactionId', abi: ABI_TYPES.HASH256 },
+  STORAGECONTEXT: { name: 'StorageContext', abi: ABI_TYPES.INTEROPINTERFACE },
+  ITERATOR: { name: 'Iterator', abi: ABI_TYPES.INTEROPINTERFACE },
 }

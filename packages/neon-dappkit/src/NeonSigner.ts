@@ -4,9 +4,11 @@ import {
   SignedMessage,
   SignMessageVersion,
   EncryptedPayload,
-  DecryptFromArrayResult
+  DecryptFromArrayResult,
 } from '@cityofzion/neon-dappkit-types'
 import { wallet, u } from '@cityofzion/neon-core'
+
+// @ts-ignore
 import randomBytes from 'randombytes'
 import * as elliptic from 'elliptic'
 import * as crypto from 'crypto'
@@ -14,8 +16,7 @@ import * as crypto from 'crypto'
 export { SignMessageVersion }
 
 export class NeonSigner implements Neo3Signer {
-  public constructor (public account?: wallet.Account) {
-  }
+  public constructor(public account?: wallet.Account) {}
 
   async signMessage(message: SignMessagePayload): Promise<SignedMessage> {
     if (!this.account) {
@@ -24,7 +25,7 @@ export class NeonSigner implements Neo3Signer {
 
     if (message.version === SignMessageVersion.CLASSIC) {
       return this.signMessageClassic(message.message)
-    } else if(message.version === SignMessageVersion.WITHOUT_SALT) {
+    } else if (message.version === SignMessageVersion.WITHOUT_SALT) {
       return this.signMessageWithoutSalt(message.message)
     } else {
       return this.signMessageDefault(message.message)
@@ -39,11 +40,11 @@ export class NeonSigner implements Neo3Signer {
       publicKey: this.account.publicKey,
       data: wallet.sign(messageHex, this.account.privateKey),
       salt,
-      messageHex
+      messageHex,
     }
   }
 
-  signMessageDefault (message: string): SignedMessage {
+  signMessageDefault(message: string): SignedMessage {
     const salt = randomBytes(16).toString('hex')
     const messageHex = u.str2hexstring(message)
 
@@ -51,38 +52,38 @@ export class NeonSigner implements Neo3Signer {
       publicKey: this.account.publicKey,
       data: wallet.sign(messageHex, this.account.privateKey, salt),
       salt,
-      messageHex
+      messageHex,
     }
   }
 
-  signMessageWithoutSalt (message: string): SignedMessage {
+  signMessageWithoutSalt(message: string): SignedMessage {
     const messageHex = this.classicFormat(message)
 
     return {
       publicKey: this.account.publicKey,
       data: wallet.sign(messageHex, this.account.privateKey),
       messageHex,
-    };
+    }
   }
 
-  private classicFormat (message: string): string {
+  private classicFormat(message: string): string {
     const parameterHexString = u.str2hexstring(message)
     const lengthHex = u.num2VarInt(parameterHexString.length / 2)
     return `010001f0${lengthHex}${parameterHexString}0000`
   }
 
-  async verifyMessage (verifyArgs: SignedMessage): Promise<boolean> {
+  async verifyMessage(verifyArgs: SignedMessage): Promise<boolean> {
     return wallet.verify(verifyArgs.messageHex, verifyArgs.data, verifyArgs.publicKey)
   }
 
   /**
    * returns the address of the account
    */
-  getAccountAddress (): string | null {
+  getAccountAddress(): string | null {
     return this.account?.address ?? null
   }
 
-  async encrypt(message: string, publicKeys: string[]) : Promise<EncryptedPayload[]>{
+  async encrypt(message: string, publicKeys: string[]): Promise<EncryptedPayload[]> {
     const curve = new elliptic.ec('p256')
 
     const messageBuffer = new TextEncoder().encode(message)
@@ -118,12 +119,12 @@ export class NeonSigner implements Neo3Signer {
         randomVector: iv.toString('hex'),
         cipherText: ciphertext.toString('hex'),
         dataTag: mac.toString('hex'),
-        ephemPublicKey
+        ephemPublicKey,
       }
     })
   }
 
-  async decrypt(payload: EncryptedPayload) : Promise<string> {
+  async decrypt(payload: EncryptedPayload): Promise<string> {
     if (!this.account) {
       throw new Error('No account provided')
     }
@@ -139,7 +140,11 @@ export class NeonSigner implements Neo3Signer {
 
     // verify the hmac
     const macKey = hash.subarray(32)
-    const dataToMac = Buffer.concat([Buffer.from(payload.randomVector, 'hex'), Buffer.from(payload.ephemPublicKey, 'hex'), Buffer.from(payload.cipherText, 'hex')])
+    const dataToMac = Buffer.concat([
+      Buffer.from(payload.randomVector, 'hex'),
+      Buffer.from(payload.ephemPublicKey, 'hex'),
+      Buffer.from(payload.cipherText, 'hex'),
+    ])
     const realMac = crypto.createHmac('sha256', macKey).update(dataToMac).digest()
 
     if (payload.dataTag !== realMac.toString('hex')) {
@@ -152,8 +157,8 @@ export class NeonSigner implements Neo3Signer {
     return new TextDecoder().decode(Buffer.concat([firstChunk, secondChunk]))
   }
 
-  async decryptFromArray(payloads: EncryptedPayload[]) : Promise<DecryptFromArrayResult> {
-    for (let [index, payload] of payloads.entries()) {
+  async decryptFromArray(payloads: EncryptedPayload[]): Promise<DecryptFromArrayResult> {
+    for (const [index, payload] of payloads.entries()) {
       try {
         const message = await this.decrypt(payload)
         return { message, keyIndex: index }

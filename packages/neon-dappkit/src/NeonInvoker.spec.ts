@@ -108,9 +108,9 @@ describe('NeonInvoker', function () {
     })
 
     assert.equal(resp.state, 'HALT', 'success')
-    if (typeChecker.isStackTypeByteString(resp.stack[0])){
-      assert.equal(resp.stack[0].value , 'R0FT', 'correct symbol')
-    }else{
+    if (typeChecker.isStackTypeByteString(resp.stack[0])) {
+      assert.equal(resp.stack[0].value, 'R0FT', 'correct symbol')
+    } else {
       assert.fail('stack return is not ByteString')
     }
   })
@@ -125,26 +125,26 @@ describe('NeonInvoker', function () {
         {
           scriptHash: '0x7346e59b3b3516467390a11c390679ab46b37af3',
           operation: 'negative_number',
-          args: [ ]
+          args: [],
         },
         {
           scriptHash: '0x7346e59b3b3516467390a11c390679ab46b37af3',
           operation: 'return_same_int',
-          args: [ { type: 'Integer', value: '1234'} ]
+          args: [{ type: 'Integer', value: '1234' }],
         },
       ],
     })
 
     assert.equal(resp.state, 'HALT', 'success')
-    if (typeChecker.isStackTypeInteger(resp.stack[0])){
-      assert.equal(resp.stack[0].value , '-100')
-    }else{
+    if (typeChecker.isStackTypeInteger(resp.stack[0])) {
+      assert.equal(resp.stack[0].value, '-100')
+    } else {
       assert.fail('stack return is not Integer')
     }
 
-    if (typeChecker.isStackTypeInteger(resp.stack[1])){
-      assert.equal(resp.stack[1].value , '1234')
-    }else{
+    if (typeChecker.isStackTypeInteger(resp.stack[1])) {
+      assert.equal(resp.stack[1].value, '1234')
+    } else {
       assert.fail('stack return is not Integer')
     }
   })
@@ -159,45 +159,45 @@ describe('NeonInvoker', function () {
         {
           scriptHash: '0x7346e59b3b3516467390a11c390679ab46b37af3',
           operation: 'bool_true',
-          args: [ ]
+          args: [],
         },
         {
           scriptHash: '0x7346e59b3b3516467390a11c390679ab46b37af3',
           operation: 'bool_false',
-          args: [ ]
+          args: [],
         },
         {
           scriptHash: '0x7346e59b3b3516467390a11c390679ab46b37af3',
           operation: 'return_same_bool',
-          args: [ { type: 'Boolean', value: true} ]
+          args: [{ type: 'Boolean', value: true }],
         },
         {
           scriptHash: '0x7346e59b3b3516467390a11c390679ab46b37af3',
           operation: 'return_same_bool',
-          args: [ { type: 'Boolean', value: false} ]
+          args: [{ type: 'Boolean', value: false }],
         },
       ],
     })
 
     assert.equal(resp.state, 'HALT', 'success')
-    if (typeChecker.isStackTypeBoolean(resp.stack[0])){
-      assert.equal(resp.stack[0].value , true)
-    }else{
+    if (typeChecker.isStackTypeBoolean(resp.stack[0])) {
+      assert.equal(resp.stack[0].value, true)
+    } else {
       assert.fail('stack return is not Boolean')
     }
-    if (typeChecker.isStackTypeBoolean(resp.stack[1])){
-      assert.equal(resp.stack[1].value , false)
-    }else{
+    if (typeChecker.isStackTypeBoolean(resp.stack[1])) {
+      assert.equal(resp.stack[1].value, false)
+    } else {
       assert.fail('stack return is not Boolean')
     }
-    if (typeChecker.isStackTypeBoolean(resp.stack[2])){
-      assert.equal(resp.stack[2].value , true)
-    }else{
+    if (typeChecker.isStackTypeBoolean(resp.stack[2])) {
+      assert.equal(resp.stack[2].value, true)
+    } else {
       assert.fail('stack return is not Boolean')
     }
-    if (typeChecker.isStackTypeBoolean(resp.stack[3])){
-      assert.equal(resp.stack[3].value , false)
-    }else{
+    if (typeChecker.isStackTypeBoolean(resp.stack[3])) {
+      assert.equal(resp.stack[3].value, false)
+    } else {
       assert.fail('stack return is not Boolean')
     }
   })
@@ -212,45 +212,45 @@ describe('NeonInvoker', function () {
         {
           scriptHash: '0x7346e59b3b3516467390a11c390679ab46b37af3',
           operation: 'bool_true',
-          args: [ ]
+          args: [],
         },
         {
           scriptHash: '0x7346e59b3b3516467390a11c390679ab46b37af3',
           operation: 'bool_false',
-          args: [ ]
+          args: [],
         },
         {
           scriptHash: '0x7346e59b3b3516467390a11c390679ab46b37af3',
           operation: 'return_same_bool',
-          args: [ { type: 'Boolean', value: true} ]
+          args: [{ type: 'Boolean', value: true }],
         },
         {
           scriptHash: '0x7346e59b3b3516467390a11c390679ab46b37af3',
           operation: 'return_same_bool',
-          args: [ { type: 'Boolean', value: false} ]
+          args: [{ type: 'Boolean', value: false }],
         },
       ],
     })
 
     assert.equal(resp.state, 'HALT', 'success')
-    if (typeChecker.isStackTypeBoolean(resp.stack[0])){
-      assert.equal(resp.stack[0].value , true)
-    }else{
+    if (typeChecker.isStackTypeBoolean(resp.stack[0])) {
+      assert.equal(resp.stack[0].value, true)
+    } else {
       assert.fail('stack return is not Boolean')
     }
-    if (typeChecker.isStackTypeBoolean(resp.stack[1])){
-      assert.equal(resp.stack[1].value , false)
-    }else{
+    if (typeChecker.isStackTypeBoolean(resp.stack[1])) {
+      assert.equal(resp.stack[1].value, false)
+    } else {
       assert.fail('stack return is not Boolean')
     }
-    if (typeChecker.isStackTypeBoolean(resp.stack[2])){
-      assert.equal(resp.stack[2].value , true)
-    }else{
+    if (typeChecker.isStackTypeBoolean(resp.stack[2])) {
+      assert.equal(resp.stack[2].value, true)
+    } else {
       assert.fail('stack return is not Boolean')
     }
-    if (typeChecker.isStackTypeBoolean(resp.stack[3])){
-      assert.equal(resp.stack[3].value , false)
-    }else{
+    if (typeChecker.isStackTypeBoolean(resp.stack[3])) {
+      assert.equal(resp.stack[3].value, false)
+    } else {
       assert.fail('stack return is not Boolean')
     }
   })
@@ -265,32 +265,32 @@ describe('NeonInvoker', function () {
         {
           scriptHash: '0x7346e59b3b3516467390a11c390679ab46b37af3',
           operation: 'positive_numbers',
-          args: []
+          args: [],
         },
       ],
     })
 
     assert.equal(resp.state, 'HALT', 'success')
-    if (typeChecker.isStackTypeArray(resp.stack[0])){
-      assert.deepEqual(resp.stack[0].value , [
+    if (typeChecker.isStackTypeArray(resp.stack[0])) {
+      assert.deepEqual(resp.stack[0].value, [
         {
-          "type": "Integer",
-          "value": "1"
+          type: 'Integer',
+          value: '1',
         },
         {
-            "type": "Integer",
-            "value": "20"
+          type: 'Integer',
+          value: '20',
         },
         {
-            "type": "Integer",
-            "value": "100"
+          type: 'Integer',
+          value: '100',
         },
         {
-            "type": "Integer",
-            "value": "123"
-        }
+          type: 'Integer',
+          value: '123',
+        },
       ])
-    }else{
+    } else {
       assert.fail('stack return is not Array')
     }
   })
@@ -305,26 +305,26 @@ describe('NeonInvoker', function () {
         {
           scriptHash: '0x7346e59b3b3516467390a11c390679ab46b37af3',
           operation: 'return_str',
-          args: []
+          args: [],
         },
         {
           scriptHash: '0x7346e59b3b3516467390a11c390679ab46b37af3',
           operation: 'return_bytes',
-          args: []
+          args: [],
         },
       ],
     })
 
     assert.equal(resp.state, 'HALT', 'success')
-    if (typeChecker.isStackTypeByteString(resp.stack[0])){
+    if (typeChecker.isStackTypeByteString(resp.stack[0])) {
       assert.deepEqual(resp.stack[0].value, 'dGVzdGluZyBzdHJpbmcgcmV0dXJu')
-    }else{
+    } else {
       assert.fail('stack return is not ByteString')
     }
 
-    if (typeChecker.isStackTypeByteString(resp.stack[1])){
+    if (typeChecker.isStackTypeByteString(resp.stack[1])) {
       assert.deepEqual(resp.stack[1].value, 'dGVzdGluZyBzdHJpbmcgcmV0dXJu')
-    }else{
+    } else {
       assert.fail('stack return is not ByteString')
     }
   })
@@ -339,32 +339,32 @@ describe('NeonInvoker', function () {
         {
           scriptHash: '0x7346e59b3b3516467390a11c390679ab46b37af3',
           operation: 'positive_numbers',
-          args: []
+          args: [],
         },
       ],
     })
 
     assert.equal(resp.state, 'HALT', 'success')
-    if (typeChecker.isStackTypeArray(resp.stack[0])){
-      assert.deepEqual(resp.stack[0].value , [
+    if (typeChecker.isStackTypeArray(resp.stack[0])) {
+      assert.deepEqual(resp.stack[0].value, [
         {
-          "type": "Integer",
-          "value": "1"
+          type: 'Integer',
+          value: '1',
         },
         {
-            "type": "Integer",
-            "value": "20"
+          type: 'Integer',
+          value: '20',
         },
         {
-            "type": "Integer",
-            "value": "100"
+          type: 'Integer',
+          value: '100',
         },
         {
-            "type": "Integer",
-            "value": "123"
-        }
+          type: 'Integer',
+          value: '123',
+        },
       ])
-    }else{
+    } else {
       assert.fail('stack return is not Array')
     }
   })
@@ -379,38 +379,37 @@ describe('NeonInvoker', function () {
         {
           scriptHash: '0x8b43ab0c83b7d12cf35a0e780072bc314a688796',
           operation: 'main',
-          args: [ ]
+          args: [],
         },
       ],
     })
 
     assert.equal(resp.state, 'HALT', 'success')
-    if (typeChecker.isStackTypeMap(resp.stack[0])){
+    if (typeChecker.isStackTypeMap(resp.stack[0])) {
       assert.deepEqual(resp.stack[0].value, [
         {
           key: {
-            type: "ByteString",
-            value: "YQ=="
+            type: 'ByteString',
+            value: 'YQ==',
           },
           value: {
-            type: "Integer",
-            value: "4"
-          }
+            type: 'Integer',
+            value: '4',
+          },
         },
         {
           key: {
-            type: "Integer",
-            value: "13"
+            type: 'Integer',
+            value: '13',
           },
           value: {
-            type: "Integer",
-            value: "3"
-          }
-        }
+            type: 'Integer',
+            value: '3',
+          },
+        },
       ])
-    } else{
+    } else {
       assert.fail('stack return is not Map')
     }
   })
-
 })

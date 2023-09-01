@@ -48,7 +48,7 @@ export class NeonInvoker implements Neo3Invoker {
       accountArr[0] ? NeonInvoker.buildMultipleSigner(accountArr, cim.signers) : undefined,
     )
 
-    return {...rpcResult, stack: rpcResult.stack as RpcResponseStackItem[]}
+    return { ...rpcResult, stack: rpcResult.stack as RpcResponseStackItem[] }
   }
 
   async invokeFunction(cim: ContractInvocationMulti): Promise<string> {
@@ -74,10 +74,10 @@ export class NeonInvoker implements Neo3Invoker {
       if (account) {
         if (this.options.signingCallback) {
           trx.addWitness(
-              new tx.Witness({
-                invocationScript: '',
-                verificationScript: wallet.getVerificationScriptFromPublicKey(account.publicKey),
-              })
+            new tx.Witness({
+              invocationScript: '',
+              verificationScript: wallet.getVerificationScriptFromPublicKey(account.publicKey),
+            }),
           )
 
           const facade = await api.NetworkFacade.fromConfig({
@@ -127,10 +127,10 @@ export class NeonInvoker implements Neo3Invoker {
     for (const account of accountArr) {
       if (account) {
         trx.addWitness(
-            new tx.Witness({
-              invocationScript: '',
-              verificationScript: wallet.getVerificationScriptFromPublicKey(account.publicKey),
-            })
+          new tx.Witness({
+            invocationScript: '',
+            verificationScript: wallet.getVerificationScriptFromPublicKey(account.publicKey),
+          }),
         )
       }
     }
@@ -171,7 +171,7 @@ export class NeonInvoker implements Neo3Invoker {
   static buildScriptBuilder(cim: ContractInvocationMulti): string {
     const sb = new sc.ScriptBuilder()
 
-    cim.invocations.forEach(c => {
+    cim.invocations.forEach((c) => {
       sb.emitContractCall({
         scriptHash: c.scriptHash,
         operation: c.operation,
@@ -187,7 +187,7 @@ export class NeonInvoker implements Neo3Invoker {
   }
 
   static convertParams(args: ExtendedArg[] | undefined): Neon.sc.ContractParam[] {
-    return (args ?? []).map(a => {
+    return (args ?? []).map((a) => {
       if (a.type === undefined) throw new Error('Invalid argument type')
       if (a.value === undefined) throw new Error('Invalid argument value')
 
@@ -212,7 +212,12 @@ export class NeonInvoker implements Neo3Invoker {
         case 'Array':
           return sc.ContractParam.array(...this.convertParams(a.value))
         case 'Map':
-          return sc.ContractParam.map(...a.value.map(map => ({key: this.convertParams([map.key])[0], value: this.convertParams([map.value])[0]})))
+          return sc.ContractParam.map(
+            ...a.value.map((map) => ({
+              key: this.convertParams([map.key])[0],
+              value: this.convertParams([map.value])[0],
+            })),
+          )
         case 'ByteArray':
           return sc.ContractParam.byteArray(u.hex2base64(a.value))
       }
@@ -237,7 +242,10 @@ export class NeonInvoker implements Neo3Invoker {
     })
   }
 
-  static buildMultipleSigner(optionAccounts: (Neon.wallet.Account | undefined)[], signers?: Signer[]): Neon.tx.Signer[] {
+  static buildMultipleSigner(
+    optionAccounts: (Neon.wallet.Account | undefined)[],
+    signers?: Signer[],
+  ): Neon.tx.Signer[] {
     if (!signers?.length) {
       return optionAccounts.map((a) => this.buildSigner(a))
     } else if (signers.length === optionAccounts.length) {
@@ -247,7 +255,9 @@ export class NeonInvoker implements Neo3Invoker {
     }
   }
 
-  private normalizeAccountArray(acc: Neon.wallet.Account | Neon.wallet.Account[] | undefined): (Neon.wallet.Account | undefined)[] {
+  private normalizeAccountArray(
+    acc: Neon.wallet.Account | Neon.wallet.Account[] | undefined,
+  ): (Neon.wallet.Account | undefined)[] {
     if (Array.isArray(acc)) {
       return acc
     } else {

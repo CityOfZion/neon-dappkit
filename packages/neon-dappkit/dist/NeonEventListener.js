@@ -60,7 +60,7 @@ class NeonEventListener {
         if (listenersOfContract) {
             let listenersOfEvent = listenersOfContract.get(eventname);
             if (listenersOfEvent) {
-                listenersOfEvent = listenersOfEvent.filter(l => l !== callback);
+                listenersOfEvent = listenersOfEvent.filter((l) => l !== callback);
                 listenersOfContract.set(eventname, listenersOfEvent);
                 if (listenersOfEvent.length === 0) {
                     listenersOfContract.delete(eventname);
@@ -118,7 +118,11 @@ class NeonEventListener {
             throw new Error('Transaction failed. VMState: ' + ((_b = txResult === null || txResult === void 0 ? void 0 : txResult.executions[0]) === null || _b === void 0 ? void 0 : _b.vmstate));
     }
     confirmStackTrue(txResult) {
-        if (!txResult || !txResult.executions || txResult.executions.length === 0 || !txResult.executions[0].stack || txResult.executions[0].stack.length === 0) {
+        if (!txResult ||
+            !txResult.executions ||
+            txResult.executions.length === 0 ||
+            !txResult.executions[0].stack ||
+            txResult.executions[0].stack.length === 0) {
             throw new Error('Transaction failed. No stack found in transaction result');
         }
         const stack = txResult.executions[0].stack[0];
@@ -127,7 +131,7 @@ class NeonEventListener {
         }
     }
     getNotificationState(txResult, eventToCheck) {
-        return txResult === null || txResult === void 0 ? void 0 : txResult.executions[0].notifications.find(e => {
+        return txResult === null || txResult === void 0 ? void 0 : txResult.executions[0].notifications.find((e) => {
             return e.contract === eventToCheck.contract && e.eventname === eventToCheck.eventname;
         });
     }
@@ -194,7 +198,7 @@ class NeonEventListener {
         });
     }
     wait(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
+        return new Promise((resolve) => setTimeout(resolve, ms));
     }
 }
 exports.NeonEventListener = NeonEventListener;
