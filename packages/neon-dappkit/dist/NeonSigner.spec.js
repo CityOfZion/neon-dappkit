@@ -118,7 +118,7 @@ describe('NeonSigner', function () {
         const signer = new index_1.NeonSigner(account);
         const messageOriginal = 'Some plaintext for encryption';
         const messageEncrypted = yield signer.encrypt(messageOriginal, [anotherAccount.publicKey]);
-        assert_1.default.rejects(() => __awaiter(this, void 0, void 0, function* () { return yield signer.decrypt(messageEncrypted[0]); }), /Decrypt failed. Event not found in string result/, 'Decrypt failed');
+        yield assert_1.default.rejects(() => __awaiter(this, void 0, void 0, function* () { return yield signer.decrypt(messageEncrypted[0]); }), /Decrypt failed. Event not found in string result/, 'Decrypt failed');
     }));
     it('can encrypt and decrypt messages from an array that has the corresponding public key', () => __awaiter(this, void 0, void 0, function* () {
         const account = new Neon.wallet.Account();

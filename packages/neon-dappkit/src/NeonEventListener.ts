@@ -35,7 +35,7 @@ export class NeonEventListener implements Neo3EventListener {
     this.rpcClient = new Neon.rpc.RPCClient(rpcUrl)
   }
 
-  addEventListener(contract: string, eventname: string, callback: Neo3EventListenerCallback) {
+  addEventListener(contract: string, eventname: string, callback: Neo3EventListenerCallback): void {
     const listenersOfContract = this.listeners.get(contract)
     if (!listenersOfContract) {
       this.listeners.set(contract, new Map([[eventname, [callback]]]))
@@ -48,7 +48,7 @@ export class NeonEventListener implements Neo3EventListener {
     }
   }
 
-  removeEventListener(contract: string, eventname: string, callback: Neo3EventListenerCallback) {
+  removeEventListener(contract: string, eventname: string, callback: Neo3EventListenerCallback): void {
     const listenersOfContract = this.listeners.get(contract)
     if (listenersOfContract) {
       let listenersOfEvent = listenersOfContract.get(eventname)
@@ -134,7 +134,11 @@ export class NeonEventListener implements Neo3EventListener {
     })
   }
 
-  confirmTransaction(txResult: Neo3ApplicationLog, eventToCheck?: Neo3Event | undefined, confirmStackTrue = false) {
+  confirmTransaction(
+    txResult: Neo3ApplicationLog,
+    eventToCheck?: Neo3Event | undefined,
+    confirmStackTrue = false,
+  ): void {
     this.confirmHalt(txResult)
     if (confirmStackTrue) {
       this.confirmStackTrue(txResult)

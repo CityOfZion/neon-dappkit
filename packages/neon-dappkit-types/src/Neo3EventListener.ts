@@ -50,7 +50,7 @@ export interface Neo3EventListener {
    * @param eventname
    * @param callback
    */
-  addEventListener(contract: string, eventname: string, callback: Neo3EventListenerCallback): undefined
+  addEventListener(contract: string, eventname: string, callback: Neo3EventListenerCallback): void
 
   /**
    * Removes an event listener for the specified contract and event name
@@ -58,7 +58,7 @@ export interface Neo3EventListener {
    * @param eventname
    * @param callback
    */
-  removeEventListener(contract: string, eventname: string, callback: Neo3EventListenerCallback): undefined
+  removeEventListener(contract: string, eventname: string, callback: Neo3EventListenerCallback): void
 
   /**
    * Waits for the transaction to be completed and returns the application log
@@ -77,5 +77,5 @@ export interface Neo3EventListener {
     txResult: Neo3ApplicationLog,
     eventToCheck?: Neo3Event | undefined,
     confirmStackTrue?: boolean | undefined,
-  ): undefined
+  ): void
 }
