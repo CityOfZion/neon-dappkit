@@ -7,6 +7,8 @@ import {
   DecryptFromArrayResult,
 } from '@cityofzion/neon-dappkit-types'
 import { wallet, u } from '@cityofzion/neon-core'
+
+// @ts-ignore
 import randomBytes from 'randombytes'
 import * as elliptic from 'elliptic'
 import * as crypto from 'crypto'

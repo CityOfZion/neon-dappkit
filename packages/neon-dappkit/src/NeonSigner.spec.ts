@@ -106,8 +106,8 @@ describe('NeonSigner', function () {
     const signer = new NeonSigner(account)
     const messageOriginal = 'Some plaintext for encryption'
 
-    const messageEncrypted = signer.encrypt(messageOriginal, [anotherAccount.publicKey])
-    assert.rejects(
+    const messageEncrypted = await signer.encrypt(messageOriginal, [anotherAccount.publicKey])
+    await assert.rejects(
       async () => await signer.decrypt(messageEncrypted[0]),
       /Decrypt failed. Event not found in string result/,
       'Decrypt failed',
