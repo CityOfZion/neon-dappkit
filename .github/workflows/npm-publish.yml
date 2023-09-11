@@ -22,8 +22,8 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
       - name: Config Git Properties
         run: |
-          git config --global user.email ${{ secrets.EMAIL }}
-          git config --global user.name ${{ secrets.AUTO_PUSH_NAME }}
+          git config --global user.email github-actions@github.com
+          git config --global user.name github-actions
       - name: Install RushJS
         run: npm install -g @microsoft/rush
       - name: Verify Change Logs
