@@ -1,0 +1,25 @@
+{
+  "name": "@cityofzion/neon-dappkit",
+  "entries": [
+    {
+      "version": "0.0.6",
+      "tag": "@cityofzion/neon-dappkit_v0.0.6",
+      "date": "Mon, 11 Sep 2023 14:54:03 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Adapt the implementation to the new signature of neon-dappkit-types to return Promises on encrypt, descrypt and decryptFromArray methods"
+          },
+          {
+            "comment": "Fix neon-core imports to use only for types"
+          }
+        ],
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@cityofzion/neon-dappkit-types\" to `0.0.6`"
+          }
+        ]
+      }
+    }
+  ]
+}

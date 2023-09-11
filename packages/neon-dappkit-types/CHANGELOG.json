@@ -1,0 +1,17 @@
+{
+  "name": "@cityofzion/neon-dappkit-types",
+  "entries": [
+    {
+      "version": "0.0.6",
+      "tag": "@cityofzion/neon-dappkit-types_v0.0.6",
+      "date": "Mon, 11 Sep 2023 14:54:03 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Return Promises on encrypt, descrypt and decryptFromArray methods"
+          }
+        ]
+      }
+    }
+  ]
+}

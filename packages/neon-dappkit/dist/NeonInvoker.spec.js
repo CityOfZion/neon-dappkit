@@ -18,7 +18,7 @@ const assert_1 = __importDefault(require("assert"));
 describe('NeonInvoker', function () {
     this.timeout(60000);
     it('does invokeFuncion', () => __awaiter(this, void 0, void 0, function* () {
-        const account = new neon_js_1.wallet.Account('fb1f57cc1347ae5b6251dc8bae761362d2ecaafec4c87f4dc9e97fef6dd75014');
+        const account = new neon_js_1.wallet.Account('3bd06d95e9189385851aa581d182f25de34af759cf7f883af57030303ded52b8');
         const invoker = yield index_1.NeonInvoker.init({
             rpcAddress: index_1.NeonInvoker.TESTNET,
             account,
@@ -30,7 +30,7 @@ describe('NeonInvoker', function () {
                     operation: 'transfer',
                     args: [
                         { type: 'Hash160', value: account.address },
-                        { type: 'Hash160', value: 'NhGomBpYnKXArr55nHRQ5rzy79TwKVXZbr' },
+                        { type: 'Hash160', value: 'NbnjKGMBJzJ6j5PHeYhjJDaQ5Vy5UYu4Fv' },
                         { type: 'Integer', value: '100000000' },
                         { type: 'Array', value: [] },
                     ],
@@ -48,7 +48,7 @@ describe('NeonInvoker', function () {
         return true;
     }));
     it('does calculateFee', () => __awaiter(this, void 0, void 0, function* () {
-        const account = new neon_js_1.wallet.Account('fb1f57cc1347ae5b6251dc8bae761362d2ecaafec4c87f4dc9e97fef6dd75014');
+        const account = new neon_js_1.wallet.Account('3bd06d95e9189385851aa581d182f25de34af759cf7f883af57030303ded52b8');
         const invoker = yield index_1.NeonInvoker.init({
             rpcAddress: index_1.NeonInvoker.TESTNET,
             account,
@@ -60,7 +60,7 @@ describe('NeonInvoker', function () {
                     operation: 'transfer',
                     args: [
                         { type: 'Hash160', value: account.address },
-                        { type: 'Hash160', value: 'NhGomBpYnKXArr55nHRQ5rzy79TwKVXZbr' },
+                        { type: 'Hash160', value: 'NbnjKGMBJzJ6j5PHeYhjJDaQ5Vy5UYu4Fv' },
                         { type: 'Integer', value: '100000000' },
                         { type: 'Array', value: [] },
                     ],
