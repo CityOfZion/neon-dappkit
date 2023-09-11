@@ -6,7 +6,8 @@ import {
   EncryptedPayload,
   DecryptFromArrayResult,
 } from '@cityofzion/neon-dappkit-types'
-import { wallet, u } from '@cityofzion/neon-core'
+import { wallet, u } from '@cityofzion/neon-js'
+import type * as NeonTypes from '@cityofzion/neon-core'
 
 // @ts-ignore
 import randomBytes from 'randombytes'
@@ -16,7 +17,7 @@ import * as crypto from 'crypto'
 export { SignMessageVersion }
 
 export class NeonSigner implements Neo3Signer {
-  public constructor(public account?: wallet.Account) {}
+  public constructor(public account?: NeonTypes.wallet.Account) {}
 
   async signMessage(message: SignMessagePayload): Promise<SignedMessage> {
     if (!this.account) {

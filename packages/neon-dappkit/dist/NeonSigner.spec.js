@@ -1,27 +1,4 @@
 "use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -36,11 +13,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const index_1 = require("./index");
-const Neon = __importStar(require("@cityofzion/neon-core"));
+const neon_js_1 = require("@cityofzion/neon-js");
 const assert_1 = __importDefault(require("assert"));
 describe('NeonSigner', function () {
     it('can sign and verify', () => __awaiter(this, void 0, void 0, function* () {
-        const acc = new Neon.wallet.Account('fb1f57cc1347ae5b6251dc8bae761362d2ecaafec4c87f4dc9e97fef6dd75014');
+        const acc = new neon_js_1.wallet.Account('fb1f57cc1347ae5b6251dc8bae761362d2ecaafec4c87f4dc9e97fef6dd75014');
         const signer = new index_1.NeonSigner(acc);
         const signed = yield signer.signMessage({
             version: index_1.SignMessageVersion.DEFAULT,
@@ -54,7 +31,7 @@ describe('NeonSigner', function () {
         (0, assert_1.default)(verified);
     }));
     it('can sign using classic version and verify', () => __awaiter(this, void 0, void 0, function* () {
-        const acc = new Neon.wallet.Account('fb1f57cc1347ae5b6251dc8bae761362d2ecaafec4c87f4dc9e97fef6dd75014');
+        const acc = new neon_js_1.wallet.Account('fb1f57cc1347ae5b6251dc8bae761362d2ecaafec4c87f4dc9e97fef6dd75014');
         const signer = new index_1.NeonSigner(acc);
         const signed = yield signer.signMessage({
             version: index_1.SignMessageVersion.CLASSIC,
@@ -68,7 +45,7 @@ describe('NeonSigner', function () {
         (0, assert_1.default)(verified);
     }));
     it('can sign with no salt and verify', () => __awaiter(this, void 0, void 0, function* () {
-        const acc = new Neon.wallet.Account('fb1f57cc1347ae5b6251dc8bae761362d2ecaafec4c87f4dc9e97fef6dd75014');
+        const acc = new neon_js_1.wallet.Account('fb1f57cc1347ae5b6251dc8bae761362d2ecaafec4c87f4dc9e97fef6dd75014');
         const signer = new index_1.NeonSigner(acc);
         const signed = yield signer.signMessage({
             version: index_1.SignMessageVersion.WITHOUT_SALT,
@@ -102,7 +79,7 @@ describe('NeonSigner', function () {
         (0, assert_1.default)(!verified);
     }));
     it('can encrypt and decrypt messages from the corresponding public key', () => __awaiter(this, void 0, void 0, function* () {
-        const account = new Neon.wallet.Account();
+        const account = new neon_js_1.wallet.Account();
         const signer = new index_1.NeonSigner(account);
         const messageOriginal = 'Some plaintext for encryption';
         const messageEncrypted = yield signer.encrypt(messageOriginal, [account.publicKey]);
@@ -113,18 +90,18 @@ describe('NeonSigner', function () {
         (0, assert_1.default)(messageDecrypted === messageOriginal);
     }));
     it('can NOT encrypt and decrypt messages from different public keys', () => __awaiter(this, void 0, void 0, function* () {
-        const account = new Neon.wallet.Account();
-        const anotherAccount = new Neon.wallet.Account();
+        const account = new neon_js_1.wallet.Account();
+        const anotherAccount = new neon_js_1.wallet.Account();
         const signer = new index_1.NeonSigner(account);
         const messageOriginal = 'Some plaintext for encryption';
         const messageEncrypted = yield signer.encrypt(messageOriginal, [anotherAccount.publicKey]);
         yield assert_1.default.rejects(() => __awaiter(this, void 0, void 0, function* () { return yield signer.decrypt(messageEncrypted[0]); }), /Decrypt failed. Event not found in string result/, 'Decrypt failed');
     }));
     it('can encrypt and decrypt messages from an array that has the corresponding public key', () => __awaiter(this, void 0, void 0, function* () {
-        const account = new Neon.wallet.Account();
-        const anotherAccount1 = new Neon.wallet.Account();
-        const anotherAccount2 = new Neon.wallet.Account();
-        const anotherAccount3 = new Neon.wallet.Account();
+        const account = new neon_js_1.wallet.Account();
+        const anotherAccount1 = new neon_js_1.wallet.Account();
+        const anotherAccount2 = new neon_js_1.wallet.Account();
+        const anotherAccount3 = new neon_js_1.wallet.Account();
         const signer = new index_1.NeonSigner(account);
         const messageOriginal = 'Some plaintext for encryption';
         const publicKeys = [
@@ -144,10 +121,10 @@ describe('NeonSigner', function () {
         (0, assert_1.default)(anotherMessageDecrypted.keyIndex === publicKeys.length - 2);
     }));
     it("can NOT encrypt and decrypt messages from an array that doesn't have the corresponding public key", () => __awaiter(this, void 0, void 0, function* () {
-        const account = new Neon.wallet.Account();
-        const anotherAccount1 = new Neon.wallet.Account();
-        const anotherAccount2 = new Neon.wallet.Account();
-        const anotherAccount3 = new Neon.wallet.Account();
+        const account = new neon_js_1.wallet.Account();
+        const anotherAccount1 = new neon_js_1.wallet.Account();
+        const anotherAccount2 = new neon_js_1.wallet.Account();
+        const anotherAccount3 = new neon_js_1.wallet.Account();
         const signer = new index_1.NeonSigner(account);
         const messageOriginal = 'Some plaintext for encryption';
         const publicKeys = [anotherAccount3.publicKey, anotherAccount2.publicKey, anotherAccount1.publicKey];

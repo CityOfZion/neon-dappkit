@@ -11,12 +11,13 @@
     "build": "tsc",
     "lint": "eslint .",
     "format": "eslint --fix",
-    "test": "ts-mocha --reporter json > ../../mocha-results.json src/**/*.spec.ts"
+    "test": "ts-mocha --reporter json > ../../mocha-results.json src/**/*.spec.ts",
+    "test-print": "ts-mocha src/**/*.spec.ts"
   },
   "dependencies": {
-    "@cityofzion/neon-core": "5.5.0",
+    "@cityofzion/neon-core": "5.5.1",
     "@cityofzion/neon-dappkit-types": "workspace:*",
-    "@cityofzion/neon-js": "5.5.0",
+    "@cityofzion/neon-js": "5.5.1",
     "crypto-js": "^4.1.1",
     "elliptic": "^6.5.4",
     "randombytes": "^2.1.0"

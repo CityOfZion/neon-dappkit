@@ -6,7 +6,8 @@ import {
   Neo3EventWithState,
   Neo3StackItem,
 } from '@cityofzion/neon-dappkit-types'
-import * as Neon from '@cityofzion/neon-core'
+import { rpc } from '@cityofzion/neon-js'
+import type * as NeonTypes from '@cityofzion/neon-core'
 
 export type NeonEventListenerOptions = {
   debug?: boolean | undefined
@@ -26,13 +27,13 @@ export class NeonEventListener implements Neo3EventListener {
   private blockPollingLoopActive = false
   private listeners = new Map<string, Map<string, Neo3EventListenerCallback[]>>()
 
-  private readonly rpcClient: Neon.rpc.RPCClient
+  private readonly rpcClient: NeonTypes.rpc.RPCClient
 
   constructor(
     rpcUrl: string,
     private options: NeonEventListenerOptions | undefined = undefined,
   ) {
-    this.rpcClient = new Neon.rpc.RPCClient(rpcUrl)
+    this.rpcClient = new rpc.RPCClient(rpcUrl)
   }
 
   addEventListener(contract: string, eventname: string, callback: Neo3EventListenerCallback): void {

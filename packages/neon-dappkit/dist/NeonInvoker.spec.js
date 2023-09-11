@@ -13,12 +13,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const index_1 = require("./index");
-const neon_core_1 = require("@cityofzion/neon-core");
+const neon_js_1 = require("@cityofzion/neon-js");
 const assert_1 = __importDefault(require("assert"));
 describe('NeonInvoker', function () {
     this.timeout(60000);
     it('does invokeFuncion', () => __awaiter(this, void 0, void 0, function* () {
-        const account = new neon_core_1.wallet.Account('fb1f57cc1347ae5b6251dc8bae761362d2ecaafec4c87f4dc9e97fef6dd75014');
+        const account = new neon_js_1.wallet.Account('fb1f57cc1347ae5b6251dc8bae761362d2ecaafec4c87f4dc9e97fef6dd75014');
         const invoker = yield index_1.NeonInvoker.init({
             rpcAddress: index_1.NeonInvoker.TESTNET,
             account,
@@ -39,7 +39,7 @@ describe('NeonInvoker', function () {
             signers: [
                 {
                     account: account.scriptHash,
-                    scopes: neon_core_1.tx.WitnessScope.CalledByEntry,
+                    scopes: neon_js_1.tx.WitnessScope.CalledByEntry,
                     rules: [],
                 },
             ],
@@ -48,7 +48,7 @@ describe('NeonInvoker', function () {
         return true;
     }));
     it('does calculateFee', () => __awaiter(this, void 0, void 0, function* () {
-        const account = new neon_core_1.wallet.Account('fb1f57cc1347ae5b6251dc8bae761362d2ecaafec4c87f4dc9e97fef6dd75014');
+        const account = new neon_js_1.wallet.Account('fb1f57cc1347ae5b6251dc8bae761362d2ecaafec4c87f4dc9e97fef6dd75014');
         const invoker = yield index_1.NeonInvoker.init({
             rpcAddress: index_1.NeonInvoker.TESTNET,
             account,
@@ -69,7 +69,7 @@ describe('NeonInvoker', function () {
             signers: [
                 {
                     account: account.scriptHash,
-                    scopes: neon_core_1.tx.WitnessScope.CalledByEntry,
+                    scopes: neon_js_1.tx.WitnessScope.CalledByEntry,
                     rules: [],
                 },
             ],

@@ -38,7 +38,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.NeonSigner = exports.SignMessageVersion = void 0;
 const neon_dappkit_types_1 = require("@cityofzion/neon-dappkit-types");
 Object.defineProperty(exports, "SignMessageVersion", { enumerable: true, get: function () { return neon_dappkit_types_1.SignMessageVersion; } });
-const neon_core_1 = require("@cityofzion/neon-core");
+const neon_js_1 = require("@cityofzion/neon-js");
 // @ts-ignore
 const randombytes_1 = __importDefault(require("randombytes"));
 const elliptic = __importStar(require("elliptic"));
@@ -68,17 +68,17 @@ class NeonSigner {
         const messageHex = this.classicFormat(`${salt}${message}`);
         return {
             publicKey: this.account.publicKey,
-            data: neon_core_1.wallet.sign(messageHex, this.account.privateKey),
+            data: neon_js_1.wallet.sign(messageHex, this.account.privateKey),
             salt,
             messageHex,
         };
     }
     signMessageDefault(message) {
         const salt = (0, randombytes_1.default)(16).toString('hex');
-        const messageHex = neon_core_1.u.str2hexstring(message);
+        const messageHex = neon_js_1.u.str2hexstring(message);
         return {
             publicKey: this.account.publicKey,
-            data: neon_core_1.wallet.sign(messageHex, this.account.privateKey, salt),
+            data: neon_js_1.wallet.sign(messageHex, this.account.privateKey, salt),
             salt,
             messageHex,
         };
@@ -87,18 +87,18 @@ class NeonSigner {
         const messageHex = this.classicFormat(message);
         return {
             publicKey: this.account.publicKey,
-            data: neon_core_1.wallet.sign(messageHex, this.account.privateKey),
+            data: neon_js_1.wallet.sign(messageHex, this.account.privateKey),
             messageHex,
         };
     }
     classicFormat(message) {
-        const parameterHexString = neon_core_1.u.str2hexstring(message);
-        const lengthHex = neon_core_1.u.num2VarInt(parameterHexString.length / 2);
+        const parameterHexString = neon_js_1.u.str2hexstring(message);
+        const lengthHex = neon_js_1.u.num2VarInt(parameterHexString.length / 2);
         return `010001f0${lengthHex}${parameterHexString}0000`;
     }
     verifyMessage(verifyArgs) {
         return __awaiter(this, void 0, void 0, function* () {
-            return neon_core_1.wallet.verify(verifyArgs.messageHex, verifyArgs.data, verifyArgs.publicKey);
+            return neon_js_1.wallet.verify(verifyArgs.messageHex, verifyArgs.data, verifyArgs.publicKey);
         });
     }
     /**

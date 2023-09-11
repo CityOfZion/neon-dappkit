@@ -7,7 +7,7 @@ import {
   RpcResponseStackItem,
 } from '@cityofzion/neon-dappkit-types'
 import { tx, u, rpc, sc, api, wallet } from '@cityofzion/neon-js'
-import * as Neon from '@cityofzion/neon-core'
+import type * as NeonTypes from '@cityofzion/neon-core'
 import * as typeChecker from './typeChecker'
 
 export type RpcConfig = {
@@ -16,8 +16,8 @@ export type RpcConfig = {
 }
 
 export type CalculateFee = {
-  networkFee: Neon.u.BigInteger
-  systemFee: Neon.u.BigInteger
+  networkFee: NeonTypes.u.BigInteger
+  systemFee: NeonTypes.u.BigInteger
   total: number
 }
 
@@ -25,7 +25,7 @@ export type ExtendedArg = Arg | { type: 'Address'; value: string } | { type: 'Sc
 
 export type InitOptions = {
   rpcAddress: string
-  account?: Neon.wallet.Account | Neon.wallet.Account[]
+  account?: NeonTypes.wallet.Account | NeonTypes.wallet.Account[]
   signingCallback?: api.SigningFunction
 }
 
@@ -107,7 +107,7 @@ export class NeonInvoker implements Neo3Invoker {
     }
   }
 
-  async getNetworkFee(cim: ContractInvocationMulti): Promise<Neon.u.BigInteger> {
+  async getNetworkFee(cim: ContractInvocationMulti): Promise<NeonTypes.u.BigInteger> {
     if (cim.networkFeeOverride) {
       return u.BigInteger.fromNumber(cim.networkFeeOverride)
     }
@@ -140,7 +140,7 @@ export class NeonInvoker implements Neo3Invoker {
     return networkFee.add(cim.extraNetworkFee ?? 0)
   }
 
-  async getSystemFee(cim: ContractInvocationMulti): Promise<Neon.u.BigInteger> {
+  async getSystemFee(cim: ContractInvocationMulti): Promise<NeonTypes.u.BigInteger> {
     if (cim.systemFeeOverride) {
       return u.BigInteger.fromNumber(cim.systemFeeOverride)
     }
@@ -186,7 +186,7 @@ export class NeonInvoker implements Neo3Invoker {
     return sb.build()
   }
 
-  static convertParams(args: ExtendedArg[] | undefined): Neon.sc.ContractParam[] {
+  static convertParams(args: ExtendedArg[] | undefined): NeonTypes.sc.ContractParam[] {
     return (args ?? []).map((a) => {
       if (a.type === undefined) throw new Error('Invalid argument type')
       if (a.value === undefined) throw new Error('Invalid argument value')
@@ -201,7 +201,7 @@ export class NeonInvoker implements Neo3Invoker {
         case 'PublicKey':
           return sc.ContractParam.publicKey(a.value)
         case 'ScriptHash':
-          return sc.ContractParam.hash160(Neon.u.HexString.fromHex(a.value))
+          return sc.ContractParam.hash160(u.HexString.fromHex(a.value))
         case 'Address':
         case 'Hash160':
           return sc.ContractParam.hash160(a.value)
@@ -224,10 +224,10 @@ export class NeonInvoker implements Neo3Invoker {
     })
   }
 
-  static buildSigner(optionsAccount: Neon.wallet.Account | undefined, signerEntry?: Signer): Neon.tx.Signer {
+  static buildSigner(optionsAccount: NeonTypes.wallet.Account | undefined, signerEntry?: Signer): NeonTypes.tx.Signer {
     let scopes = signerEntry?.scopes ?? 'CalledByEntry'
     if (typeof scopes === 'number') {
-      scopes = Neon.tx.toString(scopes)
+      scopes = tx.toString(scopes)
     }
 
     const account = signerEntry?.account ?? optionsAccount?.scriptHash
@@ -243,9 +243,9 @@ export class NeonInvoker implements Neo3Invoker {
   }
 
   static buildMultipleSigner(
-    optionAccounts: (Neon.wallet.Account | undefined)[],
+    optionAccounts: (NeonTypes.wallet.Account | undefined)[],
     signers?: Signer[],
-  ): Neon.tx.Signer[] {
+  ): NeonTypes.tx.Signer[] {
     if (!signers?.length) {
       return optionAccounts.map((a) => this.buildSigner(a))
     } else if (signers.length === optionAccounts.length) {
@@ -256,8 +256,8 @@ export class NeonInvoker implements Neo3Invoker {
   }
 
   private normalizeAccountArray(
-    acc: Neon.wallet.Account | Neon.wallet.Account[] | undefined,
-  ): (Neon.wallet.Account | undefined)[] {
+    acc: NeonTypes.wallet.Account | NeonTypes.wallet.Account[] | undefined,
+  ): (NeonTypes.wallet.Account | undefined)[] {
     if (Array.isArray(acc)) {
       return acc
     } else {

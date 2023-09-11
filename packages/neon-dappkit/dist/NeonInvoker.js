@@ -34,7 +34,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.typeChecker = exports.NeonInvoker = void 0;
 const neon_js_1 = require("@cityofzion/neon-js");
-const Neon = __importStar(require("@cityofzion/neon-core"));
 const typeChecker = __importStar(require("./typeChecker"));
 exports.typeChecker = typeChecker;
 class NeonInvoker {
@@ -184,7 +183,7 @@ class NeonInvoker {
                 case 'PublicKey':
                     return neon_js_1.sc.ContractParam.publicKey(a.value);
                 case 'ScriptHash':
-                    return neon_js_1.sc.ContractParam.hash160(Neon.u.HexString.fromHex(a.value));
+                    return neon_js_1.sc.ContractParam.hash160(neon_js_1.u.HexString.fromHex(a.value));
                 case 'Address':
                 case 'Hash160':
                     return neon_js_1.sc.ContractParam.hash160(a.value);
@@ -208,7 +207,7 @@ class NeonInvoker {
         var _a, _b;
         let scopes = (_a = signerEntry === null || signerEntry === void 0 ? void 0 : signerEntry.scopes) !== null && _a !== void 0 ? _a : 'CalledByEntry';
         if (typeof scopes === 'number') {
-            scopes = Neon.tx.toString(scopes);
+            scopes = neon_js_1.tx.toString(scopes);
         }
         const account = (_b = signerEntry === null || signerEntry === void 0 ? void 0 : signerEntry.account) !== null && _b !== void 0 ? _b : optionsAccount === null || optionsAccount === void 0 ? void 0 : optionsAccount.scriptHash;
         if (!account)

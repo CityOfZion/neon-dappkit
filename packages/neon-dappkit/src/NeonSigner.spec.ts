@@ -1,10 +1,10 @@
 import { NeonSigner, SignMessageVersion } from './index'
-import * as Neon from '@cityofzion/neon-core'
+import { wallet } from '@cityofzion/neon-js'
 import assert from 'assert'
 
 describe('NeonSigner', function () {
   it('can sign and verify', async () => {
-    const acc = new Neon.wallet.Account('fb1f57cc1347ae5b6251dc8bae761362d2ecaafec4c87f4dc9e97fef6dd75014')
+    const acc = new wallet.Account('fb1f57cc1347ae5b6251dc8bae761362d2ecaafec4c87f4dc9e97fef6dd75014')
     const signer = new NeonSigner(acc)
 
     const signed = await signer.signMessage({
@@ -23,7 +23,7 @@ describe('NeonSigner', function () {
   })
 
   it('can sign using classic version and verify', async () => {
-    const acc = new Neon.wallet.Account('fb1f57cc1347ae5b6251dc8bae761362d2ecaafec4c87f4dc9e97fef6dd75014')
+    const acc = new wallet.Account('fb1f57cc1347ae5b6251dc8bae761362d2ecaafec4c87f4dc9e97fef6dd75014')
     const signer = new NeonSigner(acc)
 
     const signed = await signer.signMessage({
@@ -42,7 +42,7 @@ describe('NeonSigner', function () {
   })
 
   it('can sign with no salt and verify', async () => {
-    const acc = new Neon.wallet.Account('fb1f57cc1347ae5b6251dc8bae761362d2ecaafec4c87f4dc9e97fef6dd75014')
+    const acc = new wallet.Account('fb1f57cc1347ae5b6251dc8bae761362d2ecaafec4c87f4dc9e97fef6dd75014')
     const signer = new NeonSigner(acc)
 
     const signed = await signer.signMessage({
@@ -87,7 +87,7 @@ describe('NeonSigner', function () {
   })
 
   it('can encrypt and decrypt messages from the corresponding public key', async () => {
-    const account = new Neon.wallet.Account()
+    const account = new wallet.Account()
     const signer = new NeonSigner(account)
     const messageOriginal = 'Some plaintext for encryption'
 
@@ -101,24 +101,24 @@ describe('NeonSigner', function () {
   })
 
   it('can NOT encrypt and decrypt messages from different public keys', async () => {
-    const account = new Neon.wallet.Account()
-    const anotherAccount = new Neon.wallet.Account()
+    const account = new wallet.Account()
+    const anotherAccount = new wallet.Account()
     const signer = new NeonSigner(account)
     const messageOriginal = 'Some plaintext for encryption'
 
     const messageEncrypted = await signer.encrypt(messageOriginal, [anotherAccount.publicKey])
     await assert.rejects(
       async () => await signer.decrypt(messageEncrypted[0]),
-      /Decrypt failed. Event not found in string result/,
-      'Decrypt failed',
+      /invalid payload: hmac misalignment/,
+      'Decrypt failed with a different public key',
     )
   })
 
   it('can encrypt and decrypt messages from an array that has the corresponding public key', async () => {
-    const account = new Neon.wallet.Account()
-    const anotherAccount1 = new Neon.wallet.Account()
-    const anotherAccount2 = new Neon.wallet.Account()
-    const anotherAccount3 = new Neon.wallet.Account()
+    const account = new wallet.Account()
+    const anotherAccount1 = new wallet.Account()
+    const anotherAccount2 = new wallet.Account()
+    const anotherAccount3 = new wallet.Account()
 
     const signer = new NeonSigner(account)
     const messageOriginal = 'Some plaintext for encryption'
@@ -143,10 +143,10 @@ describe('NeonSigner', function () {
   })
 
   it("can NOT encrypt and decrypt messages from an array that doesn't have the corresponding public key", async () => {
-    const account = new Neon.wallet.Account()
-    const anotherAccount1 = new Neon.wallet.Account()
-    const anotherAccount2 = new Neon.wallet.Account()
-    const anotherAccount3 = new Neon.wallet.Account()
+    const account = new wallet.Account()
+    const anotherAccount1 = new wallet.Account()
+    const anotherAccount2 = new wallet.Account()
+    const anotherAccount3 = new wallet.Account()
 
     const signer = new NeonSigner(account)
     const messageOriginal = 'Some plaintext for encryption'
