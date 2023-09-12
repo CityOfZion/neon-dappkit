@@ -47,6 +47,7 @@ export class NeonInvoker implements Neo3Invoker {
       u.HexString.fromHex(script),
       accountArr[0] ? NeonInvoker.buildMultipleSigner(accountArr, cim.signers) : undefined,
     )
+    if (rpcResult.state === 'FAULT') throw Error(`Execution state is FAULT. Exception: ${rpcResult.exception}`)
 
     return { ...rpcResult, stack: rpcResult.stack as RpcResponseStackItem[] }
   }

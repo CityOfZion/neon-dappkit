@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@cityofzion/neon-dappkit",
+      "comment": "Added state validation in testInvoke function to catch execution error ",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@cityofzion/neon-dappkit"
+}
