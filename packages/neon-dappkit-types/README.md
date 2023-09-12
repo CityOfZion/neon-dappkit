@@ -1,6 +1,6 @@
 <p align="center">
   <img
-    src=".github/resources/images/coz.png"
+    src="/.github/resources/images/coz.png"
     width="200px;">
 </p>
 
@@ -16,7 +16,7 @@ React-Native Apps to the Neo3 Blockchain.
 
 > [WalletConnectSDK](https://github.com/CityOfZion/wallet-connect-sdk) uses Neon-DappKit Types, so  you can easily swap
 between Neon-DappKit implementation and WalletConnectSDK on the fly and reuse code, check the
-[guide](./packages/neon-dappkit/WALLET-CONNECT.md).
+[guide](/packages/neon-dappkit/WALLET-CONNECT.md).
 
 ## Installation
 ```sh
@@ -26,10 +26,10 @@ npm i @CityOfZion/neon-dappkit
 ## Getting Started
 
 Neon-Dappkit has 4 main components:
-- [NeonInvoker](./packages/neon-dappkit/NEON-INVOKER.md): SmartContract Invocation Tool.
-- [NeonParser](./packages/neon-dappkit/NEON-PARSER.md): Powerful Parser for Neo3 Types.
-- [NeonSigner](./packages/neon-dappkit/NEON-SIGNER.md): Signs, Verifies, Encrypts and Decrypts data.
-- [NeonEventListener](./packages/neon-dappkit/NEON-EVENT-LISTENER.md): Listen to events from the Neo3 Blockchain.
+- [NeonInvoker](/packages/neon-dappkit/NEON-INVOKER.md): SmartContract Invocation Tool.
+- [NeonParser](/packages/neon-dappkit/NEON-PARSER.md): Powerful Parser for Neo3 Types.
+- [NeonSigner](/packages/neon-dappkit/NEON-SIGNER.md): Signs, Verifies, Encrypts and Decrypts data.
+- [NeonEventListener](/packages/neon-dappkit/NEON-EVENT-LISTENER.md): Listen to events from the Neo3 Blockchain.
 
 
 ## Quick Example
