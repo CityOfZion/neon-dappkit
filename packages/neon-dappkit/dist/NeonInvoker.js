@@ -45,6 +45,8 @@ class NeonInvoker {
             const accountArr = this.normalizeAccountArray(this.options.account);
             const script = NeonInvoker.buildScriptBuilder(cim);
             const rpcResult = yield new neon_js_1.rpc.RPCClient(this.options.rpcAddress).invokeScript(neon_js_1.u.HexString.fromHex(script), accountArr[0] ? NeonInvoker.buildMultipleSigner(accountArr, cim.signers) : undefined);
+            if (rpcResult.state === 'FAULT')
+                throw Error(`Execution state is FAULT. Exception: ${rpcResult.exception}`);
             return Object.assign(Object.assign({}, rpcResult), { stack: rpcResult.stack });
         });
     }

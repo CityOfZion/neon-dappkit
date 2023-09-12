@@ -2,6 +2,18 @@
   "name": "@cityofzion/neon-dappkit",
   "entries": [
     {
+      "version": "0.0.7",
+      "tag": "@cityofzion/neon-dappkit_v0.0.7",
+      "date": "Tue, 12 Sep 2023 17:08:52 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Added state validation in testInvoke function to catch execution error "
+          }
+        ]
+      }
+    },
+    {
       "version": "0.0.6",
       "tag": "@cityofzion/neon-dappkit_v0.0.6",
       "date": "Mon, 11 Sep 2023 14:54:03 GMT",
