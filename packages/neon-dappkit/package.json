@@ -15,7 +15,6 @@
     "test-print": "ts-mocha src/**/*.spec.ts"
   },
   "dependencies": {
-    "@cityofzion/neon-core": "5.5.1",
     "@cityofzion/neon-dappkit-types": "workspace:*",
     "@cityofzion/neon-js": "5.5.1",
     "crypto-js": "^4.1.1",
@@ -23,6 +22,7 @@
     "randombytes": "^2.1.0"
   },
   "devDependencies": {
+    "@cityofzion/neon-core": "5.5.1",
     "@types/elliptic": "6.4.14",
     "@types/expect": "^24.3.0",
     "@types/mocha": "10.0.0",
