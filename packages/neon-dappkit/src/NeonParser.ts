@@ -86,6 +86,7 @@ const NeonParser: Neo3Parser = {
         return parseByteString(field, parseConfig)
       case 'Integer':
         return parseInt((field as IntegerArgType).value as string)
+      case 'Struct':
       case 'Array':
         return ((field as ArrayResponseArgType).value as RpcResponseStackItem[]).map((f: any) => {
           return NeonParser.parseRpcResponse(f, (parseConfig as ArrayConfigArgType)?.generic)

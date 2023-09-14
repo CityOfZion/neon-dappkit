@@ -65,6 +65,7 @@ const NeonParser = {
                 return parseByteString(field, parseConfig);
             case 'Integer':
                 return parseInt(field.value);
+            case 'Struct':
             case 'Array':
                 return field.value.map((f) => {
                     return NeonParser.parseRpcResponse(f, parseConfig === null || parseConfig === void 0 ? void 0 : parseConfig.generic);
