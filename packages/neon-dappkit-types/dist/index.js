@@ -15,6 +15,6 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./Neo3EventListener"), exports);
-__exportStar(require("./Neo3Involker"), exports);
+__exportStar(require("./Neo3Invoker"), exports);
 __exportStar(require("./Neo3Parser"), exports);
 __exportStar(require("./Neo3Signer"), exports);

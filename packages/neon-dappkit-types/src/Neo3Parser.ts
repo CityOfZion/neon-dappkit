@@ -1,4 +1,4 @@
-import { Arg, RpcResponseStackItem } from './Neo3Involker'
+import { Arg, RpcResponseStackItem } from './Neo3Invoker'
 
 export interface Neo3Parser {
   /**

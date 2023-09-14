@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@cityofzion/neon-dappkit-types",
+      "comment": "Renamed \"Neo3Involker.ts\" to \"Neo3Invoker.ts\"",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@cityofzion/neon-dappkit-types"
+}
