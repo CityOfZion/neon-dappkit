@@ -2,6 +2,18 @@
   "name": "@cityofzion/neon-dappkit-types",
   "entries": [
     {
+      "version": "0.0.7",
+      "tag": "@cityofzion/neon-dappkit-types_v0.0.7",
+      "date": "Thu, 14 Sep 2023 20:35:01 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Renamed \"Neo3Involker.ts\" to \"Neo3Invoker.ts\""
+          }
+        ]
+      }
+    },
+    {
       "version": "0.0.6",
       "tag": "@cityofzion/neon-dappkit-types_v0.0.6",
       "date": "Mon, 11 Sep 2023 14:54:03 GMT",

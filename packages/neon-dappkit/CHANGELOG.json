@@ -2,6 +2,23 @@
   "name": "@cityofzion/neon-dappkit",
   "entries": [
     {
+      "version": "0.0.8",
+      "tag": "@cityofzion/neon-dappkit_v0.0.8",
+      "date": "Thu, 14 Sep 2023 20:35:01 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Add \"Struct\" type support on NeonParser"
+          }
+        ],
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@cityofzion/neon-dappkit-types\" to `0.0.7`"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.0.7",
       "tag": "@cityofzion/neon-dappkit_v0.0.7",
       "date": "Tue, 12 Sep 2023 17:08:52 GMT",

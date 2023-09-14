@@ -1,6 +1,13 @@
 # Change Log - @cityofzion/neon-dappkit
 
-This log was last generated on Tue, 12 Sep 2023 17:08:52 GMT and should not be manually modified.
+This log was last generated on Thu, 14 Sep 2023 20:35:01 GMT and should not be manually modified.
+
+## 0.0.8
+Thu, 14 Sep 2023 20:35:01 GMT
+
+### Patches
+
+- Add "Struct" type support on NeonParser
 
 ## 0.0.7
 Tue, 12 Sep 2023 17:08:52 GMT
