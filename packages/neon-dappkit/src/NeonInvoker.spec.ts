@@ -62,31 +62,43 @@ describe('NeonInvoker', function () {
     const accountPayer = new wallet.Account('fb1f57cc1347ae5b6251dc8bae761362d2ecaafec4c87f4dc9e97fef6dd75014') // NbnjKGMBJzJ6j5PHeYhjJDaQ5Vy5UYu4Fv
     const accountOwner = new wallet.Account('3bd06d95e9189385851aa581d182f25de34af759cf7f883af57030303ded52b8') // NhGomBpYnKXArr55nHRQ5rzy79TwKVXZbr
 
-    // THIS IS WORKING:
-    // const invokerBoth = await NeonInvoker.init({
-    //   rpcAddress: NeonInvoker.TESTNET,
-    //   account: [accountPayer, accountOwner],
-    // })
-    //
-    // const txBoth = await invokerBoth.invokeFunction({
-    //   invocations: [
-    //     {
-    //       scriptHash: '0xd2a4cff31913016155e38e474a2c06d08be276cf',
-    //       operation: 'transfer',
-    //       args: [
-    //         { type: 'Hash160', value: accountOwner.address }, // owner is sending to payer but the payer is paying for the tx
-    //         { type: 'Hash160', value: accountPayer.address },
-    //         { type: 'Integer', value: '100000000' },
-    //         { type: 'Array', value: [] },
-    //       ],
-    //     },
-    //   ],
-    //   signers: [],
-    // })
-    //
-    // assert(txBoth.length > 0, 'has txId')
+    // TEST WITH BOTH ACCOUNTS ON THE SAME INVOKER
 
-    // await wait(15000)
+    const invokerBoth = await NeonInvoker.init({
+      rpcAddress: NeonInvoker.TESTNET,
+      account: [accountPayer, accountOwner],
+    })
+
+    const txBoth = await invokerBoth.invokeFunction({
+      invocations: [
+        {
+          scriptHash: '0xd2a4cff31913016155e38e474a2c06d08be276cf',
+          operation: 'transfer',
+          args: [
+            { type: 'Hash160', value: accountOwner.address }, // owner is sending to payer but the payer is paying for the tx
+            { type: 'Hash160', value: accountPayer.address },
+            { type: 'Integer', value: '100000000' },
+            { type: 'Array', value: [] },
+          ],
+        },
+      ],
+      signers: [
+        {
+          account: accountPayer.scriptHash,
+          scopes: 'CalledByEntry',
+        },
+        {
+          account: accountOwner.scriptHash,
+          scopes: 'CalledByEntry',
+        },
+      ],
+    })
+
+    assert(txBoth.length > 0, 'has txId')
+
+    await wait(15000)
+
+    // TEST WITH EACH ACCOUNT ON A DIFFERENT INVOKER
 
     const invokerPayer = await NeonInvoker.init({
       rpcAddress: NeonInvoker.TESTNET,
@@ -136,7 +148,9 @@ describe('NeonInvoker', function () {
     const payerBalance2 = await getBalance(invokerPayer, accountPayer.address)
     const ownerBalance2 = await getBalance(invokerOwner, accountOwner.address)
 
-    console.log(payerBalance, payerBalance2, ownerBalance, ownerBalance2)
+    assert(payerBalance2 > payerBalance + 0.8, `payer balance (${payerBalance2}) increased by almost 1 (was ${payerBalance})`)
+    assert(payerBalance2 < payerBalance + 1, `payer balance (${payerBalance2}) increased by almost 1 (was ${payerBalance})`)
+    assert.equal(ownerBalance2, ownerBalance - 1, 'owner balance decreased by 1')
 
     return true
   })
