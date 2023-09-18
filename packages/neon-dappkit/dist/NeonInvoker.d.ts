@@ -1,11 +1,7 @@
-import { ContractInvocationMulti, Signer, Neo3Invoker, Arg, InvokeResult, RpcResponseStackItem } from '@cityofzion/neon-dappkit-types';
+import { ContractInvocationMulti, Neo3Invoker, Arg, InvokeResult, RpcResponseStackItem, BuiltTransaction } from '@cityofzion/neon-dappkit-types';
 import { api } from '@cityofzion/neon-js';
 import type * as NeonTypes from '@cityofzion/neon-core';
 import * as typeChecker from './typeChecker';
-export type RpcConfig = {
-    rpcAddress: string;
-    networkMagic: number;
-};
 export type CalculateFee = {
     networkFee: NeonTypes.u.BigInteger;
     systemFee: NeonTypes.u.BigInteger;
@@ -33,17 +29,24 @@ export declare class NeonInvoker implements Neo3Invoker {
     static TESTNET: string;
     private constructor();
     testInvoke(cim: ContractInvocationMulti): Promise<InvokeResult>;
-    invokeFunction(cim: ContractInvocationMulti): Promise<string>;
+    invokeFunction(cim: ContractInvocationMulti | BuiltTransaction): Promise<string>;
+    signTransaction(cim: ContractInvocationMulti | BuiltTransaction): Promise<BuiltTransaction>;
+    private cimToTx;
+    private smartCalculateNetworkFee;
+    private signTx;
+    private invokeTx;
+    private cimOrBtToSignedTx;
+    private static isBt;
+    private static btToTx;
+    private static cimAndTxToBt;
     calculateFee(cim: ContractInvocationMulti): Promise<CalculateFee>;
-    getNetworkFee(cim: ContractInvocationMulti): Promise<NeonTypes.u.BigInteger>;
-    getSystemFee(cim: ContractInvocationMulti): Promise<NeonTypes.u.BigInteger>;
     traverseIterator(sessionId: string, iteratorId: string, count: number): Promise<RpcResponseStackItem[]>;
     static init(options: InitOptions): Promise<NeonInvoker>;
     static getMagicOfRpcAddress(rpcAddress: string): Promise<number>;
-    static buildScriptBuilder(cim: ContractInvocationMulti): string;
-    static convertParams(args: ExtendedArg[] | undefined): NeonTypes.sc.ContractParam[];
-    static buildSigner(optionsAccount: NeonTypes.wallet.Account | undefined, signerEntry?: Signer): NeonTypes.tx.Signer;
-    static buildMultipleSigner(optionAccounts: (NeonTypes.wallet.Account | undefined)[], signers?: Signer[]): NeonTypes.tx.Signer[];
-    private normalizeAccountArray;
+    private static buildScriptHex;
+    private static convertParams;
+    private static buildSigner;
+    private static buildMultipleSigner;
+    private static normalizeArray;
 }
 export { typeChecker };

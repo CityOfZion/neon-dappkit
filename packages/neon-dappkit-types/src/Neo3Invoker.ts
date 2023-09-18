@@ -171,6 +171,25 @@ export type ContractInvocationMulti = {
   networkFeeOverride?: number
 }
 
+export type Witness = {
+  // base64 encoded
+  invocation: string
+  // base64 encoded
+  verification: string
+}
+
+export type BuiltTransaction = {
+  hash?: string
+  size: number
+  version: number
+  nonce: number
+  sysfee: string
+  netfee: string
+  validuntilblock: number
+  script: string
+  witnesses: Witness[]
+} & ContractInvocationMulti
+
 export type ArrayResponseArgType = { type: 'Array'; value: RpcResponseStackItem[] }
 export type MapResponseArgType = { type: 'Map'; value: { key: RpcResponseStackItem; value: RpcResponseStackItem }[] }
 export type ByteStringArgType = { type: 'ByteString'; value: string }
@@ -260,7 +279,7 @@ export interface Neo3Invoker {
    * @param params the contract invocation options
    * @return the call result promise. It might only contain the transactionId, another call to the blockchain might be necessary to check the result.
    */
-  invokeFunction: (cim: ContractInvocationMulti) => Promise<string>
+  invokeFunction: (cim: ContractInvocationMulti | BuiltTransaction) => Promise<string>
 
   /**
    * Sends a `testInvoke` request to the Wallet and it will communicate with the blockchain.
@@ -313,4 +332,10 @@ export interface Neo3Invoker {
    * @return the call result promise
    */
   traverseIterator: (sessionId: string, iteratorId: string, count: number) => Promise<RpcResponseStackItem[]>
+
+  /**
+   * This method is used to sign a transaction and return the ready to send transaction. This can be used to allow signing by different wallets.
+   * @param cim a ContractInvocationMulti or a BuiltTransaction
+   */
+  signTransaction: (cim: ContractInvocationMulti | BuiltTransaction) => Promise<BuiltTransaction>
 }
