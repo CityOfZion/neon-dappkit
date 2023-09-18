@@ -74,7 +74,7 @@ export class NeonInvoker implements Neo3Invoker {
       trx.systemFee = u.BigInteger.fromNumber(cim.systemFeeOverride)
     } else {
       const { gasconsumed } = await this.testInvoke(cim)
-      const systemFee = u.BigInteger.fromNumber(gasconsumed) // TODO: isn't this gasconsumed for both system and network fee?
+      const systemFee = u.BigInteger.fromNumber(gasconsumed)
       trx.systemFee = systemFee.add(cim.extraSystemFee ?? 0)
     }
 
@@ -95,10 +95,11 @@ export class NeonInvoker implements Neo3Invoker {
     const accountArr = NeonInvoker.normalizeArray(this.options.account)
     const trxClone = new tx.Transaction(trx)
 
+    trxClone.signers = NeonInvoker.buildMultipleSigner(accountArr)
+
     // TODO: do I need to add all the witnesses only to calculate fee?
-    // R: Probably not, but I'm not sure.
     for (const account of accountArr) {
-      if (account) {
+      if (account) { // TODO: should I check if the account is one of the signers on the cim?
         trxClone.addWitness(
             new tx.Witness({
               invocationScript: '',
@@ -108,8 +109,8 @@ export class NeonInvoker implements Neo3Invoker {
       }
     }
 
-    // This is not working when
-    return await api.smartCalculateNetworkFee(trxClone, rpcClient)
+    return u.BigInteger.fromNumber(await rpcClient.calculateNetworkFee(trxClone))
+    // return await api.smartCalculateNetworkFee(trxClone, rpcClient)
   }
 
   private async signTx(trx: NeonTypes.tx.Transaction): Promise<NeonTypes.tx.Transaction> {
@@ -117,7 +118,7 @@ export class NeonInvoker implements Neo3Invoker {
 
     for (const i in accountArr) {
       const account = accountArr[i]
-      if (account) {
+      if (account) { // TODO: should I check if the account is one of the signers on the cim?
         if (this.options.signingCallback) {
           trx.addWitness(
             new tx.Witness({
@@ -283,7 +284,7 @@ export class NeonInvoker implements Neo3Invoker {
   ): NeonTypes.tx.Signer[] | undefined {
     const response: NeonTypes.tx.Signer[] = []
     for (let i = 0; i < Math.max(signers?.length ?? 0, optionAccounts.length ?? 0); i++) {
-      response.push(this.buildSigner(optionAccounts?.[i], signers?.[i]))
+      response.push(this.buildSigner(optionAccounts?.[i], signers?.[i])) // TODO: maybe I should sign only with the `signers`, and not with the `optionsAccount`
     }
     return response
   }
