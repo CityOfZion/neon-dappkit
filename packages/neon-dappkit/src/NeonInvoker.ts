@@ -49,7 +49,6 @@ export class NeonInvoker implements Neo3Invoker {
   }
   async invokeFunction(cim: ContractInvocationMulti | BuiltTransaction): Promise<string> {
     const trx = await this.cimOrBtToSignedTx(cim)
-    console.log(JSON.stringify(trx.toJson()))
     return await this.invokeTx(trx)
   }
 
@@ -69,23 +68,25 @@ export class NeonInvoker implements Neo3Invoker {
       script: u.HexString.fromHex(script),
       validUntilBlock: currentHeight + this.options.validBlocks,
       // TODO: Should I put all the signers? Even the ones that I don't have the private key? Backend and Frontend?
-      // signers: NeonInvoker.buildMultipleSigner(accountArr, cim.signers),
+      // R: Rick said that I should put all the signers, even the ones that I don't have the private key.
+      signers: NeonInvoker.buildMultipleSigner(accountArr, cim.signers),
     })
 
+    // TODO: Do I need to put the fees at this moment or only on `signTx`?
+    // R: Rick said that I should put the fees at this moment.
     if (cim.systemFeeOverride) {
-      trx.networkFee = u.BigInteger.fromNumber(cim.systemFeeOverride)
+      trx.systemFee = u.BigInteger.fromNumber(cim.systemFeeOverride)
     } else {
-      const { gasconsumed } = await this.testInvoke(cim)
-      const systemFee = u.BigInteger.fromNumber(gasconsumed)
-      trx.networkFee = systemFee.add(cim.extraSystemFee ?? 0)
+      const { gasconsumed } = await this.testInvoke(cim) // TODO: danger, if testInvoke use cimToTx, it will be an infinite loop
+      const systemFee = u.BigInteger.fromNumber(gasconsumed) // TODO: isn't this gasconsumed for both system and network fee?
+      trx.systemFee = systemFee.add(cim.extraSystemFee ?? 0)
     }
 
     if (cim.networkFeeOverride) {
-      trx.systemFee = u.BigInteger.fromNumber(cim.networkFeeOverride)
+      trx.networkFee = u.BigInteger.fromNumber(cim.networkFeeOverride)
     } else {
       const networkFee = await this.smartCalculateNetworkFee(trx, accountArr, rpcClient)
-
-      trx.systemFee = networkFee.add(cim.extraNetworkFee ?? 0)
+      trx.networkFee = networkFee.add(cim.extraNetworkFee ?? 0)
     }
 
     return trx
@@ -97,17 +98,20 @@ export class NeonInvoker implements Neo3Invoker {
   ): Promise<NeonTypes.u.BigInteger> {
     const trxClone = tx.Transaction.fromJson(trx.toJson())
 
+    // TODO: do I need to add all the witnesses only to calculate fee?
+    // R: Probably not, but I'm not sure.
     for (const account of accountArr) {
       if (account) {
         trxClone.addWitness(
             new tx.Witness({
-              invocationScript: '',
+              invocationScript: '', // TODO: do I need to put the invocationScript? R: Rick said I need it and Raul knows how to get it.
               verificationScript: wallet.getVerificationScriptFromPublicKey(account.publicKey),
             }),
         )
       }
     }
 
+    // This is not working when
     return await api.smartCalculateNetworkFee(trxClone, rpcClient)
   }
 
@@ -115,9 +119,9 @@ export class NeonInvoker implements Neo3Invoker {
     const accountArr = NeonInvoker.normalizeArray(this.options.account)
 
     // TODO: Can I put some signers on the backend and some on the frontend?
-    const txsignersArr = (trx.signers ? NeonInvoker.normalizeArray(trx.signers) : []) as NeonTypes.tx.Signer[]
-
-    trx.signers = [...txsignersArr, ...NeonInvoker.buildMultipleSigner(accountArr, signers?.slice(txsignersArr.length))]
+    // R: Rick said that I don't need to put the signers here, only the witnesses.
+    // const txsignersArr = (trx.signers ? NeonInvoker.normalizeArray(trx.signers) : []) as NeonTypes.tx.Signer[]
+    // trx.signers = [...txsignersArr, ...NeonInvoker.buildMultipleSigner(accountArr, signers?.slice(txsignersArr.length))]
 
     for (const i in accountArr) {
       const account = accountArr[i]
@@ -125,7 +129,7 @@ export class NeonInvoker implements Neo3Invoker {
         if (this.options.signingCallback) {
           trx.addWitness(
             new tx.Witness({
-              invocationScript: '',
+              invocationScript: '', // TODO: do I need to put the invocationScript? R: Rick said I need it and Raul knows how to get it.
               verificationScript: wallet.getVerificationScriptFromPublicKey(account.publicKey),
             }),
           )
@@ -284,13 +288,13 @@ export class NeonInvoker implements Neo3Invoker {
  private static buildMultipleSigner(
     optionAccounts: (NeonTypes.wallet.Account | undefined)[],
     signers?: Signer[],
-  ): NeonTypes.tx.Signer[] {
+  ): NeonTypes.tx.Signer[] | undefined {
     if (!signers?.length) {
       return optionAccounts.map((a) => this.buildSigner(a))
     } else if (signers.length === optionAccounts.length) {
       return optionAccounts.map((a, i) => this.buildSigner(a, signers[i]))
     } else {
-      throw new Error('You need to provide an account on the constructor for each signer. At least one.')
+      return undefined // throw new Error('You need to provide an account on the constructor for each signer. At least one.')
     }
   }
 

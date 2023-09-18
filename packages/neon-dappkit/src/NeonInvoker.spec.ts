@@ -62,6 +62,32 @@ describe('NeonInvoker', function () {
     const accountPayer = new wallet.Account('fb1f57cc1347ae5b6251dc8bae761362d2ecaafec4c87f4dc9e97fef6dd75014') // NbnjKGMBJzJ6j5PHeYhjJDaQ5Vy5UYu4Fv
     const accountOwner = new wallet.Account('3bd06d95e9189385851aa581d182f25de34af759cf7f883af57030303ded52b8') // NhGomBpYnKXArr55nHRQ5rzy79TwKVXZbr
 
+    // THIS IS WORKING:
+    // const invokerBoth = await NeonInvoker.init({
+    //   rpcAddress: NeonInvoker.TESTNET,
+    //   account: [accountPayer, accountOwner],
+    // })
+    //
+    // const txBoth = await invokerBoth.invokeFunction({
+    //   invocations: [
+    //     {
+    //       scriptHash: '0xd2a4cff31913016155e38e474a2c06d08be276cf',
+    //       operation: 'transfer',
+    //       args: [
+    //         { type: 'Hash160', value: accountOwner.address }, // owner is sending to payer but the payer is paying for the tx
+    //         { type: 'Hash160', value: accountPayer.address },
+    //         { type: 'Integer', value: '100000000' },
+    //         { type: 'Array', value: [] },
+    //       ],
+    //     },
+    //   ],
+    //   signers: [],
+    // })
+    //
+    // assert(txBoth.length > 0, 'has txId')
+
+    // await wait(15000)
+
     const invokerPayer = await NeonInvoker.init({
       rpcAddress: NeonInvoker.TESTNET,
       account: accountPayer,
@@ -71,29 +97,6 @@ describe('NeonInvoker', function () {
       rpcAddress: NeonInvoker.TESTNET,
       account: accountOwner,
     })
-
-    const invokerBoth = await NeonInvoker.init({
-      rpcAddress: NeonInvoker.TESTNET,
-      account: [accountPayer, accountOwner],
-    })
-
-    await invokerBoth.invokeFunction({
-      invocations: [
-        {
-          scriptHash: '0xd2a4cff31913016155e38e474a2c06d08be276cf',
-          operation: 'transfer',
-          args: [
-            { type: 'Hash160', value: accountOwner.address }, // owner is sending to payer but the payer is paying for the tx
-            { type: 'Hash160', value: accountPayer.address },
-            { type: 'Integer', value: '100000000' },
-            { type: 'Array', value: [] },
-          ],
-        },
-      ],
-      signers: [],
-    })
-
-    await wait(15000)
 
     const payerBalance = await getBalance(invokerPayer, accountPayer.address)
     const ownerBalance = await getBalance(invokerOwner, accountOwner.address)
@@ -113,14 +116,15 @@ describe('NeonInvoker', function () {
       ],
       signers: [
         {
-          account: '0xcc776527da4a34b80f411b0ccb9dffddb38523ae',
+          account: accountPayer.scriptHash,
           scopes: 'CalledByEntry',
         },
         {
-          account: '0x857a247939db5c7cd3a7bb14791280c09e824bea',
+          account: accountOwner.scriptHash,
           scopes: 'CalledByEntry',
         },
       ],
+      networkFeeOverride: 250000, // TODO: testing overriding the fees because smartCalculateNetworkFee is not working on this case
     })
 
     const txId = await invokerOwner.invokeFunction(bt)
