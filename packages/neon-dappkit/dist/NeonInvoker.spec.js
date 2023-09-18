@@ -13,12 +13,31 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const index_1 = require("./index");
-const neon_js_1 = require("@cityofzion/neon-js");
+const neon_core_1 = require("@cityofzion/neon-core");
 const assert_1 = __importDefault(require("assert"));
+function getBalance(invoker, address) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const payerBalanceResp = yield invoker.testInvoke({
+            invocations: [
+                {
+                    operation: 'balanceOf',
+                    scriptHash: '0xd2a4cff31913016155e38e474a2c06d08be276cf',
+                    args: [{ value: address, type: 'Hash160' }],
+                },
+            ],
+        });
+        return index_1.NeonParser.parseRpcResponse(payerBalanceResp.stack[0]) / Math.pow(10, 8);
+    });
+}
+function wait(ms) {
+    return new Promise((resolve) => {
+        setTimeout(resolve, ms);
+    });
+}
 describe('NeonInvoker', function () {
     this.timeout(60000);
     it('does invokeFuncion', () => __awaiter(this, void 0, void 0, function* () {
-        const account = new neon_js_1.wallet.Account('3bd06d95e9189385851aa581d182f25de34af759cf7f883af57030303ded52b8');
+        const account = new neon_core_1.wallet.Account('3bd06d95e9189385851aa581d182f25de34af759cf7f883af57030303ded52b8');
         const invoker = yield index_1.NeonInvoker.init({
             rpcAddress: index_1.NeonInvoker.TESTNET,
             account,
@@ -39,7 +58,7 @@ describe('NeonInvoker', function () {
             signers: [
                 {
                     account: account.scriptHash,
-                    scopes: neon_js_1.tx.WitnessScope.CalledByEntry,
+                    scopes: neon_core_1.tx.WitnessScope.CalledByEntry,
                     rules: [],
                 },
             ],
@@ -47,8 +66,88 @@ describe('NeonInvoker', function () {
         (0, assert_1.default)(txId.length > 0, 'has txId');
         return true;
     }));
+    it('can sign and invoke using different NeonInvokers/accounts', () => __awaiter(this, void 0, void 0, function* () {
+        const accountPayer = new neon_core_1.wallet.Account('fb1f57cc1347ae5b6251dc8bae761362d2ecaafec4c87f4dc9e97fef6dd75014'); // NbnjKGMBJzJ6j5PHeYhjJDaQ5Vy5UYu4Fv
+        const accountOwner = new neon_core_1.wallet.Account('3bd06d95e9189385851aa581d182f25de34af759cf7f883af57030303ded52b8'); // NhGomBpYnKXArr55nHRQ5rzy79TwKVXZbr
+        // TEST WITH BOTH ACCOUNTS ON THE SAME INVOKER
+        const invokerBoth = yield index_1.NeonInvoker.init({
+            rpcAddress: index_1.NeonInvoker.TESTNET,
+            account: [accountPayer, accountOwner],
+        });
+        const txBoth = yield invokerBoth.invokeFunction({
+            invocations: [
+                {
+                    scriptHash: '0xd2a4cff31913016155e38e474a2c06d08be276cf',
+                    operation: 'transfer',
+                    args: [
+                        { type: 'Hash160', value: accountOwner.address },
+                        { type: 'Hash160', value: accountPayer.address },
+                        { type: 'Integer', value: '100000000' },
+                        { type: 'Array', value: [] },
+                    ],
+                },
+            ],
+            signers: [
+                {
+                    account: accountPayer.scriptHash,
+                    scopes: 'CalledByEntry',
+                },
+                {
+                    account: accountOwner.scriptHash,
+                    scopes: 'CalledByEntry',
+                },
+            ],
+        });
+        (0, assert_1.default)(txBoth.length > 0, 'has txId');
+        yield wait(15000);
+        // TEST WITH EACH ACCOUNT ON A DIFFERENT INVOKER
+        const invokerPayer = yield index_1.NeonInvoker.init({
+            rpcAddress: index_1.NeonInvoker.TESTNET,
+            account: accountPayer,
+        });
+        const invokerOwner = yield index_1.NeonInvoker.init({
+            rpcAddress: index_1.NeonInvoker.TESTNET,
+            account: accountOwner,
+        });
+        const payerBalance = yield getBalance(invokerPayer, accountPayer.address);
+        const ownerBalance = yield getBalance(invokerOwner, accountOwner.address);
+        const bt = yield invokerPayer.signTransaction({
+            invocations: [
+                {
+                    scriptHash: '0xd2a4cff31913016155e38e474a2c06d08be276cf',
+                    operation: 'transfer',
+                    args: [
+                        { type: 'Hash160', value: accountOwner.address },
+                        { type: 'Hash160', value: accountPayer.address },
+                        { type: 'Integer', value: '100000000' },
+                        { type: 'Array', value: [] },
+                    ],
+                },
+            ],
+            signers: [
+                {
+                    account: accountPayer.scriptHash,
+                    scopes: 'CalledByEntry',
+                },
+                {
+                    account: accountOwner.scriptHash,
+                    scopes: 'CalledByEntry',
+                },
+            ],
+            networkFeeOverride: 250000, // TODO: testing overriding the fees because smartCalculateNetworkFee is not working on this case
+        });
+        const txId = yield invokerOwner.invokeFunction(bt);
+        (0, assert_1.default)(txId.length > 0, 'has txId');
+        yield wait(15000);
+        const payerBalance2 = yield getBalance(invokerPayer, accountPayer.address);
+        const ownerBalance2 = yield getBalance(invokerOwner, accountOwner.address);
+        (0, assert_1.default)(payerBalance2 > payerBalance + 0.8, `payer balance (${payerBalance2}) increased by almost 1 (was ${payerBalance})`);
+        (0, assert_1.default)(payerBalance2 < payerBalance + 1, `payer balance (${payerBalance2}) increased by almost 1 (was ${payerBalance})`);
+        assert_1.default.equal(ownerBalance2, ownerBalance - 1, 'owner balance decreased by 1');
+        return true;
+    }));
     it('does calculateFee', () => __awaiter(this, void 0, void 0, function* () {
-        const account = new neon_js_1.wallet.Account('3bd06d95e9189385851aa581d182f25de34af759cf7f883af57030303ded52b8');
+        const account = new neon_core_1.wallet.Account('3bd06d95e9189385851aa581d182f25de34af759cf7f883af57030303ded52b8');
         const invoker = yield index_1.NeonInvoker.init({
             rpcAddress: index_1.NeonInvoker.TESTNET,
             account,
@@ -69,7 +168,7 @@ describe('NeonInvoker', function () {
             signers: [
                 {
                     account: account.scriptHash,
-                    scopes: neon_js_1.tx.WitnessScope.CalledByEntry,
+                    scopes: neon_core_1.tx.WitnessScope.CalledByEntry,
                     rules: [],
                 },
             ],

@@ -20,97 +20,40 @@ class NeonInvoker {
     testInvoke(cim) {
         return __awaiter(this, void 0, void 0, function* () {
             const accountArr = this.normalizeAccountArray(this.options.account);
-            const script = NeonInvoker.buildScriptBuilder(cim);
+            const script = this.buildScriptHex(cim);
             const rpcResult = yield new neon_js_1.rpc.RPCClient(this.options.rpcAddress).invokeScript(neon_js_1.u.HexString.fromHex(script), accountArr[0] ? NeonInvoker.buildMultipleSigner(accountArr, cim.signers) : undefined);
             if (rpcResult.state === 'FAULT')
                 throw Error(`Execution state is FAULT. Exception: ${rpcResult.exception}`);
             return Object.assign(Object.assign({}, rpcResult), { stack: rpcResult.stack });
         });
     }
-    invokeFunction(cim) {
+    invokeFunction(cimOrBt) {
         return __awaiter(this, void 0, void 0, function* () {
             const accountArr = this.normalizeAccountArray(this.options.account);
-            const script = NeonInvoker.buildScriptBuilder(cim);
+            const transaction = yield this.buildTransactionFromCimOrBt(cimOrBt, accountArr);
             const rpcClient = new neon_js_1.rpc.RPCClient(this.options.rpcAddress);
-            const currentHeight = yield rpcClient.getBlockCount();
-            let trx = new neon_js_1.tx.Transaction({
-                script: neon_js_1.u.HexString.fromHex(script),
-                validUntilBlock: currentHeight + this.options.validBlocks,
-                signers: NeonInvoker.buildMultipleSigner(accountArr, cim.signers),
-            });
-            const systemFee = yield this.getSystemFee(cim);
-            const networkFee = yield this.getNetworkFee(cim);
-            trx.networkFee = networkFee;
-            trx.systemFee = systemFee;
-            for (const account of accountArr) {
-                if (account) {
-                    if (this.options.signingCallback) {
-                        trx.addWitness(new neon_js_1.tx.Witness({
-                            invocationScript: '',
-                            verificationScript: neon_js_1.wallet.getVerificationScriptFromPublicKey(account.publicKey),
-                        }));
-                        const facade = yield neon_js_1.api.NetworkFacade.fromConfig({
-                            node: this.options.rpcAddress,
-                        });
-                        trx = yield facade.sign(trx, {
-                            signingCallback: this.options.signingCallback,
-                        });
-                    }
-                    else {
-                        trx.sign(account, this.options.networkMagic);
-                    }
-                }
-            }
-            return yield rpcClient.sendRawTransaction(trx);
+            const signedTransaction = yield this.signTransactionByAccounts(transaction, accountArr);
+            return yield rpcClient.sendRawTransaction(signedTransaction);
         });
     }
-    calculateFee(cim) {
+    signTransaction(cimOrBt) {
         return __awaiter(this, void 0, void 0, function* () {
-            const networkFee = yield this.getNetworkFee(cim);
-            const systemFee = yield this.getSystemFee(cim);
+            const accountArr = this.normalizeAccountArray(this.options.account);
+            const transaction = yield this.buildTransactionFromCimOrBt(cimOrBt, accountArr);
+            const signedTransaction = yield this.signTransactionByAccounts(transaction, accountArr);
+            const signedTransactionJson = signedTransaction.toJson();
+            return Object.assign(Object.assign({}, cimOrBt), { hash: signedTransactionJson.hash, script: neon_js_1.u.base642hex(signedTransactionJson.script), nonce: signedTransactionJson.nonce, version: signedTransactionJson.version, size: signedTransactionJson.size, validUntilBlock: signedTransactionJson.validuntilblock, witnesses: signedTransactionJson.witnesses, networkFee: signedTransactionJson.netfee, systemFee: signedTransactionJson.sysfee });
+        });
+    }
+    calculateFee(cimOrBt) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const accountArr = this.normalizeAccountArray(this.options.account);
+            const transaction = yield this.buildTransactionFromCimOrBt(cimOrBt, accountArr);
             return {
-                networkFee,
-                systemFee,
-                total: Number(networkFee.add(systemFee).toDecimal(8)),
+                networkFee: transaction.networkFee,
+                systemFee: transaction.systemFee,
+                total: Number(transaction.networkFee.add(transaction.systemFee).toDecimal(8)),
             };
-        });
-    }
-    getNetworkFee(cim) {
-        var _a;
-        return __awaiter(this, void 0, void 0, function* () {
-            if (cim.networkFeeOverride) {
-                return neon_js_1.u.BigInteger.fromNumber(cim.networkFeeOverride);
-            }
-            const accountArr = this.normalizeAccountArray(this.options.account);
-            const script = NeonInvoker.buildScriptBuilder(cim);
-            const rpcClient = new neon_js_1.rpc.RPCClient(this.options.rpcAddress);
-            const currentHeight = yield rpcClient.getBlockCount();
-            const trx = new neon_js_1.tx.Transaction({
-                script: neon_js_1.u.HexString.fromHex(script),
-                validUntilBlock: currentHeight + this.options.validBlocks,
-                signers: NeonInvoker.buildMultipleSigner(accountArr, cim.signers),
-            });
-            for (const account of accountArr) {
-                if (account) {
-                    trx.addWitness(new neon_js_1.tx.Witness({
-                        invocationScript: '',
-                        verificationScript: neon_js_1.wallet.getVerificationScriptFromPublicKey(account.publicKey),
-                    }));
-                }
-            }
-            const networkFee = yield neon_js_1.api.smartCalculateNetworkFee(trx, rpcClient);
-            return networkFee.add((_a = cim.extraNetworkFee) !== null && _a !== void 0 ? _a : 0);
-        });
-    }
-    getSystemFee(cim) {
-        var _a;
-        return __awaiter(this, void 0, void 0, function* () {
-            if (cim.systemFeeOverride) {
-                return neon_js_1.u.BigInteger.fromNumber(cim.systemFeeOverride);
-            }
-            const { gasconsumed } = yield this.testInvoke(cim);
-            const systemFee = neon_js_1.u.BigInteger.fromNumber(gasconsumed);
-            return systemFee.add((_a = cim.extraSystemFee) !== null && _a !== void 0 ? _a : 0);
         });
     }
     traverseIterator(sessionId, iteratorId, count) {
@@ -131,20 +74,6 @@ class NeonInvoker {
             const resp = yield new neon_js_1.rpc.RPCClient(rpcAddress).getVersion();
             return resp.protocol.network;
         });
-    }
-    static buildScriptBuilder(cim) {
-        const sb = new neon_js_1.sc.ScriptBuilder();
-        cim.invocations.forEach((c) => {
-            sb.emitContractCall({
-                scriptHash: c.scriptHash,
-                operation: c.operation,
-                args: NeonInvoker.convertParams(c.args),
-            });
-            if (c.abortOnFail) {
-                sb.emit(0x39);
-            }
-        });
-        return sb.build();
     }
     static convertParams(args) {
         return (args !== null && args !== void 0 ? args : []).map((a) => {
@@ -199,16 +128,12 @@ class NeonInvoker {
             rules: signerEntry === null || signerEntry === void 0 ? void 0 : signerEntry.rules,
         });
     }
-    static buildMultipleSigner(optionAccounts, signers) {
-        if (!(signers === null || signers === void 0 ? void 0 : signers.length)) {
-            return optionAccounts.map((a) => this.buildSigner(a));
+    static buildMultipleSigner(optionAccounts, signers = []) {
+        const allSigners = [];
+        for (let i = 0; i < Math.max(signers.length, optionAccounts.length); i++) {
+            allSigners.push(this.buildSigner(optionAccounts === null || optionAccounts === void 0 ? void 0 : optionAccounts[i], signers === null || signers === void 0 ? void 0 : signers[i]));
         }
-        else if (signers.length === optionAccounts.length) {
-            return optionAccounts.map((a, i) => this.buildSigner(a, signers[i]));
-        }
-        else {
-            throw new Error('You need to provide an account on the constructor for each signer. At least one.');
-        }
+        return allSigners;
     }
     normalizeAccountArray(acc) {
         if (Array.isArray(acc)) {
@@ -217,6 +142,107 @@ class NeonInvoker {
         else {
             return [acc];
         }
+    }
+    buildScriptHex(cim) {
+        const sb = new neon_js_1.sc.ScriptBuilder();
+        cim.invocations.forEach((c) => {
+            sb.emitContractCall({
+                scriptHash: c.scriptHash,
+                operation: c.operation,
+                args: NeonInvoker.convertParams(c.args),
+            });
+            if (c.abortOnFail) {
+                sb.emit(0x39);
+            }
+        });
+        return sb.build();
+    }
+    signTransactionByAccounts(transaction, accountArr) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let txClone = new neon_js_1.tx.Transaction(transaction);
+            for (const account of accountArr) {
+                if (this.options.signingCallback) {
+                    transaction.addWitness(new neon_js_1.tx.Witness({
+                        invocationScript: '',
+                        verificationScript: neon_js_1.wallet.getVerificationScriptFromPublicKey(account.publicKey),
+                    }));
+                    const facade = yield neon_js_1.api.NetworkFacade.fromConfig({
+                        node: this.options.rpcAddress,
+                    });
+                    txClone = yield facade.sign(transaction, {
+                        signingCallback: this.options.signingCallback,
+                    });
+                    continue;
+                }
+                txClone.sign(account, this.options.networkMagic);
+            }
+            return txClone;
+        });
+    }
+    buildTransactionFromCimOrBt(cimOrBt, accountArr) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const cimHexString = this.buildScriptHex(cimOrBt);
+            const signers = NeonInvoker.buildMultipleSigner(accountArr, cimOrBt.signers);
+            if ('script' in cimOrBt) {
+                if (cimOrBt.script !== cimHexString) {
+                    throw new Error('The script in the BuiltTransaction is not the same as the one generated from the ContractInvocationMulti');
+                }
+                return new neon_js_1.tx.Transaction({
+                    validUntilBlock: cimOrBt.validUntilBlock,
+                    version: cimOrBt.version,
+                    nonce: cimOrBt.nonce,
+                    script: cimOrBt.script,
+                    systemFee: cimOrBt.systemFee,
+                    networkFee: cimOrBt.networkFee,
+                    witnesses: cimOrBt.witnesses.map((witness) => neon_js_1.tx.Witness.fromJson(witness)),
+                    signers,
+                });
+            }
+            const rpcClient = new neon_js_1.rpc.RPCClient(this.options.rpcAddress);
+            const currentHeight = yield rpcClient.getBlockCount();
+            const transaction = new neon_js_1.tx.Transaction({
+                script: neon_js_1.u.HexString.fromHex(cimHexString),
+                validUntilBlock: currentHeight + this.options.validBlocks,
+                signers,
+            });
+            const systemFee = yield this.getSystemFee(cimOrBt);
+            const networkFee = yield this.getNetworkFee(cimOrBt, rpcClient, accountArr, transaction);
+            transaction.networkFee = networkFee;
+            transaction.systemFee = systemFee;
+            return transaction;
+        });
+    }
+    getNetworkFee(cim, rpcClient, accountArr, transaction) {
+        var _a;
+        return __awaiter(this, void 0, void 0, function* () {
+            if (cim.networkFeeOverride) {
+                return neon_js_1.u.BigInteger.fromNumber(cim.networkFeeOverride);
+            }
+            const txClone = new neon_js_1.tx.Transaction(transaction);
+            txClone.signers.forEach((signer) => {
+                var _a;
+                const account = (_a = accountArr.find((account) => account.scriptHash === signer.account.toString())) !== null && _a !== void 0 ? _a : accountArr[0];
+                if (!account)
+                    throw new Error('You need to provide at least one account to calculate the network fee.');
+                txClone.addWitness(new neon_js_1.tx.Witness({
+                    invocationScript: '',
+                    verificationScript: neon_js_1.wallet.getVerificationScriptFromPublicKey(account.publicKey),
+                }));
+            });
+            const networkFee = yield neon_js_1.api.smartCalculateNetworkFee(txClone, rpcClient);
+            return networkFee.add((_a = cim.extraNetworkFee) !== null && _a !== void 0 ? _a : 0);
+        });
+    }
+    getSystemFee(cimOrBt) {
+        var _a;
+        return __awaiter(this, void 0, void 0, function* () {
+            if (cimOrBt.systemFeeOverride) {
+                return neon_js_1.u.BigInteger.fromNumber(cimOrBt.systemFeeOverride);
+            }
+            const { gasconsumed } = yield this.testInvoke(cimOrBt);
+            const systemFee = neon_js_1.u.BigInteger.fromNumber(gasconsumed);
+            return systemFee.add((_a = cimOrBt.extraSystemFee) !== null && _a !== void 0 ? _a : 0);
+        });
     }
 }
 exports.NeonInvoker = NeonInvoker;
