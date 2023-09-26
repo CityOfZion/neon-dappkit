@@ -98,7 +98,7 @@ describe('NeonInvoker', function () {
             ],
         });
         assert_1.default.equal(resp.state, 'HALT', 'success');
-        if (index_1.typeChecker.isStackTypeByteString(resp.stack[0])) {
+        if (index_1.TypeChecker.isStackTypeByteString(resp.stack[0])) {
             assert_1.default.equal(resp.stack[0].value, 'R0FT', 'correct symbol');
         }
         else {
@@ -124,13 +124,13 @@ describe('NeonInvoker', function () {
             ],
         });
         assert_1.default.equal(resp.state, 'HALT', 'success');
-        if (index_1.typeChecker.isStackTypeInteger(resp.stack[0])) {
+        if (index_1.TypeChecker.isStackTypeInteger(resp.stack[0])) {
             assert_1.default.equal(resp.stack[0].value, '-100');
         }
         else {
             assert_1.default.fail('stack return is not Integer');
         }
-        if (index_1.typeChecker.isStackTypeInteger(resp.stack[1])) {
+        if (index_1.TypeChecker.isStackTypeInteger(resp.stack[1])) {
             assert_1.default.equal(resp.stack[1].value, '1234');
         }
         else {
@@ -166,25 +166,25 @@ describe('NeonInvoker', function () {
             ],
         });
         assert_1.default.equal(resp.state, 'HALT', 'success');
-        if (index_1.typeChecker.isStackTypeBoolean(resp.stack[0])) {
+        if (index_1.TypeChecker.isStackTypeBoolean(resp.stack[0])) {
             assert_1.default.equal(resp.stack[0].value, true);
         }
         else {
             assert_1.default.fail('stack return is not Boolean');
         }
-        if (index_1.typeChecker.isStackTypeBoolean(resp.stack[1])) {
+        if (index_1.TypeChecker.isStackTypeBoolean(resp.stack[1])) {
             assert_1.default.equal(resp.stack[1].value, false);
         }
         else {
             assert_1.default.fail('stack return is not Boolean');
         }
-        if (index_1.typeChecker.isStackTypeBoolean(resp.stack[2])) {
+        if (index_1.TypeChecker.isStackTypeBoolean(resp.stack[2])) {
             assert_1.default.equal(resp.stack[2].value, true);
         }
         else {
             assert_1.default.fail('stack return is not Boolean');
         }
-        if (index_1.typeChecker.isStackTypeBoolean(resp.stack[3])) {
+        if (index_1.TypeChecker.isStackTypeBoolean(resp.stack[3])) {
             assert_1.default.equal(resp.stack[3].value, false);
         }
         else {
@@ -220,25 +220,25 @@ describe('NeonInvoker', function () {
             ],
         });
         assert_1.default.equal(resp.state, 'HALT', 'success');
-        if (index_1.typeChecker.isStackTypeBoolean(resp.stack[0])) {
+        if (index_1.TypeChecker.isStackTypeBoolean(resp.stack[0])) {
             assert_1.default.equal(resp.stack[0].value, true);
         }
         else {
             assert_1.default.fail('stack return is not Boolean');
         }
-        if (index_1.typeChecker.isStackTypeBoolean(resp.stack[1])) {
+        if (index_1.TypeChecker.isStackTypeBoolean(resp.stack[1])) {
             assert_1.default.equal(resp.stack[1].value, false);
         }
         else {
             assert_1.default.fail('stack return is not Boolean');
         }
-        if (index_1.typeChecker.isStackTypeBoolean(resp.stack[2])) {
+        if (index_1.TypeChecker.isStackTypeBoolean(resp.stack[2])) {
             assert_1.default.equal(resp.stack[2].value, true);
         }
         else {
             assert_1.default.fail('stack return is not Boolean');
         }
-        if (index_1.typeChecker.isStackTypeBoolean(resp.stack[3])) {
+        if (index_1.TypeChecker.isStackTypeBoolean(resp.stack[3])) {
             assert_1.default.equal(resp.stack[3].value, false);
         }
         else {
@@ -259,7 +259,7 @@ describe('NeonInvoker', function () {
             ],
         });
         assert_1.default.equal(resp.state, 'HALT', 'success');
-        if (index_1.typeChecker.isStackTypeArray(resp.stack[0])) {
+        if (index_1.TypeChecker.isStackTypeArray(resp.stack[0])) {
             assert_1.default.deepEqual(resp.stack[0].value, [
                 {
                     type: 'Integer',
@@ -302,13 +302,13 @@ describe('NeonInvoker', function () {
             ],
         });
         assert_1.default.equal(resp.state, 'HALT', 'success');
-        if (index_1.typeChecker.isStackTypeByteString(resp.stack[0])) {
+        if (index_1.TypeChecker.isStackTypeByteString(resp.stack[0])) {
             assert_1.default.deepEqual(resp.stack[0].value, 'dGVzdGluZyBzdHJpbmcgcmV0dXJu');
         }
         else {
             assert_1.default.fail('stack return is not ByteString');
         }
-        if (index_1.typeChecker.isStackTypeByteString(resp.stack[1])) {
+        if (index_1.TypeChecker.isStackTypeByteString(resp.stack[1])) {
             assert_1.default.deepEqual(resp.stack[1].value, 'dGVzdGluZyBzdHJpbmcgcmV0dXJu');
         }
         else {
@@ -329,7 +329,7 @@ describe('NeonInvoker', function () {
             ],
         });
         assert_1.default.equal(resp.state, 'HALT', 'success');
-        if (index_1.typeChecker.isStackTypeArray(resp.stack[0])) {
+        if (index_1.TypeChecker.isStackTypeArray(resp.stack[0])) {
             assert_1.default.deepEqual(resp.stack[0].value, [
                 {
                     type: 'Integer',
@@ -367,7 +367,7 @@ describe('NeonInvoker', function () {
             ],
         });
         assert_1.default.equal(resp.state, 'HALT', 'success');
-        if (index_1.typeChecker.isStackTypeMap(resp.stack[0])) {
+        if (index_1.TypeChecker.isStackTypeMap(resp.stack[0])) {
             assert_1.default.deepEqual(resp.stack[0].value, [
                 {
                     key: {

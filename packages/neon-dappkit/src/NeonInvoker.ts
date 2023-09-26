@@ -5,10 +5,10 @@ import {
   Arg,
   InvokeResult,
   RpcResponseStackItem,
+  TypeChecker,
 } from '@cityofzion/neon-dappkit-types'
 import { tx, u, rpc, sc, api, wallet } from '@cityofzion/neon-js'
 import type * as NeonTypes from '@cityofzion/neon-core'
-import * as typeChecker from './typeChecker'
 
 export type RpcConfig = {
   rpcAddress: string
@@ -267,4 +267,4 @@ export class NeonInvoker implements Neo3Invoker {
   }
 }
 
-export { typeChecker }
+export { TypeChecker }

@@ -1,7 +1,6 @@
-import { ContractInvocationMulti, Signer, Neo3Invoker, Arg, InvokeResult, RpcResponseStackItem } from '@cityofzion/neon-dappkit-types';
+import { ContractInvocationMulti, Signer, Neo3Invoker, Arg, InvokeResult, RpcResponseStackItem, TypeChecker } from '@cityofzion/neon-dappkit-types';
 import { api } from '@cityofzion/neon-js';
 import type * as NeonTypes from '@cityofzion/neon-core';
-import * as typeChecker from './typeChecker';
 export type RpcConfig = {
     rpcAddress: string;
     networkMagic: number;
@@ -46,4 +45,4 @@ export declare class NeonInvoker implements Neo3Invoker {
     static buildMultipleSigner(optionAccounts: (NeonTypes.wallet.Account | undefined)[], signers?: Signer[]): NeonTypes.tx.Signer[];
     private normalizeAccountArray;
 }
-export { typeChecker };
+export { TypeChecker };
