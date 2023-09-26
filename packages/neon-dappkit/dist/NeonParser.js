@@ -4,7 +4,7 @@ exports.NeonParser = void 0;
 const neon_dappkit_types_1 = require("@cityofzion/neon-dappkit-types");
 const neon_js_1 = require("@cityofzion/neon-js");
 const NeonParser = {
-    abToHexstring(arr) {
+    abToHex(arr) {
         return neon_js_1.u.ab2hexstring(arr);
     },
     abToStr(buf) {
@@ -25,16 +25,16 @@ const NeonParser = {
     hexToBase64(input) {
         return neon_js_1.u.hex2base64(input);
     },
-    hexstringToAb(str) {
+    hexToAb(str) {
         return neon_js_1.u.hexstring2ab(str);
     },
-    hexstringToStr(hexstring) {
+    hexToStr(hexstring) {
         return neon_js_1.u.hexstring2str(hexstring);
     },
     intToHex(num) {
         return neon_js_1.u.int2hex(num);
     },
-    numToHexstring(num, size, littleEndian) {
+    numToHex(num, size, littleEndian) {
         return neon_js_1.u.num2hexstring(num, size, littleEndian);
     },
     numToVarInt(num) {
@@ -49,7 +49,7 @@ const NeonParser = {
     strToBase64: (input) => {
         return neon_js_1.u.hex2base64(neon_js_1.u.str2hexstring(input));
     },
-    strToHexstring(str) {
+    strToHex(str) {
         return neon_js_1.u.str2hexstring(str);
     },
     utf8ToBase64(input) {
