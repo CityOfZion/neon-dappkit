@@ -25,7 +25,7 @@ function wait(ms: number) {
 describe('NeonInvoker', function () {
   this.timeout(60000)
 
-  it('does invokeFuncion', async () => {
+  it('does invokeFunction', async () => {
     const account = new wallet.Account('3bd06d95e9189385851aa581d182f25de34af759cf7f883af57030303ded52b8')
     const invoker = await NeonInvoker.init({
       rpcAddress: NeonInvoker.TESTNET,
@@ -55,7 +55,46 @@ describe('NeonInvoker', function () {
     })
 
     assert(txId.length > 0, 'has txId')
-    return true
+    await wait(15000)
+  })
+
+  it('does invokeFunction with signingCallback', async () => {
+    const publicAccount = new wallet.Account('02eecb8c0c3ae4e3c65457581c8c8dc0ecf52f74953166ce84d3c5b67a42a1ee73')
+    const privateAccount = new wallet.Account('3bd06d95e9189385851aa581d182f25de34af759cf7f883af57030303ded52b8')
+
+    const invoker = await NeonInvoker.init({
+      rpcAddress: NeonInvoker.TESTNET,
+      signingCallback: async (transaction, details) => {
+        const hex = NeonParser.numToHexstring(details.network, 4, true) + NeonParser.reverseHex(transaction.hash())
+        return wallet.sign(hex, privateAccount.privateKey)
+      },
+      account: publicAccount,
+    })
+
+    const txId = await invoker.invokeFunction({
+      invocations: [
+        {
+          scriptHash: '0xd2a4cff31913016155e38e474a2c06d08be276cf',
+          operation: 'transfer',
+          args: [
+            { type: 'Hash160', value: publicAccount.address },
+            { type: 'Hash160', value: 'NbnjKGMBJzJ6j5PHeYhjJDaQ5Vy5UYu4Fv' },
+            { type: 'Integer', value: '100000000' },
+            { type: 'Array', value: [] },
+          ],
+        },
+      ],
+      signers: [
+        {
+          account: publicAccount.scriptHash,
+          scopes: tx.WitnessScope.CalledByEntry,
+          rules: [],
+        },
+      ],
+    })
+
+    assert(txId.length > 0, 'has txId')
+    await wait(15000)
   })
 
   it('can sign and invoke using different NeonInvokers/accounts', async () => {
@@ -136,7 +175,6 @@ describe('NeonInvoker', function () {
           scopes: 'CalledByEntry',
         },
       ],
-      networkFeeOverride: 250000, // TODO: testing overriding the fees because smartCalculateNetworkFee is not working on this case
     })
 
     const txId = await invokerOwner.invokeFunction(bt)
@@ -148,11 +186,80 @@ describe('NeonInvoker', function () {
     const payerBalance2 = await getBalance(invokerPayer, accountPayer.address)
     const ownerBalance2 = await getBalance(invokerOwner, accountOwner.address)
 
-    assert(payerBalance2 > payerBalance + 0.8, `payer balance (${payerBalance2}) increased by almost 1 (was ${payerBalance})`)
-    assert(payerBalance2 < payerBalance + 1, `payer balance (${payerBalance2}) increased by almost 1 (was ${payerBalance})`)
+    assert(
+      payerBalance2 > payerBalance + 0.8,
+      `payer balance (${payerBalance2}) increased by almost 1 (was ${payerBalance})`,
+    )
+    assert(
+      payerBalance2 < payerBalance + 1,
+      `payer balance (${payerBalance2}) increased by almost 1 (was ${payerBalance})`,
+    )
     assert.equal(ownerBalance2, ownerBalance - 1, 'owner balance decreased by 1')
 
-    return true
+    await wait(15000)
+  })
+
+  it("can throw an error if the signed transaction doesn't match the invocation", async () => {
+    const accountPayer = new wallet.Account('fb1f57cc1347ae5b6251dc8bae761362d2ecaafec4c87f4dc9e97fef6dd75014') // NbnjKGMBJzJ6j5PHeYhjJDaQ5Vy5UYu4Fv
+    const accountOwner = new wallet.Account('3bd06d95e9189385851aa581d182f25de34af759cf7f883af57030303ded52b8') // NhGomBpYnKXArr55nHRQ5rzy79TwKVXZbr
+
+    const invokerPayer = await NeonInvoker.init({
+      rpcAddress: NeonInvoker.TESTNET,
+      account: accountPayer,
+    })
+
+    const invokerOwner = await NeonInvoker.init({
+      rpcAddress: NeonInvoker.TESTNET,
+      account: accountOwner,
+    })
+
+    const bt = await invokerPayer.signTransaction({
+      invocations: [
+        {
+          scriptHash: '0xd2a4cff31913016155e38e474a2c06d08be276cf',
+          operation: 'transfer',
+          args: [
+            { type: 'Hash160', value: accountOwner.address }, // owner is sending to payer but the payer is paying for the tx
+            { type: 'Hash160', value: accountPayer.address },
+            { type: 'Integer', value: '100000000' },
+            { type: 'Array', value: [] },
+          ],
+        },
+      ],
+      signers: [
+        {
+          account: accountPayer.scriptHash,
+          scopes: 'CalledByEntry',
+        },
+        {
+          account: accountOwner.scriptHash,
+          scopes: 'CalledByEntry',
+        },
+      ],
+    })
+
+    await assert.rejects(
+      invokerOwner.invokeFunction({
+        ...bt,
+        invocations: [
+          {
+            scriptHash: '0xd2a4cff31913016155e38e474a2c06d08be276cf',
+            operation: 'transfer',
+            args: [
+              { type: 'Hash160', value: accountPayer.address },
+              { type: 'Hash160', value: accountOwner.address },
+              { type: 'Integer', value: '100000000' },
+              { type: 'Array', value: [] },
+            ],
+          },
+        ],
+      }),
+      {
+        name: 'Error',
+        message:
+          'The script in the BuiltTransaction is not the same as the one generated from the ContractInvocationMulti',
+      },
+    )
   })
 
   it('does calculateFee', async () => {

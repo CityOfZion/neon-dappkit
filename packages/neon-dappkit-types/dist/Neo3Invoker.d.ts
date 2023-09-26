@@ -164,21 +164,21 @@ export type ContractInvocationMulti = {
      */
     networkFeeOverride?: number;
 };
-export type Witness = {
+export type BuiltTransactionWitness = {
     invocation: string;
     verification: string;
 };
-export type BuiltTransaction = {
+export type BuiltTransaction = ContractInvocationMulti & {
     hash?: string;
     size: number;
     version: number;
     nonce: number;
-    sysfee: string;
-    netfee: string;
-    validuntilblock: number;
+    networkFee: string;
+    systemFee: string;
+    validUntilBlock: number;
     script: string;
-    witnesses: Witness[];
-} & ContractInvocationMulti;
+    witnesses: BuiltTransactionWitness[];
+};
 export type ArrayResponseArgType = {
     type: 'Array';
     value: RpcResponseStackItem[];
@@ -280,7 +280,7 @@ export interface Neo3Invoker {
      * @param params the contract invocation options
      * @return the call result promise. It might only contain the transactionId, another call to the blockchain might be necessary to check the result.
      */
-    invokeFunction: (cim: ContractInvocationMulti | BuiltTransaction) => Promise<string>;
+    invokeFunction: (cimOrBt: ContractInvocationMulti | BuiltTransaction) => Promise<string>;
     /**
      * Sends a `testInvoke` request to the Wallet and it will communicate with the blockchain.
      * It will not consume any gas but it will also not persist any data, this is often used to retrieve SmartContract information or check how much gas an invocation will cost.
@@ -321,7 +321,7 @@ export interface Neo3Invoker {
      * @param params the contract invocation options
      * @return the call result promise
      */
-    testInvoke: (cim: ContractInvocationMulti) => Promise<InvokeResult>;
+    testInvoke: (cim: ContractInvocationMulti | BuiltTransaction) => Promise<InvokeResult>;
     /**
      * Call the method traverseiterator on the rpc. This method is used to get the result of an iterator.
      * The result is the first count of data traversed in the Iterator, and follow-up requests will continue traversing from count + 1
