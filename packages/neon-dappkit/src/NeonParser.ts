@@ -24,7 +24,7 @@ import {
 import { u, wallet, sc } from '@cityofzion/neon-js'
 
 const NeonParser: Neo3Parser = {
-  abToHexstring(arr: ArrayBuffer | ArrayLike<number>): string {
+  abToHex(arr: ArrayBuffer | ArrayLike<number>): string {
     return u.ab2hexstring(arr)
   },
   abToStr(buf: ArrayBuffer | ArrayLike<number>): string {
@@ -45,16 +45,16 @@ const NeonParser: Neo3Parser = {
   hexToBase64(input: string): string {
     return u.hex2base64(input)
   },
-  hexstringToAb(str: string): Uint8Array {
+  hexToAb(str: string): Uint8Array {
     return u.hexstring2ab(str)
   },
-  hexstringToStr(hexstring: string): string {
+  hexToStr(hexstring: string): string {
     return u.hexstring2str(hexstring)
   },
   intToHex(num: number): string {
     return u.int2hex(num)
   },
-  numToHexstring(num: number, size: number | undefined, littleEndian: boolean | undefined): string {
+  numToHex(num: number, size: number | undefined, littleEndian: boolean | undefined): string {
     return u.num2hexstring(num, size, littleEndian)
   },
   numToVarInt(num: number): string {
@@ -69,7 +69,7 @@ const NeonParser: Neo3Parser = {
   strToBase64: (input: string): string => {
     return u.hex2base64(u.str2hexstring(input))
   },
-  strToHexstring(str: string): string {
+  strToHex(str: string): string {
     return u.str2hexstring(str)
   },
   utf8ToBase64(input: string): string {
