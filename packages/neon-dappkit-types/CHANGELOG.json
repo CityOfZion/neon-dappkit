@@ -2,6 +2,21 @@
   "name": "@cityofzion/neon-dappkit-types",
   "entries": [
     {
+      "version": "0.1.0",
+      "tag": "@cityofzion/neon-dappkit-types_v0.1.0",
+      "date": "Wed, 27 Sep 2023 16:59:04 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "Expand Neo3Parser documentation; shorten hexstring methods names to use 'hex' instead of 'hexstring'"
+          },
+          {
+            "comment": "Add TypeChecker"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.0.7",
       "tag": "@cityofzion/neon-dappkit-types_v0.0.7",
       "date": "Thu, 14 Sep 2023 20:35:01 GMT",

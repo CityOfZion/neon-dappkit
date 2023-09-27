@@ -2,6 +2,26 @@
   "name": "@cityofzion/neon-dappkit",
   "entries": [
     {
+      "version": "0.1.0",
+      "tag": "@cityofzion/neon-dappkit_v0.1.0",
+      "date": "Wed, 27 Sep 2023 16:59:04 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "Shorten hexstring methods names to use 'hex' instead of 'hexstring'"
+          },
+          {
+            "comment": "Remove typeChecker.ts file; import new TypeChecker from neon-dappkit-types"
+          }
+        ],
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@cityofzion/neon-dappkit-types\" to `0.1.0`"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.0.8",
       "tag": "@cityofzion/neon-dappkit_v0.0.8",
       "date": "Thu, 14 Sep 2023 20:35:01 GMT",

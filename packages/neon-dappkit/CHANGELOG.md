@@ -1,6 +1,14 @@
 # Change Log - @cityofzion/neon-dappkit
 
-This log was last generated on Thu, 14 Sep 2023 20:35:01 GMT and should not be manually modified.
+This log was last generated on Wed, 27 Sep 2023 16:59:04 GMT and should not be manually modified.
+
+## 0.1.0
+Wed, 27 Sep 2023 16:59:04 GMT
+
+### Minor changes
+
+- Shorten hexstring methods names to use 'hex' instead of 'hexstring'
+- Remove typeChecker.ts file; import new TypeChecker from neon-dappkit-types
 
 ## 0.0.8
 Thu, 14 Sep 2023 20:35:01 GMT
