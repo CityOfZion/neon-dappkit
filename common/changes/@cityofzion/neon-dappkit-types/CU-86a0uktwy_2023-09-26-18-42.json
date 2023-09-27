@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@cityofzion/neon-dappkit-types",
+      "comment": "Add TypeChecker",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@cityofzion/neon-dappkit-types"
+}

@@ -18,3 +18,4 @@ __exportStar(require("./Neo3EventListener"), exports);
 __exportStar(require("./Neo3Invoker"), exports);
 __exportStar(require("./Neo3Parser"), exports);
 __exportStar(require("./Neo3Signer"), exports);
+__exportStar(require("./TypeChecker"), exports);
