@@ -2,6 +2,18 @@
   "name": "@cityofzion/neon-dappkit-types",
   "entries": [
     {
+      "version": "0.2.0",
+      "tag": "@cityofzion/neon-dappkit-types_v0.2.0",
+      "date": "Thu, 28 Sep 2023 13:15:04 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "Enable multi-signing with various wallets. Use \"signTransaction\" for signing without invoking. Share the response with another user, who can then call \"invokeFunction\" later."
+          }
+        ]
+      }
+    },
+    {
       "version": "0.1.0",
       "tag": "@cityofzion/neon-dappkit-types_v0.1.0",
       "date": "Wed, 27 Sep 2023 16:59:04 GMT",

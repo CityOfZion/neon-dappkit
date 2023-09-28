@@ -1,6 +1,13 @@
 # Change Log - @cityofzion/neon-dappkit-types
 
-This log was last generated on Wed, 27 Sep 2023 16:59:04 GMT and should not be manually modified.
+This log was last generated on Thu, 28 Sep 2023 13:15:04 GMT and should not be manually modified.
+
+## 0.2.0
+Thu, 28 Sep 2023 13:15:04 GMT
+
+### Minor changes
+
+- Enable multi-signing with various wallets. Use "signTransaction" for signing without invoking. Share the response with another user, who can then call "invokeFunction" later.
 
 ## 0.1.0
 Wed, 27 Sep 2023 16:59:04 GMT
