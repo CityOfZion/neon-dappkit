@@ -136,12 +136,13 @@ class NeonInvoker {
         return allSigners;
     }
     normalizeAccountArray(acc) {
+        if (!acc) {
+            return [];
+        }
         if (Array.isArray(acc)) {
             return acc;
         }
-        else {
-            return [acc];
-        }
+        return [acc];
     }
     buildScriptHex(cim) {
         const sb = new neon_js_1.sc.ScriptBuilder();
@@ -172,9 +173,10 @@ class NeonInvoker {
                     txClone = yield facade.sign(transaction, {
                         signingCallback: this.options.signingCallback,
                     });
-                    continue;
                 }
-                txClone.sign(account, this.options.networkMagic);
+                else {
+                    txClone.sign(account, this.options.networkMagic);
+                }
             }
             return txClone;
         });
@@ -219,6 +221,9 @@ class NeonInvoker {
                 return neon_js_1.u.BigInteger.fromNumber(cim.networkFeeOverride);
             }
             const txClone = new neon_js_1.tx.Transaction(transaction);
+            // Add one witness for each signer, using the first account as placeholder if there is no account for the respective signer
+            // This is needed to calculate the network fee, since the signer is considered to calculate the fee and we need
+            // the same number of witnesses as signers, otherwise the fee calculation will fail
             txClone.signers.forEach((signer) => {
                 var _a;
                 const account = (_a = accountArr.find((account) => account.scriptHash === signer.account.toString())) !== null && _a !== void 0 ? _a : accountArr[0];

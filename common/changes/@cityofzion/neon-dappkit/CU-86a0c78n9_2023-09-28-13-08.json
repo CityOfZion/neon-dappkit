@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@cityofzion/neon-dappkit",
+      "comment": "Enable multi-signing with various wallets. Use \"signTransaction\" for signing without invoking. Share the response with another user, who can then call \"invokeFunction\" later.",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@cityofzion/neon-dappkit"
+}
