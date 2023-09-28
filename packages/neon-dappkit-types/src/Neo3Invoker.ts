@@ -171,6 +171,23 @@ export type ContractInvocationMulti = {
   networkFeeOverride?: number
 }
 
+export type BuiltTransactionWitness = {
+  invocation: string
+  verification: string
+}
+
+export type BuiltTransaction = ContractInvocationMulti & {
+  hash?: string
+  size: number
+  version: number
+  nonce: number
+  networkFee: string
+  systemFee: string
+  validUntilBlock: number
+  script: string
+  witnesses: BuiltTransactionWitness[]
+}
+
 export type ArrayResponseArgType = { type: 'Array'; value: RpcResponseStackItem[] }
 export type MapResponseArgType = { type: 'Map'; value: { key: RpcResponseStackItem; value: RpcResponseStackItem }[] }
 export type ByteStringArgType = { type: 'ByteString'; value: string }
@@ -260,7 +277,7 @@ export interface Neo3Invoker {
    * @param params the contract invocation options
    * @return the call result promise. It might only contain the transactionId, another call to the blockchain might be necessary to check the result.
    */
-  invokeFunction: (cim: ContractInvocationMulti) => Promise<string>
+  invokeFunction: (cimOrBt: ContractInvocationMulti | BuiltTransaction) => Promise<string>
 
   /**
    * Sends a `testInvoke` request to the Wallet and it will communicate with the blockchain.
@@ -302,7 +319,7 @@ export interface Neo3Invoker {
    * @param params the contract invocation options
    * @return the call result promise
    */
-  testInvoke: (cim: ContractInvocationMulti) => Promise<InvokeResult>
+  testInvoke: (cim: ContractInvocationMulti | BuiltTransaction) => Promise<InvokeResult>
 
   /**
    * Call the method traverseiterator on the rpc. This method is used to get the result of an iterator.
@@ -313,4 +330,10 @@ export interface Neo3Invoker {
    * @return the call result promise
    */
   traverseIterator: (sessionId: string, iteratorId: string, count: number) => Promise<RpcResponseStackItem[]>
+
+  /**
+   * This method is used to sign a transaction and return the ready to send transaction. This can be used to allow signing by different wallets.
+   * @param cim a ContractInvocationMulti or a BuiltTransaction
+   */
+  signTransaction: (cim: ContractInvocationMulti | BuiltTransaction) => Promise<BuiltTransaction>
 }

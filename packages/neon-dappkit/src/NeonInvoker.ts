@@ -5,15 +5,11 @@ import {
   Arg,
   InvokeResult,
   RpcResponseStackItem,
+  BuiltTransaction,
   TypeChecker,
 } from '@cityofzion/neon-dappkit-types'
 import { tx, u, rpc, sc, api, wallet } from '@cityofzion/neon-js'
 import type * as NeonTypes from '@cityofzion/neon-core'
-
-export type RpcConfig = {
-  rpcAddress: string
-  networkMagic: number
-}
 
 export type CalculateFee = {
   networkFee: NeonTypes.u.BigInteger
@@ -41,7 +37,7 @@ export class NeonInvoker implements Neo3Invoker {
 
   async testInvoke(cim: ContractInvocationMulti): Promise<InvokeResult> {
     const accountArr = this.normalizeAccountArray(this.options.account)
-    const script = NeonInvoker.buildScriptBuilder(cim)
+    const script = this.buildScriptHex(cim)
 
     const rpcResult = await new rpc.RPCClient(this.options.rpcAddress).invokeScript(
       u.HexString.fromHex(script),
@@ -52,104 +48,43 @@ export class NeonInvoker implements Neo3Invoker {
     return { ...rpcResult, stack: rpcResult.stack as RpcResponseStackItem[] }
   }
 
-  async invokeFunction(cim: ContractInvocationMulti): Promise<string> {
+  async invokeFunction(cimOrBt: ContractInvocationMulti | BuiltTransaction): Promise<string> {
     const accountArr = this.normalizeAccountArray(this.options.account)
-
-    const script = NeonInvoker.buildScriptBuilder(cim)
-
+    const transaction = await this.buildTransactionFromCimOrBt(cimOrBt, accountArr)
     const rpcClient = new rpc.RPCClient(this.options.rpcAddress)
-    const currentHeight = await rpcClient.getBlockCount()
-
-    let trx = new tx.Transaction({
-      script: u.HexString.fromHex(script),
-      validUntilBlock: currentHeight + this.options.validBlocks,
-      signers: NeonInvoker.buildMultipleSigner(accountArr, cim.signers),
-    })
-
-    const systemFee = await this.getSystemFee(cim)
-    const networkFee = await this.getNetworkFee(cim)
-    trx.networkFee = networkFee
-    trx.systemFee = systemFee
-
-    for (const account of accountArr) {
-      if (account) {
-        if (this.options.signingCallback) {
-          trx.addWitness(
-            new tx.Witness({
-              invocationScript: '',
-              verificationScript: wallet.getVerificationScriptFromPublicKey(account.publicKey),
-            }),
-          )
-
-          const facade = await api.NetworkFacade.fromConfig({
-            node: this.options.rpcAddress,
-          })
-
-          trx = await facade.sign(trx, {
-            signingCallback: this.options.signingCallback,
-          })
-        } else {
-          trx.sign(account, this.options.networkMagic)
-        }
-      }
-    }
-
-    return await rpcClient.sendRawTransaction(trx)
+    const signedTransaction = await this.signTransactionByAccounts(transaction, accountArr)
+    return await rpcClient.sendRawTransaction(signedTransaction)
   }
 
-  async calculateFee(cim: ContractInvocationMulti): Promise<CalculateFee> {
-    const networkFee = await this.getNetworkFee(cim)
-    const systemFee = await this.getSystemFee(cim)
+  async signTransaction(cimOrBt: ContractInvocationMulti | BuiltTransaction): Promise<BuiltTransaction> {
+    const accountArr = this.normalizeAccountArray(this.options.account)
+    const transaction = await this.buildTransactionFromCimOrBt(cimOrBt, accountArr)
+    const signedTransaction = await this.signTransactionByAccounts(transaction, accountArr)
+    const signedTransactionJson = signedTransaction.toJson()
 
     return {
-      networkFee,
-      systemFee,
-      total: Number(networkFee.add(systemFee).toDecimal(8)),
+      ...cimOrBt,
+      hash: signedTransactionJson.hash,
+      script: u.base642hex(signedTransactionJson.script),
+      nonce: signedTransactionJson.nonce,
+      version: signedTransactionJson.version,
+      size: signedTransactionJson.size,
+      validUntilBlock: signedTransactionJson.validuntilblock,
+      witnesses: signedTransactionJson.witnesses,
+      networkFee: signedTransactionJson.netfee,
+      systemFee: signedTransactionJson.sysfee,
     }
   }
 
-  async getNetworkFee(cim: ContractInvocationMulti): Promise<NeonTypes.u.BigInteger> {
-    if (cim.networkFeeOverride) {
-      return u.BigInteger.fromNumber(cim.networkFeeOverride)
-    }
-
+  async calculateFee(cimOrBt: ContractInvocationMulti): Promise<CalculateFee> {
     const accountArr = this.normalizeAccountArray(this.options.account)
-    const script = NeonInvoker.buildScriptBuilder(cim)
+    const transaction = await this.buildTransactionFromCimOrBt(cimOrBt, accountArr)
 
-    const rpcClient = new rpc.RPCClient(this.options.rpcAddress)
-    const currentHeight = await rpcClient.getBlockCount()
-
-    const trx = new tx.Transaction({
-      script: u.HexString.fromHex(script),
-      validUntilBlock: currentHeight + this.options.validBlocks,
-      signers: NeonInvoker.buildMultipleSigner(accountArr, cim.signers),
-    })
-
-    for (const account of accountArr) {
-      if (account) {
-        trx.addWitness(
-          new tx.Witness({
-            invocationScript: '',
-            verificationScript: wallet.getVerificationScriptFromPublicKey(account.publicKey),
-          }),
-        )
-      }
+    return {
+      networkFee: transaction.networkFee,
+      systemFee: transaction.systemFee,
+      total: Number(transaction.networkFee.add(transaction.systemFee).toDecimal(8)),
     }
-
-    const networkFee = await api.smartCalculateNetworkFee(trx, rpcClient)
-
-    return networkFee.add(cim.extraNetworkFee ?? 0)
-  }
-
-  async getSystemFee(cim: ContractInvocationMulti): Promise<NeonTypes.u.BigInteger> {
-    if (cim.systemFeeOverride) {
-      return u.BigInteger.fromNumber(cim.systemFeeOverride)
-    }
-
-    const { gasconsumed } = await this.testInvoke(cim)
-    const systemFee = u.BigInteger.fromNumber(gasconsumed)
-
-    return systemFee.add(cim.extraSystemFee ?? 0)
   }
 
   async traverseIterator(sessionId: string, iteratorId: string, count: number): Promise<RpcResponseStackItem[]> {
@@ -167,24 +102,6 @@ export class NeonInvoker implements Neo3Invoker {
   static async getMagicOfRpcAddress(rpcAddress: string): Promise<number> {
     const resp = await new rpc.RPCClient(rpcAddress).getVersion()
     return resp.protocol.network
-  }
-
-  static buildScriptBuilder(cim: ContractInvocationMulti): string {
-    const sb = new sc.ScriptBuilder()
-
-    cim.invocations.forEach((c) => {
-      sb.emitContractCall({
-        scriptHash: c.scriptHash,
-        operation: c.operation,
-        args: NeonInvoker.convertParams(c.args),
-      })
-
-      if (c.abortOnFail) {
-        sb.emit(0x39)
-      }
-    })
-
-    return sb.build()
   }
 
   static convertParams(args: ExtendedArg[] | undefined): NeonTypes.sc.ContractParam[] {
@@ -244,26 +161,161 @@ export class NeonInvoker implements Neo3Invoker {
   }
 
   static buildMultipleSigner(
-    optionAccounts: (NeonTypes.wallet.Account | undefined)[],
-    signers?: Signer[],
+    optionAccounts: NeonTypes.wallet.Account[],
+    signers: Signer[] = [],
   ): NeonTypes.tx.Signer[] {
-    if (!signers?.length) {
-      return optionAccounts.map((a) => this.buildSigner(a))
-    } else if (signers.length === optionAccounts.length) {
-      return optionAccounts.map((a, i) => this.buildSigner(a, signers[i]))
-    } else {
-      throw new Error('You need to provide an account on the constructor for each signer. At least one.')
+    const allSigners: NeonTypes.tx.Signer[] = []
+    for (let i = 0; i < Math.max(signers.length, optionAccounts.length); i++) {
+      allSigners.push(this.buildSigner(optionAccounts?.[i], signers?.[i]))
     }
+    return allSigners
   }
 
   private normalizeAccountArray(
     acc: NeonTypes.wallet.Account | NeonTypes.wallet.Account[] | undefined,
-  ): (NeonTypes.wallet.Account | undefined)[] {
+  ): NeonTypes.wallet.Account[] {
+    if (!acc) {
+      return []
+    }
+
     if (Array.isArray(acc)) {
       return acc
-    } else {
-      return [acc]
     }
+
+    return [acc]
+  }
+
+  private buildScriptHex(cim: ContractInvocationMulti): string {
+    const sb = new sc.ScriptBuilder()
+
+    cim.invocations.forEach((c) => {
+      sb.emitContractCall({
+        scriptHash: c.scriptHash,
+        operation: c.operation,
+        args: NeonInvoker.convertParams(c.args),
+      })
+
+      if (c.abortOnFail) {
+        sb.emit(0x39)
+      }
+    })
+
+    return sb.build()
+  }
+
+  private async signTransactionByAccounts(
+    transaction: NeonTypes.tx.Transaction,
+    accountArr: NeonTypes.wallet.Account[],
+  ): Promise<NeonTypes.tx.Transaction> {
+    let txClone = new tx.Transaction(transaction)
+
+    for (const account of accountArr) {
+      if (this.options.signingCallback) {
+        transaction.addWitness(
+          new tx.Witness({
+            invocationScript: '',
+            verificationScript: wallet.getVerificationScriptFromPublicKey(account.publicKey),
+          }),
+        )
+
+        const facade = await api.NetworkFacade.fromConfig({
+          node: this.options.rpcAddress,
+        })
+
+        txClone = await facade.sign(transaction, {
+          signingCallback: this.options.signingCallback,
+        })
+      } else {
+        txClone.sign(account, this.options.networkMagic)
+      }
+    }
+
+    return txClone
+  }
+
+  private async buildTransactionFromCimOrBt(
+    cimOrBt: ContractInvocationMulti | BuiltTransaction,
+    accountArr: NeonTypes.wallet.Account[],
+  ): Promise<NeonTypes.tx.Transaction> {
+    const cimHexString = this.buildScriptHex(cimOrBt)
+    const signers = NeonInvoker.buildMultipleSigner(accountArr, cimOrBt.signers)
+
+    if ('script' in cimOrBt) {
+      if (cimOrBt.script !== cimHexString) {
+        throw new Error(
+          'The script in the BuiltTransaction is not the same as the one generated from the ContractInvocationMulti',
+        )
+      }
+
+      return new tx.Transaction({
+        validUntilBlock: cimOrBt.validUntilBlock,
+        version: cimOrBt.version,
+        nonce: cimOrBt.nonce,
+        script: cimOrBt.script,
+        systemFee: cimOrBt.systemFee,
+        networkFee: cimOrBt.networkFee,
+        witnesses: cimOrBt.witnesses.map((witness) => tx.Witness.fromJson(witness)),
+        signers,
+      })
+    }
+
+    const rpcClient = new rpc.RPCClient(this.options.rpcAddress)
+    const currentHeight = await rpcClient.getBlockCount()
+
+    const transaction = new tx.Transaction({
+      script: u.HexString.fromHex(cimHexString),
+      validUntilBlock: currentHeight + this.options.validBlocks,
+      signers,
+    })
+
+    const systemFee = await this.getSystemFee(cimOrBt)
+    const networkFee = await this.getNetworkFee(cimOrBt, rpcClient, accountArr, transaction)
+    transaction.networkFee = networkFee
+    transaction.systemFee = systemFee
+
+    return transaction
+  }
+
+  private async getNetworkFee(
+    cim: ContractInvocationMulti,
+    rpcClient: NeonTypes.rpc.RPCClient,
+    accountArr: NeonTypes.wallet.Account[],
+    transaction: NeonTypes.tx.Transaction,
+  ): Promise<NeonTypes.u.BigInteger> {
+    if (cim.networkFeeOverride) {
+      return u.BigInteger.fromNumber(cim.networkFeeOverride)
+    }
+
+    const txClone = new tx.Transaction(transaction)
+    // Add one witness for each signer, using the first account as placeholder if there is no account for the respective signer
+    // This is needed to calculate the network fee, since the signer is considered to calculate the fee and we need
+    // the same number of witnesses as signers, otherwise the fee calculation will fail
+    txClone.signers.forEach((signer) => {
+      const account = accountArr.find((account) => account.scriptHash === signer.account.toString()) ?? accountArr[0]
+      if (!account) throw new Error('You need to provide at least one account to calculate the network fee.')
+
+      txClone.addWitness(
+        new tx.Witness({
+          invocationScript: '',
+          verificationScript: wallet.getVerificationScriptFromPublicKey(account.publicKey),
+        }),
+      )
+    })
+
+    const networkFee = await api.smartCalculateNetworkFee(txClone, rpcClient)
+
+    return networkFee.add(cim.extraNetworkFee ?? 0)
+  }
+
+  private async getSystemFee(cimOrBt: ContractInvocationMulti): Promise<NeonTypes.u.BigInteger> {
+    if (cimOrBt.systemFeeOverride) {
+      return u.BigInteger.fromNumber(cimOrBt.systemFeeOverride)
+    }
+
+    const { gasconsumed } = await this.testInvoke(cimOrBt)
+    const systemFee = u.BigInteger.fromNumber(gasconsumed)
+
+    return systemFee.add(cimOrBt.extraSystemFee ?? 0)
   }
 }
 
