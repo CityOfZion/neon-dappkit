@@ -235,6 +235,11 @@ export interface InvokeResult<T extends RpcResponseStackItem = RpcResponseStackI
     /** This properties comes when the invoke result is a iterator. You need to call the traverseIterator method to get the real result */
     session?: string;
 }
+export type CalculateFee = {
+    networkFee: string;
+    systemFee: string;
+    total: number;
+};
 /**
  * The entry point for the SmartContract invocation
  */
@@ -336,4 +341,10 @@ export interface Neo3Invoker {
      * @param cim a ContractInvocationMulti or a BuiltTransaction
      */
     signTransaction: (cim: ContractInvocationMulti | BuiltTransaction) => Promise<BuiltTransaction>;
+    /**
+     * This method is used to calculate a fee.
+     * @param params the contract invocation options
+     * @return the call result promise
+     */
+    calculateFee: (cim: ContractInvocationMulti) => Promise<CalculateFee>;
 }

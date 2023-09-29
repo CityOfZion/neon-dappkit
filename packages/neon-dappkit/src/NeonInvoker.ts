@@ -7,15 +7,10 @@ import {
   RpcResponseStackItem,
   BuiltTransaction,
   TypeChecker,
+  CalculateFee,
 } from '@cityofzion/neon-dappkit-types'
 import { tx, u, rpc, sc, api, wallet } from '@cityofzion/neon-js'
 import type * as NeonTypes from '@cityofzion/neon-core'
-
-export type CalculateFee = {
-  networkFee: NeonTypes.u.BigInteger
-  systemFee: NeonTypes.u.BigInteger
-  total: number
-}
 
 export type ExtendedArg = Arg | { type: 'Address'; value: string } | { type: 'ScriptHash'; value: string }
 
@@ -81,8 +76,8 @@ export class NeonInvoker implements Neo3Invoker {
     const transaction = await this.buildTransactionFromCimOrBt(cimOrBt, accountArr)
 
     return {
-      networkFee: transaction.networkFee,
-      systemFee: transaction.systemFee,
+      networkFee: transaction.networkFee.toDecimal(8),
+      systemFee: transaction.systemFee.toDecimal(8),
       total: Number(transaction.networkFee.add(transaction.systemFee).toDecimal(8)),
     }
   }
