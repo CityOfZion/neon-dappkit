@@ -5,6 +5,7 @@ import {
   Arg,
   InvokeResult,
   RpcResponseStackItem,
+  CalculateFee
 } from '@cityofzion/neon-dappkit-types'
 import { tx, u, rpc, sc, api, wallet } from '@cityofzion/neon-js'
 import type * as NeonTypes from '@cityofzion/neon-core'
@@ -13,12 +14,6 @@ import * as typeChecker from './typeChecker'
 export type RpcConfig = {
   rpcAddress: string
   networkMagic: number
-}
-
-export type CalculateFee = {
-  networkFee: NeonTypes.u.BigInteger
-  systemFee: NeonTypes.u.BigInteger
-  total: number
 }
 
 export type ExtendedArg = Arg | { type: 'Address'; value: string } | { type: 'ScriptHash'; value: string }
@@ -37,7 +32,7 @@ export class NeonInvoker implements Neo3Invoker {
   static MAINNET = 'https://mainnet1.neo.coz.io:443'
   static TESTNET = 'https://testnet1.neo.coz.io:443'
 
-  private constructor(public options: Options) {}
+  private constructor(public options: Options) { }
 
   async testInvoke(cim: ContractInvocationMulti): Promise<InvokeResult> {
     const accountArr = this.normalizeAccountArray(this.options.account)
@@ -102,8 +97,8 @@ export class NeonInvoker implements Neo3Invoker {
     const systemFee = await this.getSystemFee(cim)
 
     return {
-      networkFee,
-      systemFee,
+      networkFee: networkFee.toDecimal(8),
+      systemFee: networkFee.toDecimal(8),
       total: Number(networkFee.add(systemFee).toDecimal(8)),
     }
   }

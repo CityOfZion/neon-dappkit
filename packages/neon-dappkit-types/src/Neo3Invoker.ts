@@ -179,6 +179,12 @@ export type PointerArgType = { type: 'Pointer'; value: string }
 export type BufferArgType = { type: 'Buffer'; value: string }
 export type StructArgType = { type: 'Struct'; value: RpcResponseStackItem[] }
 
+export type CalculateFee = {
+  networkFee: string
+  systemFee: string
+  total: number
+}
+
 export type RpcResponseStackItem =
   | AnyArgType
   | BooleanArgType
@@ -313,4 +319,10 @@ export interface Neo3Invoker {
    * @return the call result promise
    */
   traverseIterator: (sessionId: string, iteratorId: string, count: number) => Promise<RpcResponseStackItem[]>
+  /**
+   * This method is used to calculate the fee.
+   * @param params the contract invocation options
+   * @return the call result promise
+   */
+  calculateFee: (cim: ContractInvocationMulti) => Promise<CalculateFee>
 }
