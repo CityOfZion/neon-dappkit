@@ -72,7 +72,7 @@ describe('NeonInvoker', function () {
 
     assert(Number(networkFee) > 0, 'has networkFee')
     assert(Number(systemFee) > 0, 'has systemFee')
-    assert(total === Number(networkFee.add(systemFee).toDecimal(8)), 'has totalFee')
+    assert(total === Number(networkFee) + Number(systemFee), 'has totalFee')
 
     const { networkFee: networkFeeOverridden, systemFee: systemFeeOverridden } = await invoker.calculateFee({
       networkFeeOverride: 20000,

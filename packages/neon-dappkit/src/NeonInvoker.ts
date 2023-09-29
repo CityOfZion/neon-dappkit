@@ -5,7 +5,7 @@ import {
   Arg,
   InvokeResult,
   RpcResponseStackItem,
-  CalculateFee
+  CalculateFee,
 } from '@cityofzion/neon-dappkit-types'
 import { tx, u, rpc, sc, api, wallet } from '@cityofzion/neon-js'
 import type * as NeonTypes from '@cityofzion/neon-core'
@@ -32,7 +32,7 @@ export class NeonInvoker implements Neo3Invoker {
   static MAINNET = 'https://mainnet1.neo.coz.io:443'
   static TESTNET = 'https://testnet1.neo.coz.io:443'
 
-  private constructor(public options: Options) { }
+  private constructor(public options: Options) {}
 
   async testInvoke(cim: ContractInvocationMulti): Promise<InvokeResult> {
     const accountArr = this.normalizeAccountArray(this.options.account)
