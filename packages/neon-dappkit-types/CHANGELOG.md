@@ -1,6 +1,13 @@
 # Change Log - @cityofzion/neon-dappkit-types
 
-This log was last generated on Thu, 28 Sep 2023 13:15:04 GMT and should not be manually modified.
+This log was last generated on Mon, 02 Oct 2023 18:41:15 GMT and should not be manually modified.
+
+## 0.3.0
+Mon, 02 Oct 2023 18:41:15 GMT
+
+### Minor changes
+
+- The calculateFee function was exported in the Neo3Invoker interface.
 
 ## 0.2.0
 Thu, 28 Sep 2023 13:15:04 GMT

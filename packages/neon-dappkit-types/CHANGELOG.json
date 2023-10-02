@@ -2,6 +2,18 @@
   "name": "@cityofzion/neon-dappkit-types",
   "entries": [
     {
+      "version": "0.3.0",
+      "tag": "@cityofzion/neon-dappkit-types_v0.3.0",
+      "date": "Mon, 02 Oct 2023 18:41:15 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "The calculateFee function was exported in the Neo3Invoker interface."
+          }
+        ]
+      }
+    },
+    {
       "version": "0.2.0",
       "tag": "@cityofzion/neon-dappkit-types_v0.2.0",
       "date": "Thu, 28 Sep 2023 13:15:04 GMT",

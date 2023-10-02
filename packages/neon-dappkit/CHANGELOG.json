@@ -2,6 +2,23 @@
   "name": "@cityofzion/neon-dappkit",
   "entries": [
     {
+      "version": "0.3.0",
+      "tag": "@cityofzion/neon-dappkit_v0.3.0",
+      "date": "Mon, 02 Oct 2023 18:41:15 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "Now the calculateFee function returns a string in the networkFee and systemFee properties."
+          }
+        ],
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@cityofzion/neon-dappkit-types\" to `0.3.0`"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.2.0",
       "tag": "@cityofzion/neon-dappkit_v0.2.0",
       "date": "Thu, 28 Sep 2023 13:15:04 GMT",
