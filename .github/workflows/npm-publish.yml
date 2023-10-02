@@ -44,6 +44,7 @@ jobs:
           path: './packages/neon-dappkit-types/docs'
       - name: Deploy Docs  GitHub Pages
         uses: actions/deploy-pages@v2
+        id: deployment
       - name: Commit and Push package.json version update
         run: |
           git add .
