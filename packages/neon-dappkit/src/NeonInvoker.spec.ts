@@ -22,6 +22,10 @@ function wait(ms: number) {
   })
 }
 
+function toDecimal(num: number, decimal: number) {
+  return num / 10 ** decimal
+}
+
 describe('NeonInvoker', function () {
   this.timeout(60000)
 
@@ -295,7 +299,10 @@ describe('NeonInvoker', function () {
 
     assert(Number(networkFee) > 0, 'has networkFee')
     assert(Number(systemFee) > 0, 'has systemFee')
-    assert(total === Number(networkFee.add(systemFee).toDecimal(8)), 'has totalFee')
+    assert(
+      total === Number(networkFee) + Number(systemFee),
+      `has totalFee -- ${networkFee} -- ${systemFee} -- ${total} -- ${Number(networkFee) + Number(systemFee)}`,
+    )
 
     const { networkFee: networkFeeOverridden, systemFee: systemFeeOverridden } = await invoker.calculateFee({
       networkFeeOverride: 20000,
@@ -303,8 +310,8 @@ describe('NeonInvoker', function () {
       ...param,
     })
 
-    assert(Number(networkFeeOverridden) === 20000, 'has networkFee overridden')
-    assert(Number(systemFeeOverridden) === 10000, 'has systemFee overridden')
+    assert(Number(networkFeeOverridden) === toDecimal(20000, 8), 'has networkFee overridden')
+    assert(Number(systemFeeOverridden) === toDecimal(10000, 8), 'has systemFee overridden')
 
     const { networkFee: networkFeeExtra, systemFee: systemFeeExtra } = await invoker.calculateFee({
       extraNetworkFee: 20000,
@@ -312,8 +319,8 @@ describe('NeonInvoker', function () {
       ...param,
     })
 
-    assert(Number(networkFeeExtra) === Number(networkFee) + 20000, 'has networkFee overridden')
-    assert(Number(systemFeeExtra) === Number(systemFee) + 10000, 'has systemFee overridden')
+    assert(Number(networkFeeExtra) === Number(networkFee) + toDecimal(20000, 8), 'has networkFee overridden')
+    assert(Number(systemFeeExtra) === Number(systemFee) + toDecimal(10000, 8), 'has systemFee overridden')
   })
 
   it('does testInvoke', async () => {
