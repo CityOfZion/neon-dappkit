@@ -2,7 +2,7 @@
   "changes": [
     {
       "packageName": "@cityofzion/neon-dappkit",
-      "comment": "Now, the 'calculateFee' function returns a string in the 'networkFee' and 'systemFee' properties.",
+      "comment": "Now the calculateFee function returns a string in the networkFee and systemFee properties.",
       "type": "minor"
     }
   ],

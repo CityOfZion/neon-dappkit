@@ -2,7 +2,7 @@
   "changes": [
     {
       "packageName": "@cityofzion/neon-dappkit-types",
-      "comment": "It has been exported, the 'calculateFee' function in the Neo3Invoker interface.",
+      "comment": "The calculateFee function was exported in the Neo3Invoker interface.",
       "type": "minor"
     }
   ],
