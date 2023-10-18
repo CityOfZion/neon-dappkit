@@ -19,7 +19,11 @@
     "@cityofzion/neon-js": "5.5.1",
     "crypto-js": "^4.1.1",
     "elliptic": "^6.5.4",
-    "randombytes": "^2.1.0"
+    "randombytes": "^2.1.0",
+    "readable-stream": "^4.4.2",
+    "stream": "^0.0.2",
+    "stream-browserify": "^3.0.0",
+    "crypto-browserify": "^3.12.0"
   },
   "devDependencies": {
     "@cityofzion/neon-core": "5.5.1",
@@ -39,5 +43,14 @@
     "type": "git",
     "url": "https://github.com/CityOfZion/neon-dappkit.git",
     "directory": "packages/neon-dappkit"
+  },
+  "browser": {
+    "stream": "stream-browserify",
+    "crypto": "crypto-browserify",
+    "_stream_transform": "readable-stream/transform",
+    "_stream_readable": "readable-stream/readable",
+    "_stream_writable": "readable-stream/writable",
+    "_stream_duplex": "readable-stream/duplex",
+    "_stream_passthrough": "readable-stream/passthrough"
   }
 }
