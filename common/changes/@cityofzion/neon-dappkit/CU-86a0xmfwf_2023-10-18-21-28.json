@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@cityofzion/neon-dappkit",
+      "comment": "The \"browser\" field was added to the package.json so that when the library is being run in the browser, certain polyfills are applied.",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@cityofzion/neon-dappkit"
+}

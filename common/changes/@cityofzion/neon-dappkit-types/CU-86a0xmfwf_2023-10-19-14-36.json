@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@cityofzion/neon-dappkit-types",
+      "comment": "Added an instruction to the changelog for Vite users",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@cityofzion/neon-dappkit-types"
+}
