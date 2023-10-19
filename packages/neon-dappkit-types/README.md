@@ -23,7 +23,9 @@ between Neon-DappKit implementation and WalletConnectSDK on the fly and reuse co
 npm i @CityOfZion/neon-dappkit
 ```
 
-### For Vite Users
+<details>
+<summary>👉 For Vite Users</summary>
+
 In the vite.config.ts file you must change the global value like this:
 ```ts
 export default defineConfig({
@@ -34,6 +36,7 @@ export default defineConfig({
 	},
 });
 ```
+</details>
 
 ## Getting Started
 
