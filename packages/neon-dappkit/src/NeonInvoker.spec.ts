@@ -29,7 +29,7 @@ function toDecimal(num: number, decimal: number) {
 describe('NeonInvoker', function () {
   this.timeout(60000)
 
-  it('does invokeFuncion', async () => {
+  it('does invokeFunction', async () => {
     const account = new wallet.Account('3bd06d95e9189385851aa581d182f25de34af759cf7f883af57030303ded52b8')
     const invoker = await NeonInvoker.init({
       rpcAddress: NeonInvoker.TESTNET,
@@ -343,6 +343,33 @@ describe('NeonInvoker', function () {
     } else {
       assert.fail('stack return is not ByteString')
     }
+  })
+
+  it('can throw an error if testInvoke state is FAULT', async () => {
+    const invoker = await NeonInvoker.init({
+      rpcAddress: NeonInvoker.TESTNET,
+    })
+
+    await assert.rejects(
+      invoker.testInvoke({
+        invocations: [
+          {
+            scriptHash: '0xd2a4cff31913016155e38e474a2c06d08be276cf',
+            operation: 'transfer',
+            args: [
+              { type: 'Hash160', value: 'NbnjKGMBJzJ6j5PHeYhjJDaQ5Vy5UYu4Fv' },
+              { type: 'Integer', value: '100000000' },
+              { type: 'Array', value: [] },
+            ],
+          },
+        ],
+      }),
+      {
+        name: 'Error',
+        message:
+          'Execution state is FAULT. Exception: Method "transfer" with 3 parameter(s) doesn\'t exist in the contract 0xd2a4cff31913016155e38e474a2c06d08be276cf.',
+      },
+    )
   })
 
   it('handles integer return', async () => {
