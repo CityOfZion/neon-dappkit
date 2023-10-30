@@ -197,6 +197,60 @@ const resp = await invoker.calculateFee({
 console.log(resp) // will print an object with `networkFee`, `systemFee` and `total`
 ```
 
+### Signing a Transaction using multiple Accounts of different Environments/Wallets
+It's very interesting to allow different accounts signing the same transaction. It might be a backend paying for the user
+transaction or a transaction that must be signed by two different individuals to be valid.
+
+It's possible to call `signTransaction` using the same arguments of `invokeFunction`. It will not send the transaction to
+the blockchain, instead, it will only sign the transaction. Using the returned information is possible to sign again or
+invoke it.
+
+On the following example we are sending GAS from the "owner" to the "payer", but the "payer" is paying the
+transaction fees: 
+```ts
+
+const accountPayer = new wallet.Account('fb1f57cc1347ae5b6251dc8bae761362d2ecaafec4c87f4dc9e97fef6dd75014') // NbnjKGMBJzJ6j5PHeYhjJDaQ5Vy5UYu4Fv
+const accountOwner = new wallet.Account('3bd06d95e9189385851aa581d182f25de34af759cf7f883af57030303ded52b8') // NhGomBpYnKXArr55nHRQ5rzy79TwKVXZbr
+
+const invokerPayer = await NeonInvoker.init({
+    rpcAddress: NeonInvoker.TESTNET,
+    account: accountPayer,
+})
+
+const builtTransaction = await invokerPayer.signTransaction({
+    invocations: [
+        {
+            scriptHash: '0xd2a4cff31913016155e38e474a2c06d08be276cf',
+            operation: 'transfer',
+            args: [  // the owner is sending to payer but the payer is paying for the tx
+                { type: 'Hash160', value: accountOwner.address },
+                { type: 'Hash160', value: accountPayer.address },
+                { type: 'Integer', value: '100000000' },
+                { type: 'Array', value: [] },
+            ],
+        },
+    ],
+    signers: [
+        {
+            account: accountPayer.scriptHash,
+            scopes: 'CalledByEntry',
+        },
+        { // // this can be retrived using NeonParser.accountInputToScripthash(addressOrPublicKey)
+            account: accountOwner.scriptHash,
+            scopes: 'CalledByEntry',
+        },
+    ],
+})
+
+const invokerOwner = await NeonInvoker.init({
+    rpcAddress: NeonInvoker.TESTNET,
+    account: accountOwner,
+})
+
+const txId = await invokerOwner.invokeFunction(builtTransaction)
+```
+The `signTransaction` also accepts a BuiltTransaction, allowing even more signers.
+
 ### More Details
 
 For more details on the methods signature, check the auto-generated
