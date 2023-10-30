@@ -1,6 +1,13 @@
 # Change Log - @cityofzion/neon-dappkit-types
 
-This log was last generated on Mon, 02 Oct 2023 18:41:15 GMT and should not be manually modified.
+This log was last generated on Mon, 30 Oct 2023 11:49:17 GMT and should not be manually modified.
+
+## 0.3.1
+Mon, 30 Oct 2023 11:49:17 GMT
+
+### Patches
+
+- Added an instruction to the changelog for Vite users
 
 ## 0.3.0
 Mon, 02 Oct 2023 18:41:15 GMT
