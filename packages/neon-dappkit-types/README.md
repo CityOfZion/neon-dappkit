@@ -29,12 +29,12 @@ In the vite.config.ts file you must change the global value like this:
 export default defineConfig({
     //your config here
 	optimizeDeps: {
-      esbuildOptions: {
-        // Node.js global to browser globalThis
-        define: {
-          global: 'globalThis',
+        esbuildOptions: {
+            // Node.js global to browser globalThis
+            define: {
+                global: 'globalThis',
+            },
         },
-      },
     },
 });
 ```
