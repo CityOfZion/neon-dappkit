@@ -20,7 +20,7 @@ between Neon-DappKit implementation and WalletConnectSDK on the fly and reuse co
 
 ## Installation
 ```sh
-npm i @CityOfZion/neon-dappkit
+npm i @cityofzion/neon-dappkit
 ```
 
 <details>
