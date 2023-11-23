@@ -170,6 +170,33 @@ const iteratorId = resp.stack[0].id as string;
 const resp2 = await invoker.traverseIterator(sessionId, iteratorId, 10)
 ```
 
+### Calculate Fee
+
+It's important to know how much a transaction will cost before invoking.
+
+The `calculateFee` function facilitates this by allowing users to input the same arguments they would use in the
+`invokeFunction`. This process yields detailed information about the `networkFee`, `systemFee`, and the aggregate `total`.
+
+See the example below:
+
+```ts
+const resp = await invoker.calculateFee({
+    invocations: [{
+        scriptHash: '0xd2a4cff31913016155e38e474a2c06d08be276cf',
+        operation: 'transfer',
+        args: [
+            { type: 'Hash160', value: account.address },
+            { type: 'Hash160', value: 'NbnjKGMBJzJ6j5PHeYhjJDaQ5Vy5UYu4Fv' },
+            { type: 'Integer', value: '100000000' },
+            { type: 'Array', value: [] },
+        ],
+    }],
+    signers: [{ scopes: 'CalledByEntry' }],
+})
+
+console.log(resp) // will print an object with `networkFee`, `systemFee` and `total`
+```
+
 ### More Details
 
 For more details on the methods signature, check the auto-generated
