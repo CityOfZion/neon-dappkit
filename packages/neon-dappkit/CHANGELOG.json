@@ -2,6 +2,18 @@
   "name": "@cityofzion/neon-dappkit",
   "entries": [
     {
+      "version": "0.3.2",
+      "tag": "@cityofzion/neon-dappkit_v0.3.2",
+      "date": "Mon, 27 Nov 2023 18:34:53 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Changes were made to methods that take Buffer as a parameter to ensure that the parameter is in fact Buffer"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.3.1",
       "tag": "@cityofzion/neon-dappkit_v0.3.1",
       "date": "Mon, 30 Oct 2023 11:49:17 GMT",

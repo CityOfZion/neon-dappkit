@@ -1,6 +1,13 @@
 # Change Log - @cityofzion/neon-dappkit
 
-This log was last generated on Mon, 30 Oct 2023 11:49:17 GMT and should not be manually modified.
+This log was last generated on Mon, 27 Nov 2023 18:34:53 GMT and should not be manually modified.
+
+## 0.3.2
+Mon, 27 Nov 2023 18:34:53 GMT
+
+### Patches
+
+- Changes were made to methods that take Buffer as a parameter to ensure that the parameter is in fact Buffer
 
 ## 0.3.1
 Mon, 30 Oct 2023 11:49:17 GMT
