@@ -107,13 +107,13 @@ export class NeonSigner implements Neo3Signer {
       const macKey = hash.subarray(32)
 
       const cipher = crypto.createCipheriv('aes-256-cbc', encryptionKey, iv)
-      const firstChunk = cipher.update(messageBuffer)
+      const firstChunk = cipher.update(Buffer.from(messageBuffer))
       const secondChunk = cipher.final()
       const ciphertext = Buffer.concat([firstChunk, secondChunk])
 
       const dataToMac = Buffer.concat([iv, Buffer.from(ephemPublicKey, 'hex'), ciphertext])
 
-      const hmacSha = crypto.createHmac('sha256', macKey).update(dataToMac).digest()
+      const hmacSha = crypto.createHmac('sha256', Buffer.from(macKey)).update(dataToMac).digest()
       const mac = Buffer.from(hmacSha)
 
       return {
@@ -146,7 +146,7 @@ export class NeonSigner implements Neo3Signer {
       Buffer.from(payload.ephemPublicKey, 'hex'),
       Buffer.from(payload.cipherText, 'hex'),
     ])
-    const realMac = crypto.createHmac('sha256', macKey).update(dataToMac).digest()
+    const realMac = crypto.createHmac('sha256', Buffer.from(macKey)).update(dataToMac).digest()
 
     if (payload.dataTag !== realMac.toString('hex')) {
       throw new Error('invalid payload: hmac misalignment')
