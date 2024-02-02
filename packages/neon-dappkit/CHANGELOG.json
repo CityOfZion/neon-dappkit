@@ -2,6 +2,18 @@
   "name": "@cityofzion/neon-dappkit",
   "entries": [
     {
+      "version": "0.4.0",
+      "tag": "@cityofzion/neon-dappkit_v0.4.0",
+      "date": "Fri, 02 Feb 2024 20:16:03 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "Update InitOptions to support validBlocks param"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.3.2",
       "tag": "@cityofzion/neon-dappkit_v0.3.2",
       "date": "Mon, 27 Nov 2023 18:34:53 GMT",

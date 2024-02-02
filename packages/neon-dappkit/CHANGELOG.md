@@ -1,6 +1,13 @@
 # Change Log - @cityofzion/neon-dappkit
 
-This log was last generated on Mon, 27 Nov 2023 18:34:53 GMT and should not be manually modified.
+This log was last generated on Fri, 02 Feb 2024 20:16:03 GMT and should not be manually modified.
+
+## 0.4.0
+Fri, 02 Feb 2024 20:16:03 GMT
+
+### Minor changes
+
+- Update InitOptions to support validBlocks param
 
 ## 0.3.2
 Mon, 27 Nov 2023 18:34:53 GMT
