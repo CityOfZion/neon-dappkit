@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@cityofzion/neon-dappkit",
+      "comment": "Update InitOptions to support validBlocks param",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@cityofzion/neon-dappkit"
+}
