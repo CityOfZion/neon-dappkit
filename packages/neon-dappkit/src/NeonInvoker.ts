@@ -17,6 +17,7 @@ export type ExtendedArg = Arg | { type: 'Address'; value: string } | { type: 'Sc
 export type InitOptions = {
   rpcAddress: string
   account?: NeonTypes.wallet.Account | NeonTypes.wallet.Account[]
+  validBlocks?: number
   signingCallback?: api.SigningFunction
 }
 
@@ -89,9 +90,9 @@ export class NeonInvoker implements Neo3Invoker {
     return result.map((item): RpcResponseStackItem => ({ value: item.value as any, type: item.type as any }))
   }
 
-  static async init(options: InitOptions): Promise<NeonInvoker> {
+  static async init({ validBlocks = 100, ...options }: InitOptions): Promise<NeonInvoker> {
     const networkMagic = await this.getMagicOfRpcAddress(options.rpcAddress)
-    return new NeonInvoker({ ...options, validBlocks: 100, networkMagic })
+    return new NeonInvoker({ ...options, validBlocks, networkMagic })
   }
 
   static async getMagicOfRpcAddress(rpcAddress: string): Promise<number> {
