@@ -203,27 +203,37 @@ export class NeonInvoker implements Neo3Invoker {
     transaction: NeonTypes.tx.Transaction,
     accountArr: NeonTypes.wallet.Account[],
   ): Promise<NeonTypes.tx.Transaction> {
-    let txClone = new tx.Transaction(transaction)
+    const txClone = new tx.Transaction(transaction)
 
-    for (const account of accountArr) {
-      if (this.options.signingCallback) {
-        transaction.addWitness(
-          new tx.Witness({
-            invocationScript: '',
-            verificationScript: wallet.getVerificationScriptFromPublicKey(account.publicKey),
-          }),
-        )
+    let signerIndex = 0
+    for (const signer of txClone.signers) {
+      for (const account of accountArr) {
+        if (signer.account.equals(account.scriptHash)) {
+          let txCopy = new tx.Transaction(transaction)
+          txCopy.witnesses = []
 
-        const facade = await api.NetworkFacade.fromConfig({
-          node: this.options.rpcAddress,
-        })
+          if (this.options.signingCallback) {
+            txCopy.addWitness(
+              new tx.Witness({
+                invocationScript: '',
+                verificationScript: wallet.getVerificationScriptFromPublicKey(account.publicKey),
+              }),
+            )
 
-        txClone = await facade.sign(transaction, {
-          signingCallback: this.options.signingCallback,
-        })
-      } else {
-        txClone.sign(account, this.options.networkMagic)
+            const facade = await api.NetworkFacade.fromConfig({
+              node: this.options.rpcAddress,
+            })
+
+            txCopy = await facade.sign(txCopy, {
+              signingCallback: this.options.signingCallback,
+            })
+          } else {
+            txCopy.sign(account, this.options.networkMagic)
+          }
+          txClone.witnesses[signerIndex] = txCopy.witnesses[0]
+        }
       }
+      signerIndex++
     }
 
     return txClone
@@ -268,6 +278,7 @@ export class NeonInvoker implements Neo3Invoker {
     const networkFee = await this.getNetworkFee(cimOrBt, rpcClient, accountArr, transaction)
     transaction.networkFee = networkFee
     transaction.systemFee = systemFee
+    transaction.witnesses = signers.map(() => tx.Witness.fromJson({ invocation: '', verification: '' }))
 
     return transaction
   }
