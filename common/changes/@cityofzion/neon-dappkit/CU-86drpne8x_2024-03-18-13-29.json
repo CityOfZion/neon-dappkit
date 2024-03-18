@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@cityofzion/neon-dappkit",
+      "comment": "Update invokeFunction and signTransaction to add smart contract witnesses when the signer is not an account used on the construtor",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@cityofzion/neon-dappkit"
+}

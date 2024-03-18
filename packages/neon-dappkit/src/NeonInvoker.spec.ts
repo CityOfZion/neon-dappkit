@@ -203,6 +203,151 @@ describe('NeonInvoker', function () {
     await wait(15000)
   })
 
+  it('can sign and invoke with signingCallback using different NeonInvokers/accounts', async () => {
+    const accountSignCallback = new wallet.Account('02eecb8c0c3ae4e3c65457581c8c8dc0ecf52f74953166ce84d3c5b67a42a1ee73')
+    const privateAccount = new wallet.Account('3bd06d95e9189385851aa581d182f25de34af759cf7f883af57030303ded52b8')
+
+    const accountSignPrivKey = new wallet.Account('fb1f57cc1347ae5b6251dc8bae761362d2ecaafec4c87f4dc9e97fef6dd75014') // NbnjKGMBJzJ6j5PHeYhjJDaQ5Vy5UYu4Fv
+
+    const invokerSignCallback = await NeonInvoker.init({
+      rpcAddress: NeonInvoker.TESTNET,
+      signingCallback: async (transaction, details) => {
+        const hex = NeonParser.numToHex(details.network, 4, true) + NeonParser.reverseHex(transaction.hash())
+        return wallet.sign(hex, privateAccount.privateKey)
+      },
+      account: accountSignCallback,
+    })
+
+    const invokerSignPrivKey = await NeonInvoker.init({
+      rpcAddress: NeonInvoker.TESTNET,
+      account: accountSignPrivKey,
+    })
+
+    let bt = await invokerSignCallback.signTransaction({
+      invocations: [
+        {
+          scriptHash: '0xd2a4cff31913016155e38e474a2c06d08be276cf',
+          operation: 'transfer',
+          args: [
+            { type: 'Hash160', value: accountSignCallback.address },
+            { type: 'Hash160', value: accountSignPrivKey.address },
+            { type: 'Integer', value: '100000000' },
+            { type: 'Array', value: [] },
+          ],
+        },
+      ],
+      signers: [
+        {
+          account: accountSignCallback.scriptHash,
+          scopes: 'CalledByEntry',
+        },
+        {
+          account: accountSignPrivKey.scriptHash,
+          scopes: 'CalledByEntry',
+        },
+      ],
+    })
+
+    let txId = await invokerSignPrivKey.invokeFunction(bt)
+
+    assert(txId.length > 0, 'has txId')
+
+    await wait(15000)
+
+    bt = await invokerSignPrivKey.signTransaction({
+      invocations: [
+        {
+          scriptHash: '0xd2a4cff31913016155e38e474a2c06d08be276cf',
+          operation: 'transfer',
+          args: [
+            { type: 'Hash160', value: accountSignPrivKey.address },
+            { type: 'Hash160', value: accountSignCallback.address },
+            { type: 'Integer', value: '100000000' },
+            { type: 'Array', value: [] },
+          ],
+        },
+      ],
+      signers: [
+        {
+          account: accountSignPrivKey.scriptHash,
+          scopes: 'CalledByEntry',
+        },
+        {
+          account: accountSignCallback.scriptHash,
+          scopes: 'CalledByEntry',
+        },
+      ],
+    })
+
+    txId = await invokerSignCallback.invokeFunction(bt)
+
+    assert(txId.length > 0, 'has txId')
+
+    await wait(15000)
+  })
+
+  it('add accounts and witnesses to verify smart contracts', async () => {
+    const account = new wallet.Account('3bd06d95e9189385851aa581d182f25de34af759cf7f883af57030303ded52b8')
+    const invoker = await NeonInvoker.init({
+      rpcAddress: NeonInvoker.TESTNET,
+      account,
+    })
+
+    // A smart contract that always return True on verify
+    const verifyTrueSmartContract = '0x7aa88cc764b80cae2267d4fdf63cd09f7e9baeba'
+
+    // NeoToken smart contract, we are not verified
+    const verifyFalseSmartContract = '0xef4073a0f2b305a38ec4050e4d3d28bc40ea63f5'
+
+    const txIdVerifyTrue = await invoker.invokeFunction({
+      invocations: [
+        {
+          scriptHash: '0xd2a4cff31913016155e38e474a2c06d08be276cf',
+          operation: 'totalSupply',
+          args: [],
+        },
+      ],
+      signers: [
+        {
+          account: account.scriptHash,
+          scopes: 'CalledByEntry',
+        },
+        {
+          account: verifyTrueSmartContract,
+          scopes: 'CalledByEntry',
+        },
+      ],
+    })
+
+    assert(txIdVerifyTrue.length > 0, 'has txId')
+
+    await assert.rejects(
+      invoker.invokeFunction({
+        invocations: [
+          {
+            scriptHash: '0xd2a4cff31913016155e38e474a2c06d08be276cf',
+            operation: 'totalSupply',
+            args: [],
+          },
+        ],
+        signers: [
+          {
+            account: account.scriptHash,
+            scopes: 'CalledByEntry',
+          },
+          {
+            account: verifyFalseSmartContract,
+            scopes: 'CalledByEntry',
+          },
+        ],
+      }),
+      {
+        name: 'Error',
+        message: 'Invalid',
+      },
+    )
+  })
+
   it("can throw an error if the signed transaction doesn't match the invocation", async () => {
     const accountPayer = new wallet.Account('fb1f57cc1347ae5b6251dc8bae761362d2ecaafec4c87f4dc9e97fef6dd75014') // NbnjKGMBJzJ6j5PHeYhjJDaQ5Vy5UYu4Fv
     const accountOwner = new wallet.Account('3bd06d95e9189385851aa581d182f25de34af759cf7f883af57030303ded52b8') // NhGomBpYnKXArr55nHRQ5rzy79TwKVXZbr
