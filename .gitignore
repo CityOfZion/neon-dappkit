@@ -79,3 +79,4 @@ common/autoinstallers/*/.npmrc
 # Mocha Report
 mocha-results.json
 **/reporter/
+packages/neon-dappkit/neogo/
