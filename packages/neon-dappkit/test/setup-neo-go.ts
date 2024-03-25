@@ -61,6 +61,7 @@ async function installNeoGo(): Promise<string | undefined> {
         }
     }
 
+    fs.chmodSync(goCompilerExecutablePath, '755')
     execSync(`${goCompilerExecutablePath} node -h`);
     return goCompilerExecutablePath;
 }
