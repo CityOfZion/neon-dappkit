@@ -11,7 +11,7 @@
     "build": "tsc",
     "lint": "eslint .",
     "format": "eslint --fix",
-    "test": "ts-mocha --reporter json > ../../mocha-results.json src/**/*.spec.ts",
+    "test": "ts-node test/setup-neo-go.ts && ts-mocha --reporter json > ../../mocha-results.json src/**/*.spec.ts",
     "test-print": "ts-mocha src/**/*.spec.ts",
     "coverage": "nyc pnpm test"
   },
@@ -31,15 +31,19 @@
     "@istanbuljs/nyc-config-typescript": "^1.0.2",
     "@types/elliptic": "6.4.14",
     "@types/expect": "^24.3.0",
+    "@types/follow-redirects": "^1.14.4",
     "@types/mocha": "10.0.0",
     "@types/node": "^18.14.6",
     "@typescript-eslint/eslint-plugin": "^6.5.0",
     "@typescript-eslint/parser": "^6.5.0",
+    "adm-zip": "^0.5.10",
     "chai": "~4.3.7",
     "eslint": "^8.48.0",
+    "follow-redirects": "^1.14.4",
     "mocha": "^10.0.0",
     "nyc": "^15.1.0",
     "ts-mocha": "^10.0.0",
+    "ts-node": "^10.9.2",
     "typescript": "^4.3.2"
   },
   "repository": {
