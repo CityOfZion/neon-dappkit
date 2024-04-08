@@ -1,7 +1,7 @@
 ProtocolConfiguration:
   Magic: 42
   MaxTraceableBlocks: 200000
-  TimePerBlock: 100ms
+  TimePerBlock: 300ms
   MemPoolSize: 100
   StandbyCommittee:
     - 02b3622bf4017bdfe317c58aed5f4c753f206b7db896046fa7d774bbc4bf7f8dc2
@@ -16,7 +16,7 @@ ApplicationConfiguration:
   # LogPath could be set up in case you need stdout logs to some proper file.
   # LogPath: "./log/neogo.log"
   DBConfiguration:
-    Type: "inmemory" #other options: 'inmemory','boltdb'
+    Type: 'inmemory' #other options: 'inmemory','boltdb'
     # DB type options. Uncomment those you need in case you want to switch DB type.
   #    LevelDBOptions:
   #        DataDirectoryPath: "./chains/unit_testnet"
@@ -24,7 +24,7 @@ ApplicationConfiguration:
   #      FilePath: "./chains/unit_testnet.bolt"
   P2P:
     Addresses:
-      - ":0" # in form of "[host]:[port][:announcedPort]"
+      - ':0' # in form of "[host]:[port][:announcedPort]"
     DialTimeout: 3s
     ProtoTickInterval: 2s
     PingInterval: 30s
@@ -36,19 +36,19 @@ ApplicationConfiguration:
   Consensus:
     Enabled: true
     UnlockWallet:
-      Path: "wallet1_solo.json"
-      Password: "one"
+      Path: 'wallet1_solo.json'
+      Password: 'one'
   RPC:
     MaxGasInvoke: 15
     Enabled: true
     Addresses:
-      - "127.0.0.1:0" # let the system choose port dynamically
+      - '127.0.0.1:50012'
     EnableCORSWorkaround: false
   Prometheus:
     Enabled: false #since it's not useful for unit tests.
     Addresses:
-      - ":2112"
+      - ':2112'
   Pprof:
     Enabled: false #since it's not useful for unit tests.
     Addresses:
-      - ":2113"
+      - ':2113'

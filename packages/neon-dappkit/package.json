@@ -12,7 +12,7 @@
     "lint": "eslint .",
     "format": "eslint --fix",
     "test": "ts-node test/setup-neo-go.ts && ts-mocha --reporter json > ../../mocha-results.json src/**/*.spec.ts",
-    "test-print": "ts-mocha src/**/*.spec.ts",
+    "test-print": "ts-node test/setup-neo-go.ts && ts-mocha src/**/*.spec.ts",
     "coverage": "nyc pnpm test"
   },
   "dependencies": {
@@ -29,6 +29,7 @@
   "devDependencies": {
     "@cityofzion/neon-core": "5.5.1",
     "@istanbuljs/nyc-config-typescript": "^1.0.2",
+    "@types/adm-zip": "0.5.5",
     "@types/elliptic": "6.4.14",
     "@types/expect": "^24.3.0",
     "@types/follow-redirects": "^1.14.4",
