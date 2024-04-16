@@ -46,7 +46,7 @@ Neon-Dappkit has 4 main components:
 - [NeonSigner](https://github.com/CityOfZion/neon-dappkit/blob/main/packages/neon-dappkit/NEON-SIGNER.md): Signs, Verifies, Encrypts and Decrypts data.
 - [NeonEventListener](https://github.com/CityOfZion/neon-dappkit/blob/main/packages/neon-dappkit/NEON-EVENT-LISTENER.md): Listen to events from the Neo3 Blockchain.
 
-Check out some examples in [examples folder](https://github.com/CityOfZion/neon-dappkit/blob/main/packages/neon-dappkit/)
+Check out some examples in [examples folder](https://github.com/CityOfZion/neon-dappkit/blob/main/packages/neon-dappkit/examples)
 
 
 ## Quick Example
