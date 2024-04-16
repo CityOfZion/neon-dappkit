@@ -68,4 +68,4 @@ eventListener.confirmTransaction(
 
 For more details on the methods signature, check the auto-generated
 [Docs](https://htmlpreview.github.io/?https://raw.githubusercontent.com/CityOfZion/neon-dappkit/master/packages/neon-dappkit-types/docs/interfaces/Neo3EventListener.html)
-and the [Source Code](./src/NeonEventListener.ts).
+and the [Source Code](https://github.com/CityOfZion/neon-dappkit/blob/main/packages/neon-dappkit/src/NeonEventListener.ts).

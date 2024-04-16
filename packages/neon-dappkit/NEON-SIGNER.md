@@ -71,4 +71,4 @@ is the correct one.
 
 For more details on the methods signature, check the auto-generated
 [Docs](https://htmlpreview.github.io/?https://raw.githubusercontent.com/CityOfZion/neon-dappkit/master/packages/neon-dappkit-types/docs/interfaces/Neo3Signer.html),
-the [Unit Tests](./src/NeonSigner.spec.ts) and the [Source Code](./src/NeonSigner.ts).
+the [Unit Tests](https://github.com/CityOfZion/neon-dappkit/blob/main/packages/neon-dappkit/src/NeonSigner.spec.ts) and the [Source Code](https://github.com/CityOfZion/neon-dappkit/blob/main/packages/neon-dappkit/src/NeonSigner.ts).
