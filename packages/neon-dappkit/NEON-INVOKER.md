@@ -8,9 +8,9 @@ To persist changes to the blockchain or sign the transactions you should pass an
 `Account` from `@cityofzion/neon-js`. Check the example:
 ```ts
 import { NeonInvoker } from '@cityofzion/neon-dappkit'
-import { default as Neon } from '@cityofzion/neon-js'
+import * as Neon from '@cityofzion/neon-js'
 
-const account = new Neon.wallet.account('3bd06d95e9189385851aa581d182f25de34af759cf7f883af57030303ded52b8')
+const account = new Neon.wallet.Account('3bd06d95e9189385851aa581d182f25de34af759cf7f883af57030303ded52b8')
 
 const invoker = await NeonInvoker.init({
   rpcAddress: NeonInvoker.MAINNET,
@@ -254,4 +254,4 @@ const txId = await invokerOwner.invokeFunction(builtTransaction)
 
 For more details on the methods signature, check the auto-generated
 [Docs](https://htmlpreview.github.io/?https://raw.githubusercontent.com/CityOfZion/neon-dappkit/master/packages/neon-dappkit-types/docs/interfaces/Neo3Invoker.html),
-the [Unit Tests](./src/NeonInvoker.spec.ts) and the [Source Code](./src/NeonInvoker.ts).
+the [Unit Tests](https://github.com/CityOfZion/neon-dappkit/blob/main/packages/neon-dappkit/src/NeonInvoker.spec.ts) and the [Source Code](https://github.com/CityOfZion/neon-dappkit/blob/main/packages/neon-dappkit/src/NeonInvoker.ts).
