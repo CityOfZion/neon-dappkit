@@ -28,13 +28,18 @@ npm i @cityofzion/neon-dappkit
 
 In the vite.config.ts file you must change the global value like this:
 ```ts
+import {defineConfig} from 'vite'
+
 export default defineConfig({
     //your config here
-	define: {
-		global: 'globalThis',
+    define: {
+        global: 'globalThis',
+        process: {
+            version: 'globalThis'
+        }
         //...
-	},
-});
+    },
+})
 ```
 </details>
 
