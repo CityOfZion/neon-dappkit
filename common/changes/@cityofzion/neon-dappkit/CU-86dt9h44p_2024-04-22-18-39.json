@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@cityofzion/neon-dappkit",
+      "comment": "Fix vite documentation",
+      "type": "none"
+    }
+  ],
+  "packageName": "@cityofzion/neon-dappkit"
+}
