@@ -5,7 +5,7 @@ on:
       - main
 
 env:
-  NODE_VERSION: 16.x
+  NODE_VERSION: 18.x
 
 jobs:
   build-and-test:
@@ -32,6 +32,7 @@ jobs:
       - name: Run Tests
         run: cd packages/neon-dappkit && pnpm test
       - name: Notify Test Reporter
+        if: ${{ always() }}
         uses: dorny/test-reporter@v1.6.0
         with:
           name: Unit Tests
