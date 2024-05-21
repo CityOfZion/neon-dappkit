@@ -294,20 +294,21 @@ export class NeonInvoker implements Neo3Invoker {
     }
 
     const txClone = new tx.Transaction(transaction)
-    // Add one witness for each signer, using the first account as placeholder if there is no account for the respective signer
+
+    // Add one witness for each signer and use placeholder accounts to calculate the network fee.
     // This is needed to calculate the network fee, since the signer is considered to calculate the fee and we need
     // the same number of witnesses as signers, otherwise the fee calculation will fail
-    txClone.signers.forEach((signer) => {
-      const account = accountArr.find((account) => account.scriptHash === signer.account.toString()) ?? accountArr[0]
-      if (!account) throw new Error('You need to provide at least one account to calculate the network fee.')
+    for (let i = 0; i < txClone.signers.length; i++) {
+      const placeholderAccount = new wallet.Account()
+      txClone.signers[i].account = u.HexString.fromHex(placeholderAccount.scriptHash)
 
       txClone.addWitness(
         new tx.Witness({
           invocationScript: '',
-          verificationScript: wallet.getVerificationScriptFromPublicKey(account.publicKey),
+          verificationScript: wallet.getVerificationScriptFromPublicKey(placeholderAccount.publicKey),
         }),
       )
-    })
+    }
 
     const networkFee = await api.smartCalculateNetworkFee(txClone, rpcClient)
 
