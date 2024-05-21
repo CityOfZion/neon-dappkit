@@ -71,7 +71,8 @@ const resp = await invoker.invokeFunction({
         ]
     }],
     signers: [{
-        scopes: 'Global'
+        scopes: 'CalledByEntry',
+        account: '0x857a247939db5c7cd3a7bb14791280c09e824bea'
     }]
 })
 ```
@@ -79,10 +80,10 @@ const resp = await invoker.invokeFunction({
 Options for each `signer`:
 
 - `scopes`: to specify which scopes should be used to sign the transaction, [learn more](https://developers.neo.org/docs/n3/foundation/Transactions#scopes). This property accepts them as a string as seen on the examples, or as a number, which can be imported from `WitnessScope` of `neon-js`.
-- `account`: to specify which account's scripthash should be used to sign the transaction, otherwise the wallet will use the user's selected account to sign.
-- `allowedContracts`: when the `scopes` property is set as `CustomContracts`, you should use this property to specify which contracts are allowed
-- `allowedGroups`: when the `scopes` property is set as `CustomGroups`, you should use this property to specify which groups are allowed
-- `rules`: to specify which rules should be used to sign the transaction, [learn more](https://developers.neo.org/docs/n3/foundation/Transactions#witnessrule).
+- `account`: to specify which account's or contract's scripthash should be used to sign the transaction, otherwise the wallet will use the user's selected account to sign. If the value starts with "0x", then it will be trimmed to use the rest of the hexstring. It does not accept addresses, only scripthashes. If you need to sign as a contract, then you can use its scripthash, but beware: internally this contract's [`verify`](https://github.com/neo-project/proposals/blob/77feb5639ad22d09363aacebd4fb8e1880f3cb29/nep-22.mediawiki#verify) method will be called and it needs to return `true`, otherwise this signature will be invalid and the transaction will fail.
+- `allowedContracts`: when the `scopes` property is set as `CustomContracts`, you should use this property to specify a list with the script hash of the contracts that are allowed.
+- `allowedGroups`: when the `scopes` property is set as `CustomGroups`, you should use this property to specify the public key of the groups that are allowed.
+- `rules`: are needed when you have a complex scope and need to use logic to allow or deny which smart contracts have access to the signature. [Learn more](https://developers.neo.org/docs/n3/foundation/Transactions#witnessrule).
 
 Options for each `invocation`:
 
@@ -116,6 +117,86 @@ const resp = await invoker.invokeFunction({
     networkFeeOverride: 3000000 // sending 3 GAS instead of the minimum network fee
 })
 ```
+<details>
+<summary>📃 Signer Scope CustomContracts</summary>
+
+```ts
+const respCustomContracts = await invoker.invokeFunction({
+    invocations: [{
+        // ...
+    },
+    {
+        // ...
+    }],
+    signers: [{
+        scopes: 'CustomContracts',
+        account: '857a247939db5c7cd3a7bb14791280c09e824bea', // signer account scripthash
+        allowedContracts: [ // Using CustomContracts means that the signature is valid only these contracts below
+            '0xd2a4cff31913016155e38e474a2c06d08be276cf', // GAS token
+            '0xef4073a0f2b305a38ec4050e4d3d28bc40ea63f5', // NEO token
+        ]
+    }],
+})
+```
+</details>
+
+<details>
+<summary>👥 Signer Scope CustomGroups</summary>
+
+```ts
+const respCustomGroups = await invoker.invokeFunction({
+    invocations: [{
+        // ...
+    },
+    {
+        // ...
+    }],
+    signers: [{
+        scopes: 'CustomGroups',
+        account: '857a247939db5c7cd3a7bb14791280c09e824bea', // signer account scripthash
+        allowedGroups: [ // When using CustomGroups you need to list the pubkey of the groups you want to allow
+            '03ab362a4eda62d22505ffe5a5e5422f1322317e8088afedb7c5029801e1ece806'
+        ]
+    }],
+})
+```
+</details>
+
+<details>
+<summary>📝 Signer Scope Rules</summary>
+    
+```ts
+const respRules = await invoker.invokeFunction({
+    invocations: [{
+        // ...
+    },
+    {
+        // ...
+    }],
+    signers: [{
+        scopes: 'Rules',
+        account: '857a247939db5c7cd3a7bb14791280c09e824bea', // signer account scripthash
+        rules: [
+            {   // This rule will allow the signature only if the contract is called by the NEO token or by the entry point
+                action: 'Allow',
+                condition: {
+                    type: "Or",
+                    expressions: [
+                        {
+                            type: "CalledByContract",
+                            hash: "0xef4073a0f2b305a38ec4050e4d3d28bc40ea63f5"    
+                        },
+                        {
+                            type: "CalledByEntry"
+                        }
+                    ]
+                }
+            }
+        ]
+    }],
+})
+```
+</details>
 
 ### Calling TestInvoke
 
