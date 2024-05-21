@@ -342,8 +342,7 @@ describe('NeonInvoker', function () {
         ],
       }),
       {
-        name: 'Error',
-        message: 'Invalid',
+        message: /^Inventory verification failed/,
       },
     )
   })
