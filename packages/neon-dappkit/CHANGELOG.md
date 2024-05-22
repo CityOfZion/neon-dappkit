@@ -1,6 +1,13 @@
 # Change Log - @cityofzion/neon-dappkit
 
-This log was last generated on Mon, 18 Mar 2024 18:09:02 GMT and should not be manually modified.
+This log was last generated on Wed, 22 May 2024 19:09:40 GMT and should not be manually modified.
+
+## 0.4.2
+Wed, 22 May 2024 19:09:40 GMT
+
+### Patches
+
+- Use placeholder accounts when calculating networkfee
 
 ## 0.4.1
 Mon, 18 Mar 2024 18:09:02 GMT
