@@ -1,0 +1,20 @@
+{
+  "type": "Neo.Network.P2P.Payloads.Transaction",
+  "network": 42,
+  "hash": "0x073b10d38c7746dbc49ac68111620de07aefc90fb9099ff2127b49dad5078132",
+  "data": "AMMv98G0P5gAAAAAADTmEgAAAAAAQQsAAAHYzFqQTVJvyabKtVugLJpv54nJVgEAXwsDAOQLVAIAAAAMFA2pZ6QAQyvyf46OtG/orGWezN4EDBTYzFqQTVJvyabKtVugLJpv54nJVhTAHwwIdHJhbnNmZXIMFM924ovQBixKR47jVWEBExnzz6TSQWJ9W1I5",
+  "items": {
+    "0x56c989e76f9a2ca05bb5caa6c96f524d905accd8": {
+      "script": "EQwhArNiK/QBe9/jF8WK7V9MdT8ga324lgRvp9d0u8S/f43CEUGe0Nw6",
+      "parameters": [
+        {
+          "type": "Signature",
+          "value": "FXFv4y0kiyi5UuQqEahGLqGkgaUj3ocz0VNr9ftSuBijHQQvGegcIgLisOPtVuEserMr4hTsOsbjXrMVsa9tDA=="
+        }
+      ],
+      "signatures": {
+        "02b3622bf4017bdfe317c58aed5f4c753f206b7db896046fa7d774bbc4bf7f8dc2": "FXFv4y0kiyi5UuQqEahGLqGkgaUj3ocz0VNr9ftSuBijHQQvGegcIgLisOPtVuEserMr4hTsOsbjXrMVsa9tDA=="
+      }
+    }
+  }
+}

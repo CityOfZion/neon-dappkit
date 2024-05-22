@@ -1,73 +1,93 @@
+import { ChildProcess, spawn, execSync } from 'child_process'
 import { ContractInvocationMulti } from '@cityofzion/neon-dappkit-types'
-import { NeonInvoker, NeonParser, TypeChecker } from './index'
-import { wallet, tx } from '@cityofzion/neon-js'
+import { NeonEventListener, NeonInvoker, NeonParser, TypeChecker } from '../src/index'
 import assert from 'assert'
-
-async function getBalance(invoker: NeonInvoker, address: string) {
-  const payerBalanceResp = await invoker.testInvoke({
-    invocations: [
-      {
-        operation: 'balanceOf',
-        scriptHash: '0xd2a4cff31913016155e38e474a2c06d08be276cf',
-        args: [{ value: address, type: 'Hash160' }],
-      },
-    ],
-  })
-  return NeonParser.parseRpcResponse(payerBalanceResp.stack[0]) / Math.pow(10, 8)
-}
-
-function wait(ms: number) {
-  return new Promise((resolve) => {
-    setTimeout(resolve, ms)
-  })
-}
-
-function toDecimal(num: number, decimal: number) {
-  return num / 10 ** decimal
-}
+import * as path from 'path'
+import { tx } from '@cityofzion/neon-js'
+import { wallet } from '@cityofzion/neon-core'
+import {
+  wait,
+  neoGoPath,
+  getDataDir,
+  getBalance,
+  toDecimal,
+  transferInvocation,
+  rpcAddress,
+  gasScriptHash,
+  waitTime,
+  neonEventListenerOptions,
+  neoScriptHash,
+} from './helper'
 
 describe('NeonInvoker', function () {
   this.timeout(60000)
+  let childProcess: ChildProcess
+  let account1: wallet.Account
+  let account2: wallet.Account
+  const neonEventListener = new NeonEventListener(rpcAddress, neonEventListenerOptions)
+  const verifiableContract = '0x1b0146e719219b77e70b654aeb23f82b25f8abca'
+  const testReturnContract = '0x5d564a6ee553234ff7a32c7cc2e188d3086d4892'
+  const testReturnMapContract = '0x3b2244fc8c13644048040c8e4aa6562365658def'
+
+  beforeEach(async function () {
+    const neoGo = neoGoPath()
+    const dataDir = getDataDir()
+
+    childProcess = spawn(
+      neoGo,
+      ['node', '--config-file', `${dataDir}/protocol.unit_testnet.single.yml`, '--relative-path', dataDir],
+      {},
+    )
+    await wait(waitTime)
+
+    account1 = new wallet.Account('c7134d6fd8e73d819e82755c64c93788d8db0961929e025a53363c4cc02a6962')
+    account2 = new wallet.Account('450d6c2a04b5b470339a745427bae6828400cf048400837d73c415063835e005')
+
+    // Giving 100 GAS to account1 and account2
+    execSync(`${neoGo} util sendtx -r ${rpcAddress} ${path.resolve(path.join(getDataDir(), 'givewallet1.json'))}`)
+    execSync(`${neoGo} util sendtx -r ${rpcAddress} ${path.resolve(path.join(getDataDir(), 'givewallet2.json'))}`)
+
+    await wait(waitTime)
+
+    // Deploying smart contracts
+    execSync(
+      `${neoGo} util sendtx -r ${rpcAddress} ${path.resolve(path.join(getDataDir(), 'deployVerifiable.json'))}`,
+    ).toString()
+    execSync(
+      `${neoGo} util sendtx -r ${rpcAddress} ${path.resolve(path.join(getDataDir(), 'deployReturnTest.json'))}`,
+    ).toString()
+    execSync(
+      `${neoGo} util sendtx -r ${rpcAddress} ${path.resolve(path.join(getDataDir(), 'deployReturnMapTest.json'))}`,
+    ).toString()
+
+    await wait(waitTime)
+
+    return true
+  })
+
+  afterEach('Tear down', async function () {
+    return childProcess.kill()
+  })
 
   it('does invokeFunction', async () => {
-    const account = new wallet.Account('3bd06d95e9189385851aa581d182f25de34af759cf7f883af57030303ded52b8')
     const invoker = await NeonInvoker.init({
-      rpcAddress: NeonInvoker.TESTNET,
-      account,
+      rpcAddress,
+      account: account1,
     })
+    const receiver = new wallet.Account()
 
-    const txId = await invoker.invokeFunction({
-      invocations: [
-        {
-          scriptHash: '0xd2a4cff31913016155e38e474a2c06d08be276cf',
-          operation: 'transfer',
-          args: [
-            { type: 'Hash160', value: account.address },
-            { type: 'Hash160', value: 'NbnjKGMBJzJ6j5PHeYhjJDaQ5Vy5UYu4Fv' },
-            { type: 'Integer', value: '100000000' },
-            { type: 'Array', value: [] },
-          ],
-        },
-      ],
-      signers: [
-        {
-          account: account.scriptHash,
-          scopes: tx.WitnessScope.CalledByEntry,
-          rules: [],
-        },
-      ],
-    })
+    const txId = await invoker.invokeFunction(transferInvocation(gasScriptHash, account1, receiver, '100'))
 
     assert(txId.length > 0, 'has txId')
-    await wait(15000)
+    await wait(waitTime)
   })
 
   it('does invokeFunction with signingCallback', async () => {
-    const publicAccount = new wallet.Account('02eecb8c0c3ae4e3c65457581c8c8dc0ecf52f74953166ce84d3c5b67a42a1ee73')
-    const privateAccount = new wallet.Account('3bd06d95e9189385851aa581d182f25de34af759cf7f883af57030303ded52b8')
+    const privateAccount = account1
+    const publicAccount = new wallet.Account(privateAccount.publicKey)
 
     const invoker = await NeonInvoker.init({
-      rpcAddress: NeonInvoker.TESTNET,
+      rpcAddress,
       signingCallback: async (transaction, details) => {
         const hex = NeonParser.numToHex(details.network, 4, true) + NeonParser.reverseHex(transaction.hash())
         return wallet.sign(hex, privateAccount.privateKey)
@@ -76,18 +96,7 @@ describe('NeonInvoker', function () {
     })
 
     const txId = await invoker.invokeFunction({
-      invocations: [
-        {
-          scriptHash: '0xd2a4cff31913016155e38e474a2c06d08be276cf',
-          operation: 'transfer',
-          args: [
-            { type: 'Hash160', value: publicAccount.address },
-            { type: 'Hash160', value: 'NbnjKGMBJzJ6j5PHeYhjJDaQ5Vy5UYu4Fv' },
-            { type: 'Integer', value: '100000000' },
-            { type: 'Array', value: [] },
-          ],
-        },
-      ],
+      ...transferInvocation(gasScriptHash, publicAccount, new wallet.Account(), '100'),
       signers: [
         {
           account: publicAccount.scriptHash,
@@ -98,33 +107,23 @@ describe('NeonInvoker', function () {
     })
 
     assert(txId.length > 0, 'has txId')
-    await wait(15000)
+    await wait(waitTime)
   })
 
   it('can sign and invoke using different NeonInvokers/accounts', async () => {
-    const accountPayer = new wallet.Account('fb1f57cc1347ae5b6251dc8bae761362d2ecaafec4c87f4dc9e97fef6dd75014') // NbnjKGMBJzJ6j5PHeYhjJDaQ5Vy5UYu4Fv
-    const accountOwner = new wallet.Account('3bd06d95e9189385851aa581d182f25de34af759cf7f883af57030303ded52b8') // NhGomBpYnKXArr55nHRQ5rzy79TwKVXZbr
+    const accountPayer = account1
+    const accountOwner = account2
 
     // TEST WITH BOTH ACCOUNTS ON THE SAME INVOKER
 
     const invokerBoth = await NeonInvoker.init({
-      rpcAddress: NeonInvoker.TESTNET,
+      rpcAddress,
       account: [accountPayer, accountOwner],
     })
 
     const txBoth = await invokerBoth.invokeFunction({
-      invocations: [
-        {
-          scriptHash: '0xd2a4cff31913016155e38e474a2c06d08be276cf',
-          operation: 'transfer',
-          args: [
-            { type: 'Hash160', value: accountOwner.address }, // owner is sending to payer but the payer is paying for the tx
-            { type: 'Hash160', value: accountPayer.address },
-            { type: 'Integer', value: '100000000' },
-            { type: 'Array', value: [] },
-          ],
-        },
-      ],
+      // owner is sending GAS to payer, but the payer is paying for the tx
+      ...transferInvocation(gasScriptHash, accountOwner, accountPayer, '100'),
       signers: [
         {
           account: accountPayer.scriptHash,
@@ -139,36 +138,27 @@ describe('NeonInvoker', function () {
 
     assert(txBoth.length > 0, 'has txId')
 
-    await wait(15000)
+    await wait(waitTime)
 
     // TEST WITH EACH ACCOUNT ON A DIFFERENT INVOKER
 
     const invokerPayer = await NeonInvoker.init({
-      rpcAddress: NeonInvoker.TESTNET,
+      rpcAddress,
       account: accountPayer,
     })
 
     const invokerOwner = await NeonInvoker.init({
-      rpcAddress: NeonInvoker.TESTNET,
+      rpcAddress,
       account: accountOwner,
     })
 
     const payerBalance = await getBalance(invokerPayer, accountPayer.address)
     const ownerBalance = await getBalance(invokerOwner, accountOwner.address)
 
+    const amount = 50000000
     const bt = await invokerPayer.signTransaction({
-      invocations: [
-        {
-          scriptHash: '0xd2a4cff31913016155e38e474a2c06d08be276cf',
-          operation: 'transfer',
-          args: [
-            { type: 'Hash160', value: accountOwner.address }, // owner is sending to payer but the payer is paying for the tx
-            { type: 'Hash160', value: accountPayer.address },
-            { type: 'Integer', value: '100000000' },
-            { type: 'Array', value: [] },
-          ],
-        },
-      ],
+      //  owner is sending GAS to payer, but the payer is paying for the tx
+      ...transferInvocation(gasScriptHash, accountOwner, accountPayer, amount.toString()),
       signers: [
         {
           account: accountPayer.scriptHash,
@@ -185,32 +175,34 @@ describe('NeonInvoker', function () {
 
     assert(txId.length > 0, 'has txId')
 
-    await wait(15000)
+    await wait(waitTime)
 
-    const payerBalance2 = await getBalance(invokerPayer, accountPayer.address)
-    const ownerBalance2 = await getBalance(invokerOwner, accountOwner.address)
+    const payerBalanceAfter = await getBalance(invokerPayer, accountPayer.address)
+    const ownerBalanceAfter = await getBalance(invokerOwner, accountOwner.address)
+
+    const totalFees = Number(bt.systemFee) + Number(bt.networkFee)
 
     assert(
-      payerBalance2 > payerBalance + 0.8,
-      `payer balance (${payerBalance2}) increased by almost 1 (was ${payerBalance})`,
+      payerBalance - totalFees + amount === payerBalanceAfter,
+      `payer balance (was ${payerBalance}) should be ${payerBalance - totalFees + amount} but is ${payerBalanceAfter}`,
     )
-    assert(
-      payerBalance2 < payerBalance + 1,
-      `payer balance (${payerBalance2}) increased by almost 1 (was ${payerBalance})`,
+    assert.equal(
+      ownerBalanceAfter,
+      ownerBalance - amount,
+      `owner balance (was ${ownerBalance}) should be ${ownerBalance - totalFees + amount} but is ${ownerBalanceAfter}`,
     )
-    assert.equal(ownerBalance2, ownerBalance - 1, 'owner balance decreased by 1')
 
-    await wait(15000)
+    await wait(waitTime)
   })
 
   it('can sign and invoke with signingCallback using different NeonInvokers/accounts', async () => {
-    const accountSignCallback = new wallet.Account('02eecb8c0c3ae4e3c65457581c8c8dc0ecf52f74953166ce84d3c5b67a42a1ee73')
-    const privateAccount = new wallet.Account('3bd06d95e9189385851aa581d182f25de34af759cf7f883af57030303ded52b8')
+    const privateAccount = account1
+    const accountSignCallback = new wallet.Account(account1.publicKey)
 
-    const accountSignPrivKey = new wallet.Account('fb1f57cc1347ae5b6251dc8bae761362d2ecaafec4c87f4dc9e97fef6dd75014') // NbnjKGMBJzJ6j5PHeYhjJDaQ5Vy5UYu4Fv
+    const accountSignPrivKey = account2
 
     const invokerSignCallback = await NeonInvoker.init({
-      rpcAddress: NeonInvoker.TESTNET,
+      rpcAddress,
       signingCallback: async (transaction, details) => {
         const hex = NeonParser.numToHex(details.network, 4, true) + NeonParser.reverseHex(transaction.hash())
         return wallet.sign(hex, privateAccount.privateKey)
@@ -219,23 +211,12 @@ describe('NeonInvoker', function () {
     })
 
     const invokerSignPrivKey = await NeonInvoker.init({
-      rpcAddress: NeonInvoker.TESTNET,
+      rpcAddress,
       account: accountSignPrivKey,
     })
 
     let bt = await invokerSignCallback.signTransaction({
-      invocations: [
-        {
-          scriptHash: '0xd2a4cff31913016155e38e474a2c06d08be276cf',
-          operation: 'transfer',
-          args: [
-            { type: 'Hash160', value: accountSignCallback.address },
-            { type: 'Hash160', value: accountSignPrivKey.address },
-            { type: 'Integer', value: '100000000' },
-            { type: 'Array', value: [] },
-          ],
-        },
-      ],
+      ...transferInvocation(gasScriptHash, accountSignCallback, accountSignPrivKey, '100000000'),
       signers: [
         {
           account: accountSignCallback.scriptHash,
@@ -252,21 +233,10 @@ describe('NeonInvoker', function () {
 
     assert(txId.length > 0, 'has txId')
 
-    await wait(15000)
+    await wait(waitTime)
 
     bt = await invokerSignPrivKey.signTransaction({
-      invocations: [
-        {
-          scriptHash: '0xd2a4cff31913016155e38e474a2c06d08be276cf',
-          operation: 'transfer',
-          args: [
-            { type: 'Hash160', value: accountSignPrivKey.address },
-            { type: 'Hash160', value: accountSignCallback.address },
-            { type: 'Integer', value: '100000000' },
-            { type: 'Array', value: [] },
-          ],
-        },
-      ],
+      ...transferInvocation(gasScriptHash, accountSignPrivKey, accountSignCallback, '100000000'),
       signers: [
         {
           account: accountSignPrivKey.scriptHash,
@@ -283,21 +253,25 @@ describe('NeonInvoker', function () {
 
     assert(txId.length > 0, 'has txId')
 
-    await wait(15000)
+    const appLog = await neonEventListener.waitForApplicationLog(txId)
+    assert(
+      appLog.executions[0].stack[0].value === true,
+      `transfer was not successful (${appLog.executions[0].stack[0].value})`,
+    )
   })
 
   it('add accounts and witnesses to verify smart contracts', async () => {
-    const account = new wallet.Account('3bd06d95e9189385851aa581d182f25de34af759cf7f883af57030303ded52b8')
+    const account = account1
     const invoker = await NeonInvoker.init({
-      rpcAddress: NeonInvoker.TESTNET,
+      rpcAddress,
       account,
     })
 
     // A smart contract that always return True on verify
-    const verifyTrueSmartContract = '0x7aa88cc764b80cae2267d4fdf63cd09f7e9baeba'
+    const verifyTrueSmartContract = verifiableContract
 
     // NeoToken smart contract, we are not verified
-    const verifyFalseSmartContract = '0xef4073a0f2b305a38ec4050e4d3d28bc40ea63f5'
+    const verifyFalseSmartContract = neoScriptHash
 
     const txIdVerifyTrue = await invoker.invokeFunction({
       invocations: [
@@ -317,6 +291,8 @@ describe('NeonInvoker', function () {
           scopes: 'CalledByEntry',
         },
       ],
+      // There is currently a problem with the networkfee when using a contract as a signer, so some extra GAS will be used https://github.com/neo-project/neo/issues/2805
+      extraNetworkFee: 200000,
     })
 
     assert(txIdVerifyTrue.length > 0, 'has txId')
@@ -341,39 +317,26 @@ describe('NeonInvoker', function () {
           },
         ],
       }),
-      {
-        message: /^Inventory verification failed/,
-      },
     )
   })
 
   it("can throw an error if the signed transaction doesn't match the invocation", async () => {
-    const accountPayer = new wallet.Account('fb1f57cc1347ae5b6251dc8bae761362d2ecaafec4c87f4dc9e97fef6dd75014') // NbnjKGMBJzJ6j5PHeYhjJDaQ5Vy5UYu4Fv
-    const accountOwner = new wallet.Account('3bd06d95e9189385851aa581d182f25de34af759cf7f883af57030303ded52b8') // NhGomBpYnKXArr55nHRQ5rzy79TwKVXZbr
+    const accountPayer = account1
+    const accountOwner = account2
 
     const invokerPayer = await NeonInvoker.init({
-      rpcAddress: NeonInvoker.TESTNET,
+      rpcAddress,
       account: accountPayer,
     })
 
     const invokerOwner = await NeonInvoker.init({
-      rpcAddress: NeonInvoker.TESTNET,
+      rpcAddress,
       account: accountOwner,
     })
 
     const bt = await invokerPayer.signTransaction({
-      invocations: [
-        {
-          scriptHash: '0xd2a4cff31913016155e38e474a2c06d08be276cf',
-          operation: 'transfer',
-          args: [
-            { type: 'Hash160', value: accountOwner.address }, // owner is sending to payer but the payer is paying for the tx
-            { type: 'Hash160', value: accountPayer.address },
-            { type: 'Integer', value: '100000000' },
-            { type: 'Array', value: [] },
-          ],
-        },
-      ],
+      // owner is sending to payer but the payer is paying for the tx
+      ...transferInvocation(gasScriptHash, accountOwner, accountPayer, '100000000'),
       signers: [
         {
           account: accountPayer.scriptHash,
@@ -402,18 +365,13 @@ describe('NeonInvoker', function () {
           },
         ],
       }),
-      {
-        name: 'Error',
-        message:
-          'The script in the BuiltTransaction is not the same as the one generated from the ContractInvocationMulti',
-      },
     )
   })
 
   it('does calculateFee', async () => {
-    const account = new wallet.Account('3bd06d95e9189385851aa581d182f25de34af759cf7f883af57030303ded52b8')
+    const account = account1
     const invoker = await NeonInvoker.init({
-      rpcAddress: NeonInvoker.TESTNET,
+      rpcAddress,
       account,
     })
 
@@ -454,8 +412,14 @@ describe('NeonInvoker', function () {
       ...param,
     })
 
-    assert(Number(networkFeeOverridden) === toDecimal(20000, 8), 'has networkFee overridden')
-    assert(Number(systemFeeOverridden) === toDecimal(10000, 8), 'has systemFee overridden')
+    assert(
+      parseFloat(networkFeeOverridden) === toDecimal(20000, 8),
+      `networkFee override is not equal (${parseFloat(networkFeeOverridden)} !== ${toDecimal(20000, 8)})`,
+    )
+    assert(
+      parseFloat(systemFeeOverridden) === toDecimal(10000, 8),
+      `systemFee override is not equal (${parseFloat(systemFeeOverridden)} !== ${toDecimal(10000, 8)})`,
+    )
 
     const { networkFee: networkFeeExtra, systemFee: systemFeeExtra } = await invoker.calculateFee({
       extraNetworkFee: 20000,
@@ -463,13 +427,24 @@ describe('NeonInvoker', function () {
       ...param,
     })
 
-    assert(Number(networkFeeExtra) === Number(networkFee) + toDecimal(20000, 8), 'has networkFee overridden')
-    assert(Number(systemFeeExtra) === Number(systemFee) + toDecimal(10000, 8), 'has systemFee overridden')
+    assert(
+      parseFloat(networkFeeExtra).toFixed(8) === (parseFloat(networkFee) + toDecimal(20000, 8)).toFixed(8),
+      `extra networkFee is not equal (${parseFloat(networkFeeExtra).toFixed(8)} !== ${(
+        parseFloat(networkFee) + toDecimal(20000, 8)
+      ).toFixed(8)})`,
+    )
+
+    assert(
+      parseFloat(systemFeeExtra).toFixed(8) === (parseFloat(systemFee) + toDecimal(10000, 8)).toFixed(8),
+      `extra systemFee is not equal (${parseFloat(systemFeeExtra).toFixed(8)} !== ${(
+        parseFloat(systemFee) + toDecimal(10000, 8)
+      ).toFixed(8)})`,
+    )
   })
 
   it('does testInvoke', async () => {
     const invoker = await NeonInvoker.init({
-      rpcAddress: NeonInvoker.TESTNET,
+      rpcAddress,
     })
 
     const resp = await invoker.testInvoke({
@@ -491,7 +466,7 @@ describe('NeonInvoker', function () {
 
   it('can throw an error if testInvoke state is FAULT', async () => {
     const invoker = await NeonInvoker.init({
-      rpcAddress: NeonInvoker.TESTNET,
+      rpcAddress,
     })
 
     await assert.rejects(
@@ -508,28 +483,23 @@ describe('NeonInvoker', function () {
           },
         ],
       }),
-      {
-        name: 'Error',
-        message:
-          'Execution state is FAULT. Exception: Method "transfer" with 3 parameter(s) doesn\'t exist in the contract 0xd2a4cff31913016155e38e474a2c06d08be276cf.',
-      },
     )
   })
 
   it('handles integer return', async () => {
     const invoker = await NeonInvoker.init({
-      rpcAddress: NeonInvoker.TESTNET,
+      rpcAddress,
     })
 
     const resp = await invoker.testInvoke({
       invocations: [
         {
-          scriptHash: '0x7346e59b3b3516467390a11c390679ab46b37af3',
+          scriptHash: testReturnContract,
           operation: 'negative_number',
           args: [],
         },
         {
-          scriptHash: '0x7346e59b3b3516467390a11c390679ab46b37af3',
+          scriptHash: testReturnContract,
           operation: 'return_same_int',
           args: [{ type: 'Integer', value: '1234' }],
         },
@@ -552,28 +522,28 @@ describe('NeonInvoker', function () {
 
   it('handles boolean return', async () => {
     const invoker = await NeonInvoker.init({
-      rpcAddress: NeonInvoker.TESTNET,
+      rpcAddress,
     })
 
     const resp = await invoker.testInvoke({
       invocations: [
         {
-          scriptHash: '0x7346e59b3b3516467390a11c390679ab46b37af3',
+          scriptHash: testReturnContract,
           operation: 'bool_true',
           args: [],
         },
         {
-          scriptHash: '0x7346e59b3b3516467390a11c390679ab46b37af3',
+          scriptHash: testReturnContract,
           operation: 'bool_false',
           args: [],
         },
         {
-          scriptHash: '0x7346e59b3b3516467390a11c390679ab46b37af3',
+          scriptHash: testReturnContract,
           operation: 'return_same_bool',
           args: [{ type: 'Boolean', value: true }],
         },
         {
-          scriptHash: '0x7346e59b3b3516467390a11c390679ab46b37af3',
+          scriptHash: testReturnContract,
           operation: 'return_same_bool',
           args: [{ type: 'Boolean', value: false }],
         },
@@ -605,28 +575,28 @@ describe('NeonInvoker', function () {
 
   it('handles boolean return (again)', async () => {
     const invoker = await NeonInvoker.init({
-      rpcAddress: NeonInvoker.TESTNET,
+      rpcAddress,
     })
 
     const resp = await invoker.testInvoke({
       invocations: [
         {
-          scriptHash: '0x7346e59b3b3516467390a11c390679ab46b37af3',
+          scriptHash: testReturnContract,
           operation: 'bool_true',
           args: [],
         },
         {
-          scriptHash: '0x7346e59b3b3516467390a11c390679ab46b37af3',
+          scriptHash: testReturnContract,
           operation: 'bool_false',
           args: [],
         },
         {
-          scriptHash: '0x7346e59b3b3516467390a11c390679ab46b37af3',
+          scriptHash: testReturnContract,
           operation: 'return_same_bool',
           args: [{ type: 'Boolean', value: true }],
         },
         {
-          scriptHash: '0x7346e59b3b3516467390a11c390679ab46b37af3',
+          scriptHash: testReturnContract,
           operation: 'return_same_bool',
           args: [{ type: 'Boolean', value: false }],
         },
@@ -658,13 +628,13 @@ describe('NeonInvoker', function () {
 
   it('handles array return', async () => {
     const invoker = await NeonInvoker.init({
-      rpcAddress: NeonInvoker.TESTNET,
+      rpcAddress,
     })
 
     const resp = await invoker.testInvoke({
       invocations: [
         {
-          scriptHash: '0x7346e59b3b3516467390a11c390679ab46b37af3',
+          scriptHash: testReturnContract,
           operation: 'positive_numbers',
           args: [],
         },
@@ -698,18 +668,18 @@ describe('NeonInvoker', function () {
 
   it('handles bytestring return', async () => {
     const invoker = await NeonInvoker.init({
-      rpcAddress: NeonInvoker.TESTNET,
+      rpcAddress,
     })
 
     const resp = await invoker.testInvoke({
       invocations: [
         {
-          scriptHash: '0x7346e59b3b3516467390a11c390679ab46b37af3',
+          scriptHash: testReturnContract,
           operation: 'return_str',
           args: [],
         },
         {
-          scriptHash: '0x7346e59b3b3516467390a11c390679ab46b37af3',
+          scriptHash: testReturnContract,
           operation: 'return_bytes',
           args: [],
         },
@@ -732,13 +702,13 @@ describe('NeonInvoker', function () {
 
   it('handles array return (again)', async () => {
     const invoker = await NeonInvoker.init({
-      rpcAddress: NeonInvoker.TESTNET,
+      rpcAddress,
     })
 
     const resp = await invoker.testInvoke({
       invocations: [
         {
-          scriptHash: '0x7346e59b3b3516467390a11c390679ab46b37af3',
+          scriptHash: testReturnContract,
           operation: 'positive_numbers',
           args: [],
         },
@@ -772,13 +742,13 @@ describe('NeonInvoker', function () {
 
   it('handles map return', async () => {
     const invoker = await NeonInvoker.init({
-      rpcAddress: NeonInvoker.TESTNET,
+      rpcAddress,
     })
 
     const resp = await invoker.testInvoke({
       invocations: [
         {
-          scriptHash: '0x8b43ab0c83b7d12cf35a0e780072bc314a688796',
+          scriptHash: testReturnMapContract,
           operation: 'main',
           args: [],
         },

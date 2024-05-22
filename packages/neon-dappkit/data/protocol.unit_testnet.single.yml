@@ -1,20 +1,20 @@
 ProtocolConfiguration:
   Magic: 42
   MaxTraceableBlocks: 200000
-  TimePerBlock: 300ms
+  InitialGASSupply: 5200000000
+  TimePerBlock: 500ms
   MemPoolSize: 100
   StandbyCommittee:
     - 02b3622bf4017bdfe317c58aed5f4c753f206b7db896046fa7d774bbc4bf7f8dc2
   ValidatorsCount: 1
   VerifyTransactions: true
-  P2PSigExtensions: true
+  P2PSigExtensions: false
   Hardforks:
     Aspidochelone: 25
 
 ApplicationConfiguration:
   SkipBlockVerification: false
   # LogPath could be set up in case you need stdout logs to some proper file.
-  # LogPath: "./log/neogo.log"
   DBConfiguration:
     Type: 'inmemory' #other options: 'inmemory','boltdb'
     # DB type options. Uncomment those you need in case you want to switch DB type.
@@ -42,7 +42,7 @@ ApplicationConfiguration:
     MaxGasInvoke: 15
     Enabled: true
     Addresses:
-      - '127.0.0.1:50012'
+      - '127.0.0.1:30222'
     EnableCORSWorkaround: false
   Prometheus:
     Enabled: false #since it's not useful for unit tests.

@@ -1,4 +1,4 @@
-import { NeonSigner, SignMessageVersion } from './index'
+import { NeonSigner, SignMessageVersion } from '../src/index'
 import { wallet } from '@cityofzion/neon-js'
 import assert from 'assert'
 

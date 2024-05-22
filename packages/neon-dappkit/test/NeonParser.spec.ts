@@ -1,4 +1,4 @@
-import { NeonParser } from '.'
+import { NeonParser } from '../src'
 import { describe, it } from 'mocha'
 import * as assert from 'assert'
 import { RpcResponseStackItem } from '@cityofzion/neon-dappkit-types'
