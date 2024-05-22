@@ -1,0 +1,18 @@
+{
+  "type": "Neo.Network.P2P.Payloads.Transaction",
+  "network": 42,
+  "hash": "0xd1e694bf2198ecccafa2abc09149394c0f523e5e70e8fdd5566f57ddc1c9588e",
+  "data": "AN4giAUq+ao7AAAAABA1GgAAAAAAIQEAAAENqWekAEMr8n+OjrRv6KxlnszeBAEA/T4CDbQBew0KICAgICJuYW1lIjogInRlc3RtYXAiLA0KICAgICJncm91cHMiOiBbXSwNCiAgICAiZmVhdHVyZXMiOiB7fSwNCiAgICAic3VwcG9ydGVkc3RhbmRhcmRzIjogW10sDQogICAgImFiaSI6IHsNCiAgICAgICAgIm1ldGhvZHMiOiBbDQogICAgICAgICAgICB7DQogICAgICAgICAgICAgICAgIm5hbWUiOiAibWFpbiIsDQogICAgICAgICAgICAgICAgInBhcmFtZXRlcnMiOiBbXSwNCiAgICAgICAgICAgICAgICAicmV0dXJudHlwZSI6ICJNYXAiLA0KICAgICAgICAgICAgICAgICJvZmZzZXQiOiAwLA0KICAgICAgICAgICAgICAgICJzYWZlIjogZmFsc2UNCiAgICAgICAgICAgIH0NCiAgICAgICAgXSwNCiAgICAgICAgImV2ZW50cyI6IFtdDQogICAgfSwNCiAgICAicGVybWlzc2lvbnMiOiBbXSwNCiAgICAidHJ1c3RzIjogW10sDQogICAgImV4dHJhIjogbnVsbA0KfQxfTkVGM25lbzMtYm9hIGJ5IENPWi0xLjIuMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABFXAQDIcGgMAWEU0GgdE9BoQOnpMLUSwB8MBmRlcGxveQwU/aP6Q0bqUyolj8SX3a3bZDfJ/f9BYn1bUg==",
+  "items": {
+    "0x04decc9e65ace86fb48e8e7ff22b4300a467a90d": {
+      "script": "DCEDWpKPIBY5IE4GtDaLGpM2VGKo67/wuIGBUbdPqrOithpBVuezJw==",
+      "parameters": [
+        {
+          "type": "Signature",
+          "value": "sD38tAvGimlPGKrRqhXXLDiReAldfZeCdMlCjvWzhL4r0yN4fKi7NLZYBQI2PktWiujk6rsWq+jc4bK7lZbEjQ=="
+        }
+      ],
+      "signatures": {}
+    }
+  }
+}

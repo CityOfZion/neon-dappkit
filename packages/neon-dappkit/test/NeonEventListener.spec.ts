@@ -1,6 +1,5 @@
 import { ChildProcess, spawn } from 'child_process'
-import { NeonEventListener, NeonInvoker, NeonParser } from './index'
-import * as path from 'path'
+import { NeonEventListener, NeonInvoker, NeonParser } from '../src/index'
 import assert from 'assert'
 import {
   ContractInvocationMulti,
@@ -10,52 +9,29 @@ import {
   TypeChecker,
 } from '@cityofzion/neon-dappkit-types'
 import { wallet } from '@cityofzion/neon-core'
-
-function wait(ms: number) {
-  return new Promise((resolve) => {
-    setTimeout(resolve, ms)
-  })
-}
-
-function neoGoPath() {
-  return path.resolve(path.join(__dirname, '..', 'neogo', 'neogo'))
-}
-
-function getDataDir() {
-  return path.resolve(path.join(__dirname, '..', 'data'))
-}
+import {
+  wait,
+  neoGoPath,
+  getDataDir,
+  transferInvocation,
+  waitTime,
+  rpcAddress,
+  gasScriptHash,
+  neonEventListenerOptions,
+} from './helper'
 
 describe('NeonEventListener', function () {
   this.timeout(60000)
   let childProcess: ChildProcess
-  const rpcAddress = 'http://127.0.0.1:50012'
-  const eventListener = new NeonEventListener(rpcAddress, {
-    waitForApplicationLog: { maxAttempts: 10, waitMs: 100 },
-    waitForEventMs: 100,
-  })
-  const gasScriptHash = '0xd2a4cff31913016155e38e474a2c06d08be276cf'
+  const eventListener = new NeonEventListener(rpcAddress, neonEventListenerOptions)
   let accountWithGas: wallet.Account
-  const waitTime = 900
 
-  function transferInvocation(
+  function gasTransferInvocation(
     sender: wallet.Account,
     receiver: wallet.Account,
     amount: string,
   ): ContractInvocationMulti {
-    return {
-      invocations: [
-        {
-          scriptHash: gasScriptHash,
-          operation: 'transfer',
-          args: [
-            { type: 'Hash160', value: sender.address },
-            { type: 'Hash160', value: receiver.address },
-            { type: 'Integer', value: amount },
-            { type: 'String', value: 'test' },
-          ],
-        },
-      ],
-    }
+    return transferInvocation(gasScriptHash, sender, receiver, amount)
   }
 
   beforeEach(async function () {
@@ -72,6 +48,8 @@ describe('NeonEventListener', function () {
     accountWithGas = new wallet.Account(
       await wallet.decrypt('6PYM8VdX3hY4B51UJxmm8D41RQMbpJT8aYHibyQ67gjkUPmvQgu51Y5UQR', 'one', { n: 2, r: 1, p: 1 }),
     )
+
+    await wait(waitTime)
 
     return true
   })
@@ -102,7 +80,7 @@ describe('NeonEventListener', function () {
 
     const neoInvoker = await NeonInvoker.init({ rpcAddress, account: sender })
 
-    const txId = await neoInvoker.invokeFunction(transferInvocation(sender, receiver, '100'))
+    const txId = await neoInvoker.invokeFunction(gasTransferInvocation(sender, receiver, '100'))
     assert(txId, 'Transaction ID should be returned')
 
     const notification = await eventPromise
@@ -141,7 +119,7 @@ describe('NeonEventListener', function () {
 
     const neoInvoker = await NeonInvoker.init({ rpcAddress, account: sender })
 
-    const txId = await neoInvoker.invokeFunction(transferInvocation(sender, receiver, '100'))
+    const txId = await neoInvoker.invokeFunction(gasTransferInvocation(sender, receiver, '100'))
     assert(txId, 'Transaction ID should be returned')
 
     const notification1 = await eventPromise1
@@ -160,7 +138,7 @@ describe('NeonEventListener', function () {
 
     const neoInvoker = await NeonInvoker.init({ rpcAddress, account: sender })
 
-    const txId = await neoInvoker.invokeFunction(transferInvocation(sender, receiver, '100'))
+    const txId = await neoInvoker.invokeFunction(gasTransferInvocation(sender, receiver, '100'))
     assert(txId, 'Transaction ID should be returned')
 
     await wait(waitTime)
@@ -177,7 +155,7 @@ describe('NeonEventListener', function () {
 
     const neoInvoker = await NeonInvoker.init({ rpcAddress, account: sender })
 
-    const txId = await neoInvoker.invokeFunction(transferInvocation(sender, receiver, '100'))
+    const txId = await neoInvoker.invokeFunction(gasTransferInvocation(sender, receiver, '100'))
     assert(txId, 'Transaction ID should be returned')
 
     await wait(waitTime)
@@ -203,7 +181,7 @@ describe('NeonEventListener', function () {
 
     const neoInvoker = await NeonInvoker.init({ rpcAddress, account: sender })
 
-    const txId = await neoInvoker.invokeFunction(transferInvocation(sender, receiver, '100'))
+    const txId = await neoInvoker.invokeFunction(gasTransferInvocation(sender, receiver, '100'))
     assert(txId, 'Transaction ID should be returned')
 
     await assert.rejects(async () => eventPromise)
@@ -225,14 +203,14 @@ describe('NeonEventListener', function () {
 
     const neoInvoker = await NeonInvoker.init({ rpcAddress, account: sender })
 
-    let txId = await neoInvoker.invokeFunction(transferInvocation(sender, receiver, '100'))
+    let txId = await neoInvoker.invokeFunction(gasTransferInvocation(sender, receiver, '100'))
     assert(txId, 'Transaction ID should be returned')
 
     await wait(waitTime)
     assert(called === 1, 'Callback should be called once')
 
     eventListener.removeEventListener(gasScriptHash, eventName, callBack)
-    txId = await neoInvoker.invokeFunction(transferInvocation(sender, receiver, '100'))
+    txId = await neoInvoker.invokeFunction(gasTransferInvocation(sender, receiver, '100'))
     assert(txId, 'Transaction ID should be returned')
 
     await wait(waitTime)
@@ -255,14 +233,14 @@ describe('NeonEventListener', function () {
 
     const neoInvoker = await NeonInvoker.init({ rpcAddress, account: sender })
 
-    let txId = await neoInvoker.invokeFunction(transferInvocation(sender, receiver, '100'))
+    let txId = await neoInvoker.invokeFunction(gasTransferInvocation(sender, receiver, '100'))
     assert(txId, 'Transaction ID should be returned')
 
     await wait(waitTime)
     assert(called === 1, 'Callback should be called once')
 
     eventListener.removeAllEventListenersOfContract(gasScriptHash)
-    txId = await neoInvoker.invokeFunction(transferInvocation(sender, receiver, '100'))
+    txId = await neoInvoker.invokeFunction(gasTransferInvocation(sender, receiver, '100'))
     assert(txId, 'Transaction ID should be returned')
 
     await wait(waitTime)
@@ -285,14 +263,14 @@ describe('NeonEventListener', function () {
 
     const neoInvoker = await NeonInvoker.init({ rpcAddress, account: sender })
 
-    let txId = await neoInvoker.invokeFunction(transferInvocation(sender, receiver, '100'))
+    let txId = await neoInvoker.invokeFunction(gasTransferInvocation(sender, receiver, '100'))
     assert(txId, 'Transaction ID should be returned')
 
     await wait(waitTime)
     assert(called === 1, 'Callback should be called once')
 
     eventListener.removeAllEventListenersOfEvent(gasScriptHash, eventName)
-    txId = await neoInvoker.invokeFunction(transferInvocation(sender, receiver, '100'))
+    txId = await neoInvoker.invokeFunction(gasTransferInvocation(sender, receiver, '100'))
     assert(txId, 'Transaction ID should be returned')
 
     await wait(waitTime)
@@ -304,7 +282,7 @@ describe('NeonEventListener', function () {
     const receiver = new wallet.Account()
 
     const neoInvoker = await NeonInvoker.init({ rpcAddress, account: sender })
-    const txId = await neoInvoker.invokeFunction(transferInvocation(sender, receiver, '100'))
+    const txId = await neoInvoker.invokeFunction(gasTransferInvocation(sender, receiver, '100'))
 
     const applicationLog = await eventListener.waitForApplicationLog(txId)
 
@@ -334,7 +312,7 @@ describe('NeonEventListener', function () {
     const receiver = new wallet.Account()
 
     const neoInvoker = await NeonInvoker.init({ rpcAddress, account: sender })
-    const txId = await neoInvoker.invokeFunction(transferInvocation(sender, receiver, '100'))
+    const txId = await neoInvoker.invokeFunction(gasTransferInvocation(sender, receiver, '100'))
 
     const fastEventListener = new NeonEventListener(rpcAddress, {
       waitForApplicationLog: { maxAttempts: 1, waitMs: 10 },
@@ -348,7 +326,7 @@ describe('NeonEventListener', function () {
     const receiver = new wallet.Account()
 
     const neoInvoker = await NeonInvoker.init({ rpcAddress, account: sender })
-    const txId = await neoInvoker.invokeFunction(transferInvocation(sender, receiver, '100'))
+    const txId = await neoInvoker.invokeFunction(gasTransferInvocation(sender, receiver, '100'))
     const applicationLog = await eventListener.waitForApplicationLog(txId)
 
     eventListener.confirmHalt(applicationLog)
@@ -375,12 +353,12 @@ describe('NeonEventListener', function () {
     const receiver = new wallet.Account()
 
     const neoInvoker = await NeonInvoker.init({ rpcAddress, account: sender })
-    const txId = await neoInvoker.invokeFunction(transferInvocation(sender, receiver, '100'))
+    const txId = await neoInvoker.invokeFunction(gasTransferInvocation(sender, receiver, '100'))
     const applicationLog = await eventListener.waitForApplicationLog(txId)
 
     eventListener.confirmStackTrue(applicationLog)
 
-    const txIdFalse = await neoInvoker.invokeFunction(transferInvocation(sender, receiver, '-100'))
+    const txIdFalse = await neoInvoker.invokeFunction(gasTransferInvocation(sender, receiver, '-100'))
     const applicationLogFalse = await eventListener.waitForApplicationLog(txIdFalse)
 
     await assert.rejects(async () => {
@@ -402,7 +380,7 @@ describe('NeonEventListener', function () {
     const receiver = new wallet.Account()
 
     const neoInvoker = await NeonInvoker.init({ rpcAddress, account: sender })
-    const txId = await neoInvoker.invokeFunction(transferInvocation(sender, receiver, '100'))
+    const txId = await neoInvoker.invokeFunction(gasTransferInvocation(sender, receiver, '100'))
     const applicationLog = await eventListener.waitForApplicationLog(txId)
 
     const notificationState = eventListener.getNotificationState(applicationLog, {
@@ -437,14 +415,14 @@ describe('NeonEventListener', function () {
     const receiver = new wallet.Account()
 
     const neoInvoker = await NeonInvoker.init({ rpcAddress, account: sender })
-    const txId = await neoInvoker.invokeFunction(transferInvocation(sender, receiver, '100'))
+    const txId = await neoInvoker.invokeFunction(gasTransferInvocation(sender, receiver, '100'))
     const applicationLog = await eventListener.waitForApplicationLog(txId)
 
     eventListener.confirmTransaction(applicationLog)
     eventListener.confirmTransaction(applicationLog, { contract: gasScriptHash, eventname: 'Transfer' })
     eventListener.confirmTransaction(applicationLog, { contract: gasScriptHash, eventname: 'Transfer' }, true)
 
-    const txIdFalse = await neoInvoker.invokeFunction(transferInvocation(sender, receiver, '-100'))
+    const txIdFalse = await neoInvoker.invokeFunction(gasTransferInvocation(sender, receiver, '-100'))
     const applicationLogFalse = await eventListener.waitForApplicationLog(txIdFalse)
 
     eventListener.confirmTransaction(applicationLogFalse)

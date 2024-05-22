@@ -8,11 +8,11 @@
     "/dist"
   ],
   "scripts": {
-    "build": "tsc",
+    "build": "tsc -p tsconfig.build.json",
     "lint": "eslint .",
     "format": "eslint --fix",
-    "test": "ts-node test/setup-neo-go.ts && ts-mocha --reporter json > ../../mocha-results.json src/**/*.spec.ts",
-    "test-print": "ts-node test/setup-neo-go.ts && ts-mocha src/**/*.spec.ts",
+    "test": "ts-node test/setup-neo-go.ts && ts-mocha --reporter json > ../../mocha-results.json test/**/*.spec.ts",
+    "test-print": "ts-node test/setup-neo-go.ts && ts-mocha test/**/*.spec.ts",
     "coverage": "nyc pnpm test"
   },
   "dependencies": {

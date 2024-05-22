@@ -16,25 +16,34 @@
         "deployed": false
       },
       "lock": false,
-      "isDefault": false
+      "isDefault": true
     },
     {
-      "address": "NVTiAjNgagDkTr5HTzDmQP9kPwPHN5BgVq",
+      "address": "NfgHwwTi3wHAS8aFAN243C5vGbkYDpqLHP",
       "key": "6PYM8VdX3hY4B51UJxmm8D41RQMbpJT8aYHibyQ67gjkUPmvQgu51Y5UQR",
       "label": "",
       "contract": {
-        "script": "EwwhAhA6f33QFlWFl/eWDSfFFqQ5T9loueZRVetLAT5AQEBuDCECp7xV/oaE4BGXaNEEujB5W9zIZhnoZK3SYVZyPtGFzWIMIQKzYiv0AXvf4xfFiu1fTHU/IGt9uJYEb6fXdLvEv3+NwgwhA9kMB99j5pDOd5EuEKtRrMlEtmhgI3tgjE+PgwnnHuaZFEGe0Nw6",
+        "script": "EQwhArNiK/QBe9/jF8WK7V9MdT8ga324lgRvp9d0u8S/f43CEUGe0Nw6",
         "parameters": [
           {
             "name": "parameter0",
             "type": "Signature"
-          },
+          }
+        ],
+        "deployed": false
+      },
+      "lock": false,
+      "isDefault": false
+    },
+    {
+      "address": "NMACuhqEaNAeDSQVipcUPYiJ9TVgVyUxGV",
+      "key": "6PYLyTFiWAHEivtab5dMWorwiNaczcbFRbxcqAuBWVyGLtFSsbFZycEZVu",
+      "label": "account1",
+      "contract": {
+        "script": "DCEDWpKPIBY5IE4GtDaLGpM2VGKo67/wuIGBUbdPqrOithpBVuezJw==",
+        "parameters": [
           {
-            "name": "parameter1",
-            "type": "Signature"
-          },
-          {
-            "name": "parameter2",
+            "name": "parameter0",
             "type": "Signature"
           }
         ],

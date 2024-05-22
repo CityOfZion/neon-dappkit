@@ -19,7 +19,7 @@ async function installNeoGo(): Promise<string | undefined> {
     return goCompilerExecutablePath
   }
 
-  const version = '0.105.1'
+  const version = '0.106.0'
   const arch = process.arch
 
   let archType = 'arm64'
