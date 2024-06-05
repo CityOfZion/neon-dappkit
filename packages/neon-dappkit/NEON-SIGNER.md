@@ -29,10 +29,11 @@ const signer = new NeonSigner()
 ```ts
 // 1) sign a message
 const mySignedMessage = await signer.signMessage({ message: 'My message', version: 2 })
+// the signed message contains messageHex, data, publicKey and salt
 
-// 2) store these information somewhere
+// 2) store or share these information to be verified later or by someone else
 
-// 3) check later if the message was signed by this account
+// 3) check if the signature is valid, if the method returns true, it is certain that that specific publicKey signed that messageHex
 const valid = await signer.verifyMessage(mySignedMessage)
 ```
 You can use different **versions**, the default is `2`, but you can use `3` to sign a message without salt, and `1` to
@@ -69,6 +70,4 @@ is the correct one.
 
 ### More Details
 
-For more details on the methods signature, check the auto-generated
-[Docs](https://htmlpreview.github.io/?https://raw.githubusercontent.com/CityOfZion/neon-dappkit/master/packages/neon-dappkit-types/docs/interfaces/Neo3Signer.html),
-the [Unit Tests](https://github.com/CityOfZion/neon-dappkit/blob/main/packages/neon-dappkit/src/NeonSigner.spec.ts) and the [Source Code](https://github.com/CityOfZion/neon-dappkit/blob/main/packages/neon-dappkit/src/NeonSigner.ts).
+For more details on the methods signature, check the [Unit Tests](https://github.com/CityOfZion/neon-dappkit/blob/main/packages/neon-dappkit/test/NeonSigner.spec.ts).
