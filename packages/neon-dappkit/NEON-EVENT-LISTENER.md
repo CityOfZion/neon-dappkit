@@ -6,7 +6,6 @@ To use NeonEventListener you can simply call its constructor passing the network
 
 ```ts
 import { NeonEventListener } from '@cityofzion/neon-dappkit'
-import { default as Neon } from '@cityofzion/neon-js'
 
 const eventListener = new NeonEventListener(NeonEventListener.MAINNET)
 ```
