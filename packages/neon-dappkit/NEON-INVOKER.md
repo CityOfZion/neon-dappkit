@@ -52,7 +52,7 @@ Neo blockchain expect params with
 Check [Arguments Documentation](./ARGUMENTS.md)
 to know more about the expected value for each argument type.
 
-To invoke a SmartContract, it's important to know the argument types of the method, this information can be found on Dora.
+To invoke a SmartContract, it's important to know the argument types of the method, this information can be found on the contract page on Dora.
 On the example below we are invoking the `transfer` method of the [GAS](https://dora.coz.io/contract/neo3/mainnet/0xd2a4cff31913016155e38e474a2c06d08be276cf) token.
 
 Check it out:
@@ -77,6 +77,13 @@ const resp = await invoker.invokeFunction({
 })
 ```
 
+Options for each `invocation`:
+
+- `scriptHash`: the SmartContract ScriptHash
+- `operation`: the SmartContract's method name
+- `args`: the parameters to be sent to the method, as explained above
+- `abortOnFail`: when requesting multiple invocations, you can set `abortOnFail` to true on some invocations so the VM will abort the rest of the calls if this invocation returns `false`
+
 Options for each `signer`:
 
 - `scopes`: to specify which scopes should be used to sign the transaction, [learn more](https://developers.neo.org/docs/n3/foundation/Transactions#scopes). This property accepts them as a string as seen on the examples, or as a number, which can be imported from `WitnessScope` of `neon-js`.
@@ -84,13 +91,6 @@ Options for each `signer`:
 - `allowedContracts`: when the `scopes` property is set as `CustomContracts`, you should use this property to specify a list with the script hash of the contracts that are allowed.
 - `allowedGroups`: when the `scopes` property is set as `CustomGroups`, you should use this property to specify the public key of the groups that are allowed.
 - `rules`: are needed when you have a complex scope and need to use logic to allow or deny which smart contracts have access to the signature. [Learn more](https://developers.neo.org/docs/n3/foundation/Transactions#witnessrule).
-
-Options for each `invocation`:
-
-- `scriptHash`: the SmartContract ScriptHash
-- `operation`: the SmartContract's method name
-- `args`: the parameters to be sent to the method, as explained above
-- `abortOnFail`: when requesting multiple invocations, you can set `abortOnFail` to true on some invocations so the VM will abort the rest of the calls if this invocation returns `false`
 
 Additional root options:
 
@@ -124,9 +124,6 @@ const resp = await invoker.invokeFunction({
 const respCustomContracts = await invoker.invokeFunction({
     invocations: [{
         // ...
-    },
-    {
-        // ...
     }],
     signers: [{
         scopes: 'CustomContracts',
@@ -147,9 +144,6 @@ const respCustomContracts = await invoker.invokeFunction({
 const respCustomGroups = await invoker.invokeFunction({
     invocations: [{
         // ...
-    },
-    {
-        // ...
     }],
     signers: [{
         scopes: 'CustomGroups',
@@ -168,9 +162,6 @@ const respCustomGroups = await invoker.invokeFunction({
 ```ts
 const respRules = await invoker.invokeFunction({
     invocations: [{
-        // ...
-    },
-    {
         // ...
     }],
     signers: [{
@@ -200,11 +191,9 @@ const respRules = await invoker.invokeFunction({
 
 ### Calling TestInvoke
 
-To retrieve information from a SmartContract without persisting any information on the blockchain you can use `testInvoke` method.
+To retrieve information from a SmartContract without spending GAS, and without persisting any information on the blockchain, you can use `testInvoke` method.
 
 On the example below we are invoking the `balanceOf` method of the `GAS` token.
-
-Is expected for the Wallets to not ask the user for authorization on testInvoke.
 
 Check it out:
 
