@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@cityofzion/neon-dappkit-types",
+      "comment": "SignedMessage object might have an optional message property instead of the messageHex",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@cityofzion/neon-dappkit-types"
+}

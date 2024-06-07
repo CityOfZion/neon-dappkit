@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@cityofzion/neon-dappkit",
+      "comment": "Increased compatibility of signMessage and verifyMessage",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@cityofzion/neon-dappkit"
+}
