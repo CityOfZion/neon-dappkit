@@ -77,8 +77,12 @@ export class NeonSigner implements Neo3Signer {
   }
 
   async verifyMessage(verifyArgs: SignedMessage): Promise<boolean> {
-    const messageHex = verifyArgs.message ?? u.hexstring2str(verifyArgs.messageHex)
-    return wallet.verify(messageHex, verifyArgs.data, verifyArgs.publicKey) || this.verifyMessageLegacy(verifyArgs)
+    return (await this.verifyMessageSimple(verifyArgs)) || (await this.verifyMessageLegacy(verifyArgs))
+  }
+
+  private async verifyMessageSimple(verifyArgs: SignedMessage): Promise<boolean> {
+    const messageHex = verifyArgs.messageHex ?? u.str2hexstring(verifyArgs.message)
+    return wallet.verify(messageHex, verifyArgs.data, verifyArgs.publicKey)
   }
 
   private async verifyMessageLegacy(verifyArgs: SignedMessage): Promise<boolean> {
