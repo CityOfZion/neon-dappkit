@@ -45,12 +45,7 @@ const invoker = await NeonInvoker.init({
 
 To invoke a SmartContract method you can use `invokeFunction` method.
 
-Neo blockchain expect params with
-`{ type, value }` format, and on `type` you should provide one of the types mentioned [here](https://neon.coz.io/wksdk/core/interfaces/Argument.html).
-
-
-Check [Arguments Documentation](./ARGUMENTS.md)
-to know more about the expected value for each argument type.
+Neo blockchain expect arguments with `{ type, value }` format, check the [Arguments Documentation](./ARGUMENTS.md) to understand how to format them.
 
 To invoke a SmartContract, it's important to know the argument types of the method, this information can be found on the contract page on Dora.
 On the example below we are invoking the `transfer` method of the [GAS](https://dora.coz.io/contract/neo3/mainnet/0xd2a4cff31913016155e38e474a2c06d08be276cf) token.
