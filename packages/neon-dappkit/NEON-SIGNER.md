@@ -25,7 +25,8 @@ const signer = new NeonSigner()
 ## Usage
 
 ### Sign and Verify message
-
+The process of signing and then verifying a message is useful to prove that the user owns a specific account and have
+truly signed your specific message. 
 ```ts
 // 1) sign a message
 const mySignedMessage = await signer.signMessage({ message: 'My message', version: 2 })
@@ -44,10 +45,10 @@ use the legacy version.
 ```ts
 // 1) encrypt data using the public key of the recipient, so only the recipient can decrypt it with his private key
 // this method receives an array of public keys, so you can encrypt the data for multiple recipients
-// and it returns an array of encrypted messages
+// and it returns an array of encrypted messages, one for each recipient public key
 const encryptedMessages = signer.encrypt("Data to be encrypted", [recipientPublicKey])
 
-// select which encrypted message you want to use
+// 2) select which encrypted message you want to use
 const encryptedMessage = encryptedMessages[0]
 
 // 3) on the other side, the recipient can decrypt the data using his private key
@@ -59,7 +60,7 @@ one.
 ```ts
 // 1) encrypt data using the public key of many recipients
 const encryptedMessages = signer.encrypt("Data to be encrypted", [
-    recipientPublicKey1, recipientPublicKey2, recipientPublicKey3
+    jackPublicKey, rickPublicKey, bobPublicKey
 ])
 
 // 2) on the other side, one of the recipients can decrypt the data using his private key
