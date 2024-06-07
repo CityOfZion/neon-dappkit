@@ -30,15 +30,17 @@ truly signed your specific message.
 ```ts
 // 1) sign a message
 const mySignedMessage = await signer.signMessage({ message: 'My message', version: 2 })
-// the signed message contains messageHex, data, publicKey and salt
+// the signed message contains the message, messageHex, data, publicKey and salt
 
 // 2) store or share these information to be verified later or by someone else
 
 // 3) check if the signature is valid, if the method returns true, it is certain that that specific publicKey signed that messageHex
 const valid = await signer.verifyMessage(mySignedMessage)
 ```
-You can use different **versions**, the default is `2`, but you can use `3` to sign a message without salt, and `1` to
-use the legacy version.
+You can use different **versions**:
+1. The same format as Neoline, with salt.
+2. The more readable version, easier to verify by other means (with salt).
+3. The same format as Neoline, without salt.
 
 ### Encrypt and Decrypt data
 

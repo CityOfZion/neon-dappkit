@@ -73,6 +73,19 @@ describe('NeonSigner', function () {
     assert(verified)
   })
 
+  it('can verify legacy messages', async () => {
+    const signer = new NeonSigner()
+    const verified = await signer.verifyMessage({
+      message: 'Hello World',
+      messageHex: '48656c6c6f20576f726c64',
+      salt: '1b7fbf00b4f43ed9afd51d794e3470b8',
+      data: 'ba32f6a69e80e7e0ddc8c18324988769cd785f0e36f6ca5b7c0ab49149b89a27f9173fcfa8404386dd69bc14605ed8440e4970da0bda802b58a673fc5d00f3d4',
+      publicKey: '0297f256ad8c5361dca4e931f7c69568fbb14b0b203062678d160dbaeff88e9e53',
+    })
+
+    assert(verified)
+  })
+
   it('can verify when failing', async () => {
     const signer = new NeonSigner()
     const verified = await signer.verifyMessage({
