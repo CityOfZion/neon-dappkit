@@ -16,9 +16,9 @@ export type SignMessagePayload = {
 }
 
 /**
- * A simple type that defines the Signed Message format
+ * The base for the SignedMessage, it doesn't have message or messageHex
  */
-export type SignedMessage = {
+export interface SignedMessageBase {
   /**
    * signer's public key
    */
@@ -33,12 +33,36 @@ export type SignedMessage = {
    * salt used to encrypt
    */
   salt?: string
+}
 
+/**
+ * The SignedMessage including the messageHex, message is optional
+ */
+export interface SignedMessageWithHex extends SignedMessageBase {
   /**
    * message hex
    */
   messageHex: string
+
+  message?: string
 }
+
+/**
+ * The SignedMessage including the original message, the messageHex is optional
+ */
+export interface SignedMessageWithTheOriginal extends SignedMessageBase {
+  /**
+   * original message
+   */
+  message: string
+
+  messageHex?: string
+}
+
+/**
+ * A simple type that defines the Signed Message format
+ */
+export type SignedMessage = SignedMessageWithHex | SignedMessageWithTheOriginal
 
 export interface EncryptedPayload {
   randomVector: string

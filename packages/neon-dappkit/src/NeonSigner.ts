@@ -41,6 +41,7 @@ export class NeonSigner implements Neo3Signer {
       publicKey: this.account.publicKey,
       data: wallet.sign(messageHex, this.account.privateKey),
       salt,
+      message,
       messageHex,
     }
   }
@@ -53,6 +54,7 @@ export class NeonSigner implements Neo3Signer {
       publicKey: this.account.publicKey,
       data: wallet.sign(messageHex, this.account.privateKey, salt),
       salt,
+      message,
       messageHex,
     }
   }
@@ -63,6 +65,7 @@ export class NeonSigner implements Neo3Signer {
     return {
       publicKey: this.account.publicKey,
       data: wallet.sign(messageHex, this.account.privateKey),
+      message,
       messageHex,
     }
   }
@@ -74,7 +77,21 @@ export class NeonSigner implements Neo3Signer {
   }
 
   async verifyMessage(verifyArgs: SignedMessage): Promise<boolean> {
-    return wallet.verify(verifyArgs.messageHex, verifyArgs.data, verifyArgs.publicKey)
+    return (await this.verifyMessageSimple(verifyArgs)) || (await this.verifyMessageLegacy(verifyArgs))
+  }
+
+  private async verifyMessageSimple(verifyArgs: SignedMessage): Promise<boolean> {
+    const messageHex = verifyArgs.messageHex ?? u.str2hexstring(verifyArgs.message)
+    return wallet.verify(messageHex, verifyArgs.data, verifyArgs.publicKey)
+  }
+
+  private async verifyMessageLegacy(verifyArgs: SignedMessage): Promise<boolean> {
+    const message = verifyArgs.salt + (verifyArgs.message ?? u.hexstring2str(verifyArgs.messageHex))
+    const parameterHexString = Buffer.from(message).toString('hex')
+    const lengthHex = u.num2VarInt(parameterHexString.length / 2)
+    const concatenatedString = lengthHex + parameterHexString
+    const messageHex = '010001f0' + concatenatedString + '0000'
+    return wallet.verify(messageHex, verifyArgs.data, verifyArgs.publicKey)
   }
 
   /**

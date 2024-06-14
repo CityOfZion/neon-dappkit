@@ -29,16 +29,27 @@ The process of signing and then verifying a message is useful to prove that the 
 truly signed your specific message. 
 ```ts
 // 1) sign a message
-const mySignedMessage = await signer.signMessage({ message: 'My message', version: 2 })
-// the signed message contains messageHex, data, publicKey and salt
+const mySignedMessage = await signer.signMessage({ message: 'My message' })
+// the signed message contains the message, messageHex, data, publicKey and salt
 
 // 2) store or share these information to be verified later or by someone else
 
 // 3) check if the signature is valid, if the method returns true, it is certain that that specific publicKey signed that messageHex
 const valid = await signer.verifyMessage(mySignedMessage)
 ```
-You can use different **versions**, the default is `2`, but you can use `3` to sign a message without salt, and `1` to
-use the legacy version.
+You can use different signing **versions**:
+1. CLASSIC: The same format as Neoline, with salt.
+2. DEFAULT: The more human-readable version, easier to verify with neon-js (with salt).
+3. WITHOUT_SALT: The same format as Neoline, but without salt.
+
+```ts
+import { SignMessageVersion } from '@cityofzion/neon-dappkit-types'
+// ...
+const mySignedMessage = await signer.signMessage({
+    message: 'My message',
+    version: SignMessageVersion.CLASSIC
+})
+```
 
 ### Encrypt and Decrypt data
 
