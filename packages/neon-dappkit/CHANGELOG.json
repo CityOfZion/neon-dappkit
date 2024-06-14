@@ -2,6 +2,23 @@
   "name": "@cityofzion/neon-dappkit",
   "entries": [
     {
+      "version": "0.5.0",
+      "tag": "@cityofzion/neon-dappkit_v0.5.0",
+      "date": "Fri, 14 Jun 2024 20:54:31 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "Increased compatibility of signMessage and verifyMessage"
+          }
+        ],
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@cityofzion/neon-dappkit-types\" to `0.4.0`"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.4.2",
       "tag": "@cityofzion/neon-dappkit_v0.4.2",
       "date": "Wed, 22 May 2024 19:09:40 GMT",

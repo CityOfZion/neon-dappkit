@@ -1,6 +1,13 @@
 # Change Log - @cityofzion/neon-dappkit-types
 
-This log was last generated on Mon, 30 Oct 2023 11:49:17 GMT and should not be manually modified.
+This log was last generated on Fri, 14 Jun 2024 20:54:31 GMT and should not be manually modified.
+
+## 0.4.0
+Fri, 14 Jun 2024 20:54:31 GMT
+
+### Minor changes
+
+- SignedMessage object might have an optional message property instead of the messageHex
 
 ## 0.3.1
 Mon, 30 Oct 2023 11:49:17 GMT

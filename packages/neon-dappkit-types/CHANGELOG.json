@@ -2,6 +2,26 @@
   "name": "@cityofzion/neon-dappkit-types",
   "entries": [
     {
+      "version": "0.4.0",
+      "tag": "@cityofzion/neon-dappkit-types_v0.4.0",
+      "date": "Fri, 14 Jun 2024 20:54:31 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "Fix vite documentation"
+          },
+          {
+            "comment": "Improvements on NeonDappkit docs"
+          }
+        ],
+        "minor": [
+          {
+            "comment": "SignedMessage object might have an optional message property instead of the messageHex"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.3.1",
       "tag": "@cityofzion/neon-dappkit-types_v0.3.1",
       "date": "Mon, 30 Oct 2023 11:49:17 GMT",

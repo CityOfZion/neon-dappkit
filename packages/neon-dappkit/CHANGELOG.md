@@ -1,6 +1,13 @@
 # Change Log - @cityofzion/neon-dappkit
 
-This log was last generated on Wed, 22 May 2024 19:09:40 GMT and should not be manually modified.
+This log was last generated on Fri, 14 Jun 2024 20:54:31 GMT and should not be manually modified.
+
+## 0.5.0
+Fri, 14 Jun 2024 20:54:31 GMT
+
+### Minor changes
+
+- Increased compatibility of signMessage and verifyMessage
 
 ## 0.4.2
 Wed, 22 May 2024 19:09:40 GMT
