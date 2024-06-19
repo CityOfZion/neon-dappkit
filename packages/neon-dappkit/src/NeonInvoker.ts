@@ -132,8 +132,21 @@ export class NeonInvoker implements Neo3Invoker {
               value: this.convertParams([map.value])[0],
             })),
           )
-        case 'ByteArray':
-          return sc.ContractParam.byteArray(u.hex2base64(a.value))
+        case 'ByteArray': {
+          const base64Regex = /^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/
+          const hexLowerRegex = /^([0-9a-f]{2})*$/
+          const hexUpperRegex = /^([0-9A-F]{2})*$/
+          let byteArrayValue
+          if (hexLowerRegex.test(a.value) || hexUpperRegex.test(a.value)) {
+            byteArrayValue = u.hex2base64(a.value)
+          } else if (base64Regex.test(a.value)) {
+            byteArrayValue = a.value
+          } else {
+            throw new Error(`Invalid ByteArray value, should be either a valid hex or base64, got: ${a.value}`)
+          }
+
+          return sc.ContractParam.byteArray(byteArrayValue)
+        }
       }
     })
   }

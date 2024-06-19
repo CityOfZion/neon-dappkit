@@ -185,16 +185,22 @@ invoker.testInvoke({
 
 ### ByteArray
 
-It is expecting to receive a HEX string as value on args. It automatically converts a hex to base64.
+It is expecting to receive a HEX string as value on args and will automatically converts a hex to base64.
+If it's not a valid hex string, then it will check if it's a valid base64 string. 
+Otherwise, it will throw an error.
 
 ```ts
-const hexValue = 'HEX string'
+const hexValue = '12af980c' // This will end up being converted to base64 'Eq+YDA=='
+const base64Value = 'qqLQB6T6hHfzFNUlpWTJ8A=='
 invoker.testInvoke({
   invocations: [
     {
       operation: 'method',
       scriptHash: contractScriptHash,
-      args: [{ type: 'ByteArray', value: hexValue }],
+      args: [
+        { type: 'ByteArray', value: hexValue },
+        { type: 'ByteArray', value: base64Value },
+      ],
     },
   ],
 })
