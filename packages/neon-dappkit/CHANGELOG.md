@@ -1,6 +1,13 @@
 # Change Log - @cityofzion/neon-dappkit
 
-This log was last generated on Fri, 14 Jun 2024 20:54:31 GMT and should not be manually modified.
+This log was last generated on Wed, 19 Jun 2024 14:12:13 GMT and should not be manually modified.
+
+## 0.5.1
+Wed, 19 Jun 2024 14:12:13 GMT
+
+### Patches
+
+- Check if the ByteArray parameter value is a base64 if it's not a hex string
 
 ## 0.5.0
 Fri, 14 Jun 2024 20:54:31 GMT

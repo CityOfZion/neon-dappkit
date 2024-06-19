@@ -2,6 +2,18 @@
   "name": "@cityofzion/neon-dappkit",
   "entries": [
     {
+      "version": "0.5.1",
+      "tag": "@cityofzion/neon-dappkit_v0.5.1",
+      "date": "Wed, 19 Jun 2024 14:12:13 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Check if the ByteArray parameter value is a base64 if it's not a hex string"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.5.0",
       "tag": "@cityofzion/neon-dappkit_v0.5.0",
       "date": "Fri, 14 Jun 2024 20:54:31 GMT",
