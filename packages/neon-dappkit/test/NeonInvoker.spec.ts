@@ -3,7 +3,7 @@ import { ContractInvocationMulti } from '@cityofzion/neon-dappkit-types'
 import { NeonEventListener, NeonInvoker, NeonParser, TypeChecker } from '../src/index'
 import assert from 'assert'
 import * as path from 'path'
-import { tx } from '@cityofzion/neon-js'
+import { tx, u } from '@cityofzion/neon-js'
 import { wallet } from '@cityofzion/neon-core'
 import {
   wait,
@@ -782,5 +782,149 @@ describe('NeonInvoker', function () {
     } else {
       assert.fail('stack return is not Map')
     }
+  })
+
+  it('checks if the bytearray arg value is hex or base64', async () => {
+    const invoker = await NeonInvoker.init({
+      rpcAddress,
+      account: account1,
+    })
+
+    const byteArrayCim = (bytearrayArg: string) => {
+      return {
+        invocations: [
+          {
+            scriptHash: testReturnContract,
+            operation: 'return_same_bytes',
+            args: [{ type: 'ByteArray', value: bytearrayArg }],
+          },
+        ],
+      } as ContractInvocationMulti
+    }
+
+    // Will turn hex into base64
+    let validHexValue = 'a0b1c3'
+    let hexArgTxResult = await invoker.testInvoke(byteArrayCim(validHexValue))
+    if (!TypeChecker.isStackTypeByteString(hexArgTxResult.stack[0])) {
+      throw new Error('hexArgTxResult: stack return is not ByteString')
+    }
+    let hexArgTxValue = hexArgTxResult.stack[0].value
+    assert.equal(hexArgTxValue, u.hex2base64(validHexValue), 'hexArgTxValue is not equal to base64 parsed value')
+
+    validHexValue = 'A0B1C3'
+    hexArgTxResult = await invoker.testInvoke(byteArrayCim(validHexValue))
+    if (!TypeChecker.isStackTypeByteString(hexArgTxResult.stack[0])) {
+      throw new Error('hexArgTxResult: stack return is not ByteString')
+    }
+    hexArgTxValue = hexArgTxResult.stack[0].value
+    assert.equal(hexArgTxValue, u.hex2base64(validHexValue), 'hexArgTxValue is not equal to base64 parsed value')
+
+    // Will use and return base64
+    const validBase64Value = 'nJInjs09a2A='
+    const base64ArgTxResult = await invoker.testInvoke(byteArrayCim(validBase64Value))
+    if (!TypeChecker.isStackTypeByteString(base64ArgTxResult.stack[0])) {
+      throw new Error('base64ArgTxResult: stack return is not ByteString')
+    }
+    const base64ArgTxValue = base64ArgTxResult.stack[0].value
+    assert.equal(base64ArgTxValue, validBase64Value, 'base64ArgTxValue is not equal to base64 value')
+
+    // Will consider as hex if both are possible and parse it to base64
+    const validBase64AndHexValue = 'abcd'
+    const base64AndHexArgTxResult = await invoker.testInvoke(byteArrayCim(validBase64AndHexValue))
+    if (!TypeChecker.isStackTypeByteString(base64AndHexArgTxResult.stack[0])) {
+      throw new Error('base64ArgTxResult: stack return is not ByteString')
+    }
+    const base64AndHexArgTxValue = base64AndHexArgTxResult.stack[0].value
+    assert.equal(
+      base64AndHexArgTxValue,
+      u.hex2base64(validBase64AndHexValue),
+      'base64AndHexArgTxValue is not equal to base64 parsed value',
+    )
+
+    // Technally, 'aBCd' is a valid hex value, however,
+    // we chose to consider a string to have lower and upper case characters as a invalid hex value
+    // so this means that it will be considered as base64
+    const validUpperLowerValue = 'aBCd'
+    const upperLowerArgTxResult = await invoker.testInvoke(byteArrayCim(validUpperLowerValue))
+    if (!TypeChecker.isStackTypeByteString(upperLowerArgTxResult.stack[0])) {
+      throw new Error('upperLowerArgTxResult: stack return is not ByteString')
+    }
+    const upperLowerArgTxValue = upperLowerArgTxResult.stack[0].value
+    assert.equal(upperLowerArgTxValue, validUpperLowerValue, 'upperLowerArgTxValue is not equal to base64 parsed value')
+
+    // Using an array with all 3 previous values should return the same values as expected above
+    const arrayArgTxResult = await invoker.testInvoke({
+      invocations: [
+        {
+          scriptHash: testReturnContract,
+          operation: 'return_same_array',
+          args: [
+            {
+              type: 'Array',
+              value: [
+                { type: 'ByteArray', value: validHexValue },
+                { type: 'ByteArray', value: validBase64Value },
+                { type: 'ByteArray', value: validBase64AndHexValue },
+              ],
+            },
+          ],
+        },
+      ],
+    })
+    if (!TypeChecker.isStackTypeArray(arrayArgTxResult.stack[0])) {
+      throw new Error('arrayArgTxResult: stack return is not Array')
+    }
+    const argTxValue = arrayArgTxResult.stack[0].value
+    assert.equal(argTxValue.length, 3, 'arrayArgTxValue length is not 3')
+    if (!TypeChecker.isStackTypeByteString(argTxValue[0])) {
+      throw new Error('argTxValue[0].value: stack return is not ByteString')
+    }
+    assert.equal(
+      argTxValue[0].value,
+      u.hex2base64(validHexValue),
+      'arrayArgTxValue[0] is not equal to base64 parsed value',
+    )
+    if (!TypeChecker.isStackTypeByteString(argTxValue[1])) {
+      throw new Error('argTxValue[1].value: stack return is not ByteString')
+    }
+    assert.equal(argTxValue[1].value, validBase64Value, 'arrayArgTxValue[1] is not equal to base64 value')
+    if (!TypeChecker.isStackTypeByteString(argTxValue[2])) {
+      throw new Error('argTxValue[2].value: stack return is not ByteString')
+    }
+    assert.equal(
+      argTxValue[2].value,
+      u.hex2base64(validBase64AndHexValue),
+      'arrayArgTxValue[2] is not equal to base64 parsed value',
+    )
+  })
+
+  it('tests invalid bytearray args', async () => {
+    const invoker = await NeonInvoker.init({
+      rpcAddress,
+      account: account1,
+    })
+
+    const byteArrayCim = (bytearrayArg: string) => {
+      return {
+        invocations: [
+          {
+            scriptHash: testReturnContract,
+            operation: 'return_same_bytes',
+            args: [{ type: 'ByteArray', value: bytearrayArg }],
+          },
+        ],
+      } as ContractInvocationMulti
+    }
+
+    let invalidValue = 'abc'
+    await assert.rejects(
+      invoker.testInvoke(byteArrayCim(invalidValue)),
+      `Invalid bytearray value '${invalidValue}' should throw an error`,
+    )
+    invalidValue = 'çãmq'
+    await assert.rejects(
+      invoker.testInvoke(byteArrayCim(invalidValue)),
+      `Invalid bytearray value '${invalidValue}' should throw an error`,
+    )
   })
 })

@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@cityofzion/neon-dappkit",
+      "comment": "Check if the ByteArray parameter value is a base64 if it's not a hex string",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@cityofzion/neon-dappkit"
+}
