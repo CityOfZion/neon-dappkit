@@ -178,8 +178,7 @@ describe('NeonParser', function () {
     assert.equal(NeonParser.strToHex(str), hexString)
   })
 
-  // Currently neon-core's utf82base64 method is bugged, but will be fixed on the next patch release
-  it.skip('converts a utf-8 string into a base64 string', async () => {
+  it('converts a utf-8 string into a base64 string', async () => {
     let utf8String = 'unit test'
     let base64String = 'dW5pdCB0ZXN0'
     assert.equal(NeonParser.utf8ToBase64(utf8String), base64String)

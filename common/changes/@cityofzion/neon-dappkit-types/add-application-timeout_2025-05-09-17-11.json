@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@cityofzion/neon-dappkit-types",
+      "comment": "Add a timeout optional parameter to waitForApplicationLog",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@cityofzion/neon-dappkit-types"
+}

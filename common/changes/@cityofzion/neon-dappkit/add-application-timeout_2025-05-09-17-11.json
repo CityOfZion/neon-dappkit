@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@cityofzion/neon-dappkit",
+      "comment": "Add a timeout optional parameter to waitForApplicationLog, remove option from constructor and update neon-js",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@cityofzion/neon-dappkit"
+}
