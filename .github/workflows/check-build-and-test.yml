@@ -47,4 +47,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: coverage-summary
-          path: packages/neon-dappkit/coverage/coverage-summary.json
+          path: reporter/coverage-summary.json
