@@ -1,4 +1,8 @@
-name: Check Build and Test
+name: 'Check Build and Test'
+
+permissions:
+  pull-requests: write
+  checks: write
 on:
   pull_request:
     branches:
@@ -9,14 +13,12 @@ env:
 
 jobs:
   build-and-test:
-    permissions:
-      checks: write
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
         with:
-          fetch-depth: 2
+          fetch-depth: 10
       - name: Setup Node Version ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v3
         with:
@@ -33,14 +35,11 @@ jobs:
         run: rush rebuild --verbose
       - name: Run Tests
         run: cd packages/neon-dappkit && pnpm test
-      - name: Notify Test Reporter
+      - uses: actions/upload-artifact@v4
         if: ${{ always() }}
-        uses: dorny/test-reporter@v1.6.0
         with:
-          name: Unit Tests
-          reporter: mocha-json
+          name: test-results
           path: mocha-results.json
-          fail-on-error: true
       - name: Check Code Coverage
         continue-on-error: true
         working-directory: ./packages/neon-dappkit/
