@@ -1,7 +1,6 @@
 name: 'Check Build and Test'
 
 permissions:
-  pull-requests: write
   checks: write
 on:
   pull_request:
@@ -44,8 +43,8 @@ jobs:
         continue-on-error: true
         working-directory: ./packages/neon-dappkit/
         run: pnpm coverage
-      - name: Notify Code Coverage
-        uses: sidx1024/report-nyc-coverage-github-action@v1.2.7
+      - name: Upload Coverage Summary
+        uses: actions/upload-artifact@v4
         with:
-          coverage_file: './packages/neon-dappkit/reporter/coverage-summary.json'
-          comment_template_file: '.github/comment-template.md'
+          name: coverage-summary
+          path: packages/neon-dappkit/coverage/coverage-summary.json
