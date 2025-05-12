@@ -43,13 +43,8 @@ jobs:
         continue-on-error: true
         working-directory: ./packages/neon-dappkit/
         run: pnpm coverage
-      - name: whyy
-        run: |
-          pwd
-          ls -lah
-          ls -lah ./reporter/
       - name: Upload Coverage Summary
         uses: actions/upload-artifact@v4
         with:
           name: coverage-summary
-          path: ./reporter/coverage-summary.json
+          path: ./packages/neon-dappkit/reporter/coverage-summary.json
