@@ -22,6 +22,7 @@ jobs:
           path: ./artifacts/coverage
           repository: CityOfZion/neon-dappkit
           run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Download Coverage Summary Artifact
         uses: actions/download-artifact@v4
         with:
@@ -29,6 +30,7 @@ jobs:
           path: ./artifacts/
           repository: CityOfZion/neon-dappkit
           run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Notify Code Coverage
         uses: sidx1024/report-nyc-coverage-github-action@v1.2.7
         with:
