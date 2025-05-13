@@ -23,10 +23,10 @@ jobs:
           repository: CityOfZion/neon-dappkit
           run-id: ${{ github.event.workflow_run.id }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Download Coverage Summary Artifact
+      - name: Download test results Artifact
         uses: actions/download-artifact@v4
         with:
-          name: test-results.json
+          name: test-results
           path: ./artifacts/
           repository: CityOfZion/neon-dappkit
           run-id: ${{ github.event.workflow_run.id }}
