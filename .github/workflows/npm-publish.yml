@@ -15,7 +15,7 @@ jobs:
       id-token: write
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 2
       - name: Setup Node Version ${{ env.NODE_VERSION }}
@@ -39,11 +39,11 @@ jobs:
       - name: Publish Projects
         run: rush publish --apply --target-branch main --publish --npm-auth-token ${{ secrets.NPM_TOKEN }} --add-commit-details --include-all
       - name: Upload Docs on Github Pages
-        uses: actions/upload-pages-artifact@v2
+        uses: actions/upload-pages-artifact@v3
         with:
           path: './packages/neon-dappkit-types/docs'
       - name: Deploy Docs  GitHub Pages
-        uses: actions/deploy-pages@v2
+        uses: actions/deploy-pages@v4
       - name: Commit and Push package.json version update
         run: |
           git add .
