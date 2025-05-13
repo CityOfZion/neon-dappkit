@@ -1,6 +1,13 @@
 # Change Log - @cityofzion/neon-dappkit-types
 
-This log was last generated on Fri, 14 Jun 2024 20:54:31 GMT and should not be manually modified.
+This log was last generated on Tue, 13 May 2025 15:24:01 GMT and should not be manually modified.
+
+## 0.5.0
+Tue, 13 May 2025 15:24:01 GMT
+
+### Minor changes
+
+- Add a timeout optional parameter to waitForApplicationLog
 
 ## 0.4.0
 Fri, 14 Jun 2024 20:54:31 GMT

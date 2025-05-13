@@ -1,6 +1,13 @@
 # Change Log - @cityofzion/neon-dappkit
 
-This log was last generated on Wed, 19 Jun 2024 14:12:13 GMT and should not be manually modified.
+This log was last generated on Tue, 13 May 2025 15:24:01 GMT and should not be manually modified.
+
+## 0.6.0
+Tue, 13 May 2025 15:24:01 GMT
+
+### Minor changes
+
+- Add a timeout optional parameter to waitForApplicationLog, remove option from constructor and update neon-js
 
 ## 0.5.1
 Wed, 19 Jun 2024 14:12:13 GMT
