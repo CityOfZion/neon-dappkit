@@ -41,3 +41,4 @@ jobs:
           name: Unit Tests
           path: './artifacts/mocha-results.json'
           reporter: mocha-json
+          max-annotations: 0
