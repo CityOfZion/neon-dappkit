@@ -20,12 +20,14 @@ jobs:
         with:
           name: coverage-summary
           path: ./artifacts/coverage
+          repository: CityOfZion/neon-dappkit
           run-id: ${{ github.event.workflow_run.id }}
       - name: Download Coverage Summary Artifact
         uses: actions/download-artifact@v4
         with:
           name: test-results.json
           path: ./artifacts/
+          repository: CityOfZion/neon-dappkit
           run-id: ${{ github.event.workflow_run.id }}
       - name: Notify Code Coverage
         uses: sidx1024/report-nyc-coverage-github-action@v1.2.7
