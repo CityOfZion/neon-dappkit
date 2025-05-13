@@ -11,12 +11,6 @@ import type * as NeonTypes from '@cityofzion/neon-core'
 
 export type NeonEventListenerOptions = {
   debug?: boolean | undefined
-  waitForApplicationLog?:
-    | {
-        maxAttempts?: number | undefined
-        waitMs?: number | undefined
-      }
-    | undefined
   waitForEventMs?: number | undefined
 }
 
@@ -89,11 +83,17 @@ export class NeonEventListener implements Neo3EventListener {
     }
   }
 
-  async waitForApplicationLog(txId: string): Promise<Neo3ApplicationLog> {
-    const maxAttempts = this.options?.waitForApplicationLog?.maxAttempts ?? 30
-    const waitMs = this.options?.waitForApplicationLog?.waitMs ?? 1000
+  /**
+   * Waits for the transaction to be completed and returns the application log
+   * @param txId id od the transaction
+   * @param timeout the timeout in milliseconds, if not provided, the default timeout is 30 seconds
+   */
+  async waitForApplicationLog(txId: string, timeout: number = 30000): Promise<Neo3ApplicationLog> {
+    const maxAttempts = 20
+    const waitMs = Math.floor(timeout / maxAttempts)
 
-    let attempts = 0
+    const initialTime = Date.now()
+
     let error = new Error("Couldn't get application log")
     do {
       try {
@@ -101,9 +101,8 @@ export class NeonEventListener implements Neo3EventListener {
       } catch (e) {
         error = e
       }
-      attempts++
       await this.wait(waitMs)
-    } while (attempts < maxAttempts)
+    } while (Date.now() < initialTime + timeout)
 
     throw error
   }

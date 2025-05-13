@@ -63,8 +63,9 @@ export interface Neo3EventListener {
   /**
    * Waits for the transaction to be completed and returns the application log
    * @param txId id od the transaction
+   * @param timeout the timeout in milliseconds
    */
-  waitForApplicationLog(txId: string): Promise<Neo3ApplicationLog>
+  waitForApplicationLog(txId: string, timeout?: number): Promise<Neo3ApplicationLog>
 
   /**
    * Checks if the transaction was completed successfully

@@ -314,11 +314,7 @@ describe('NeonEventListener', function () {
     const neoInvoker = await NeonInvoker.init({ rpcAddress, account: sender })
     const txId = await neoInvoker.invokeFunction(gasTransferInvocation(sender, receiver, '100'))
 
-    const fastEventListener = new NeonEventListener(rpcAddress, {
-      waitForApplicationLog: { maxAttempts: 1, waitMs: 10 },
-    })
-
-    await assert.rejects(fastEventListener.waitForApplicationLog(txId))
+    await assert.rejects(eventListener.waitForApplicationLog(txId, 1))
   })
 
   it('confirms Halt', async () => {
