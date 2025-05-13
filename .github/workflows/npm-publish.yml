@@ -3,7 +3,7 @@ name: Publish neon-dappkit-types and neon-dappkit on NPM
 on: workflow_dispatch
 
 env:
-  NODE_VERSION: 16.x
+  NODE_VERSION: 18
 
 jobs:
   publish:
