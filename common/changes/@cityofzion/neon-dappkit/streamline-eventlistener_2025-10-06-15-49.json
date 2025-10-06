@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@cityofzion/neon-dappkit",
+      "comment": "upate to use latest type changes",
+      "type": "major"
+    }
+  ],
+  "packageName": "@cityofzion/neon-dappkit"
+}
