@@ -1,6 +1,6 @@
 import { ChildProcess, spawn, execSync } from 'child_process'
 import { ContractInvocationMulti } from '@cityofzion/neon-dappkit-types'
-import { NeonEventListener, NeonInvoker, NeonParser, TypeChecker } from '../src/index'
+import { NeonEventListener, NeonInvoker, NeonParser, TypeChecker } from '../src'
 import assert from 'assert'
 import * as path from 'path'
 import { tx, u } from '@cityofzion/neon-js'

@@ -1,3 +1,5 @@
+import {InvokeBase, Notification} from "./Neo3Invoker";
+
 /**
  * An interface that defines the event contract and event name
  */
@@ -7,23 +9,15 @@ export interface Neo3Event {
 }
 
 /**
- * An interface that defines the event contract, event name and the state of the event
- */
-export interface Neo3EventWithState extends Neo3Event {
-  state: Neo3StackItem
-}
-
-/**
  * The event listener callback
  */
-export type Neo3EventListenerCallback = (event: Neo3EventWithState) => void
+export type Neo3EventListenerCallback = (event: Notification) => void
 
 /**
- * An interface that defines the stack item format
+ * An interface that defines an application execution format
  */
-export interface Neo3StackItem {
-  type: string
-  value?: string | boolean | number | Neo3StackItem[]
+export interface ApplicationExecution extends InvokeBase {
+    trigger: string
 }
 
 /**
@@ -31,13 +25,7 @@ export interface Neo3StackItem {
  */
 export interface Neo3ApplicationLog {
   txid: string
-  executions: {
-    trigger: string
-    vmstate: string
-    gasconsumed: string
-    stack?: Neo3StackItem[]
-    notifications: Neo3EventWithState[]
-  }[]
+  executions: ApplicationExecution[]
 }
 
 /**

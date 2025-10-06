@@ -1,10 +1,12 @@
 import {
-  Neo3ApplicationLog,
-  Neo3Event,
-  Neo3EventListener,
-  Neo3EventListenerCallback,
-  Neo3EventWithState,
-  Neo3StackItem,
+    ApplicationExecution,
+    Neo3ApplicationLog,
+    Neo3Event,
+    Neo3EventListener,
+    Neo3EventListenerCallback,
+    Notification,
+    RpcResponseStackItem,
+    TypeChecker
 } from '@cityofzion/neon-dappkit-types'
 import { rpc } from '@cityofzion/neon-js'
 import type * as NeonTypes from '@cityofzion/neon-core'
@@ -97,7 +99,8 @@ export class NeonEventListener implements Neo3EventListener {
     let error = new Error("Couldn't get application log")
     do {
       try {
-        return await this.rpcClient.getApplicationLog(txId)
+        const log = await this.rpcClient.getApplicationLog(txId)
+        return this.neonApplogToNeo3ApplicationLog(log)
       } catch (e) {
         error = e
       }
@@ -108,8 +111,8 @@ export class NeonEventListener implements Neo3EventListener {
   }
 
   confirmHalt(txResult: Neo3ApplicationLog) {
-    if (txResult?.executions[0]?.vmstate !== 'HALT')
-      throw new Error('Transaction failed. VMState: ' + txResult?.executions[0]?.vmstate)
+    if (txResult?.executions[0]?.state !== 'HALT')
+      throw new Error('Transaction failed. VMState: ' + txResult?.executions[0]?.state)
   }
 
   confirmStackTrue(txResult: Neo3ApplicationLog) {
@@ -122,15 +125,19 @@ export class NeonEventListener implements Neo3EventListener {
     ) {
       throw new Error('Transaction failed. No stack found in transaction result')
     }
-    const stack: Neo3StackItem = txResult.executions[0].stack[0]
-    if (stack.value !== true) {
+    const stack  = txResult.executions[0].stack[0]
+
+    if (!TypeChecker.isStackTypeBoolean(stack) || stack.value !== true) {
       throw new Error('Transaction failed. Stack value is not true')
     }
   }
 
-  getNotificationState(txResult: Neo3ApplicationLog, eventToCheck: Neo3Event): Neo3EventWithState | undefined {
+  getNotificationState(txResult: Neo3ApplicationLog, eventToCheck: Neo3Event): Notification | undefined {
     return txResult?.executions[0].notifications.find((e) => {
-      return e.contract === eventToCheck.contract && e.eventname === eventToCheck.eventname
+        if (e.contract === eventToCheck.contract && e.eventname === eventToCheck.eventname) {
+            return e
+        }
+        return undefined
     })
   }
 
@@ -173,7 +180,8 @@ export class NeonEventListener implements Neo3EventListener {
             continue
           }
 
-          const log = await this.rpcClient.getApplicationLog(transaction.hash)
+          const neonLog = await this.rpcClient.getApplicationLog(transaction.hash)
+          const log = this.neonApplogToNeo3ApplicationLog(neonLog)
 
           for (const notification of log.executions[0].notifications) {
             const listenersOfContract = this.listeners.get(notification.contract)
@@ -191,7 +199,7 @@ export class NeonEventListener implements Neo3EventListener {
             for (const listener of listenersOfEvent) {
               try {
                 this.options?.debug && console.log('Calling listener')
-                listener(notification as Neo3EventWithState)
+                listener(notification)
               } catch (e) {
                 this.options?.debug && console.error(e)
               }
@@ -211,4 +219,29 @@ export class NeonEventListener implements Neo3EventListener {
   private wait(ms: number) {
     return new Promise((resolve) => setTimeout(resolve, ms))
   }
+
+  private neonApplogToNeo3ApplicationLog(log: NeonTypes.rpc.ApplicationLogJson): Neo3ApplicationLog {
+      const executions = log.executions.map(execution => {
+          return {
+              trigger: execution.trigger,
+              state: execution.vmstate,
+              gasconsumed: execution.gasconsumed,
+              stack: execution.stack.map(si => {
+                  return {type: si.type, value: si.value} as RpcResponseStackItem
+              }),
+              notifications: execution.notifications.map(notification => {
+                  return {
+                      contract: notification.contract,
+                      eventname: notification.eventname,
+                      state: {type: notification.state.type, value: notification.state.value}
+                  } as Notification
+              })
+          } as ApplicationExecution
+      })
+      return {
+          txid: log.txid,
+          executions
+      } as Neo3ApplicationLog
+  }
+
 }
