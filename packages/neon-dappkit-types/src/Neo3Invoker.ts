@@ -191,7 +191,7 @@ export type BuiltTransaction = ContractInvocationMulti & {
 export type ArrayResponseArgType = { type: 'Array'; value: RpcResponseStackItem[] }
 export type MapResponseArgType = { type: 'Map'; value: { key: RpcResponseStackItem; value: RpcResponseStackItem }[] }
 export type ByteStringArgType = { type: 'ByteString'; value: string }
-export type InteropInterfaceArgType = { type: 'InteropInterface'; interface: string; id: string, value?: never }
+export type InteropInterfaceArgType = { type: 'InteropInterface'; interface: string; id: string; value?: never }
 export type PointerArgType = { type: 'Pointer'; value: string }
 export type BufferArgType = { type: 'Buffer'; value: string }
 export type StructArgType = { type: 'Struct'; value: RpcResponseStackItem[] }
@@ -209,27 +209,27 @@ export type RpcResponseStackItem =
   | StructArgType
 
 export interface Notification {
-    /** hash of the smart contract that emitted the notification */
-    contract: string
-    /** name of the notification */
-    eventname: string
-    /** the emitted notification contents */
-    state: RpcResponseStackItem
+  /** hash of the smart contract that emitted the notification */
+  contract: string
+  /** name of the notification */
+  eventname: string
+  /** the emitted notification contents */
+  state: RpcResponseStackItem
 }
 
-export interface InvokeBase <T extends RpcResponseStackItem = RpcResponseStackItem> {
-    /** State of VM on exit. HALT means a successful exit while FAULT means exit with error. */
-    state: 'HALT' | 'FAULT'
-    /** Amount of gas consumed up to the point of stopping in the VM. If state is FAULT, this value is not representative of the amount of gas it will consume if it somehow succeeds on the blockchain.
-     * This is a decimal value.
-     */
-    gasconsumed: string
-    /** A human-readable string clarifying the exception that occurred. Only available when state is "FAULT". */
-    exception: string | null
-    /** Result stack of the VM. */
-    stack: T[]
-    /** Notifications emitted by the smart contract. */
-    notifications: Notification[]
+export interface InvokeBase<T extends RpcResponseStackItem = RpcResponseStackItem> {
+  /** State of VM on exit. HALT means a successful exit while FAULT means exit with error. */
+  state: 'HALT' | 'FAULT'
+  /** Amount of gas consumed up to the point of stopping in the VM. If state is FAULT, this value is not representative of the amount of gas it will consume if it somehow succeeds on the blockchain.
+   * This is a decimal value.
+   */
+  gasconsumed: string
+  /** A human-readable string clarifying the exception that occurred. Only available when state is "FAULT". */
+  exception: string | null
+  /** Result stack of the VM. */
+  stack: T[]
+  /** Notifications emitted by the smart contract. */
+  notifications: Notification[]
 }
 
 /**

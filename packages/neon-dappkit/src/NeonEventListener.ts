@@ -1,12 +1,12 @@
 import {
-    ApplicationExecution,
-    Neo3ApplicationLog,
-    Neo3Event,
-    Neo3EventListener,
-    Neo3EventListenerCallback,
-    Notification,
-    RpcResponseStackItem,
-    TypeChecker
+  ApplicationExecution,
+  Neo3ApplicationLog,
+  Neo3Event,
+  Neo3EventListener,
+  Neo3EventListenerCallback,
+  Notification,
+  RpcResponseStackItem,
+  TypeChecker,
 } from '@cityofzion/neon-dappkit-types'
 import { rpc } from '@cityofzion/neon-js'
 import type * as NeonTypes from '@cityofzion/neon-core'
@@ -125,7 +125,7 @@ export class NeonEventListener implements Neo3EventListener {
     ) {
       throw new Error('Transaction failed. No stack found in transaction result')
     }
-    const stack  = txResult.executions[0].stack[0]
+    const stack = txResult.executions[0].stack[0]
 
     if (!TypeChecker.isStackTypeBoolean(stack) || stack.value !== true) {
       throw new Error('Transaction failed. Stack value is not true')
@@ -134,7 +134,8 @@ export class NeonEventListener implements Neo3EventListener {
 
   getNotificationState(txResult: Neo3ApplicationLog, eventToCheck: Neo3Event): Notification | undefined {
     return txResult?.executions[0].notifications.find((e) => {
-        return e.contract === eventToCheck.contract && e.eventname === eventToCheck.eventname })
+      return e.contract === eventToCheck.contract && e.eventname === eventToCheck.eventname
+    })
   }
 
   confirmTransaction(
@@ -217,27 +218,26 @@ export class NeonEventListener implements Neo3EventListener {
   }
 
   private neonApplogToNeo3ApplicationLog(log: NeonTypes.rpc.ApplicationLogJson): Neo3ApplicationLog {
-      const executions = log.executions.map(execution => {
-          return {
-              trigger: execution.trigger,
-              state: execution.vmstate,
-              gasconsumed: execution.gasconsumed,
-              stack: execution.stack.map(si => {
-                  return {type: si.type, value: si.value} as RpcResponseStackItem
-              }),
-              notifications: execution.notifications.map(notification => {
-                  return {
-                      contract: notification.contract,
-                      eventname: notification.eventname,
-                      state: {type: notification.state.type, value: notification.state.value}
-                  } as Notification
-              })
-          } as ApplicationExecution
-      })
+    const executions = log.executions.map((execution) => {
       return {
-          txid: log.txid,
-          executions
-      } as Neo3ApplicationLog
+        trigger: execution.trigger,
+        state: execution.vmstate,
+        gasconsumed: execution.gasconsumed,
+        stack: execution.stack.map((si) => {
+          return { type: si.type, value: si.value } as RpcResponseStackItem
+        }),
+        notifications: execution.notifications.map((notification) => {
+          return {
+            contract: notification.contract,
+            eventname: notification.eventname,
+            state: { type: notification.state.type, value: notification.state.value },
+          } as Notification
+        }),
+      } as ApplicationExecution
+    })
+    return {
+      txid: log.txid,
+      executions,
+    } as Neo3ApplicationLog
   }
-
 }

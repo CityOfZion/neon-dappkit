@@ -2,11 +2,11 @@ import { ChildProcess, spawn } from 'child_process'
 import { NeonEventListener, NeonInvoker, NeonParser } from '../src'
 import assert from 'assert'
 import {
-    ContractInvocationMulti,
-    Neo3ApplicationLog,
-    Neo3EventListenerCallback,
-    Notification,
-    TypeChecker,
+  ContractInvocationMulti,
+  Neo3ApplicationLog,
+  Neo3EventListenerCallback,
+  Notification,
+  TypeChecker,
 } from '@cityofzion/neon-dappkit-types'
 import { wallet } from '@cityofzion/neon-core'
 import {
@@ -337,8 +337,8 @@ describe('NeonEventListener', function () {
           state: 'FAULT',
           gasconsumed: '0',
           notifications: [],
-          exception:"",
-          stack: []
+          exception: '',
+          stack: [],
         },
       ],
     }

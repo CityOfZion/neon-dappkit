@@ -1,4 +1,4 @@
-import {InvokeBase, Notification} from "./Neo3Invoker";
+import { InvokeBase, Notification } from './Neo3Invoker'
 
 /**
  * An interface that defines the event contract and event name
@@ -17,7 +17,7 @@ export type Neo3EventListenerCallback = (event: Notification) => void
  * An interface that defines an application execution format
  */
 export interface ApplicationExecution extends InvokeBase {
-    trigger: string
+  trigger: string
 }
 
 /**
