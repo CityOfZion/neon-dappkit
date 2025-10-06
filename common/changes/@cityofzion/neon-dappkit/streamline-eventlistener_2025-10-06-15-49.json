@@ -2,7 +2,7 @@
   "changes": [
     {
       "packageName": "@cityofzion/neon-dappkit",
-      "comment": "upate to use latest type changes",
+      "comment": "update to use latest type changes",
       "type": "major"
     }
   ],
