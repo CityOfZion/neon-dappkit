@@ -134,11 +134,7 @@ export class NeonEventListener implements Neo3EventListener {
 
   getNotificationState(txResult: Neo3ApplicationLog, eventToCheck: Neo3Event): Notification | undefined {
     return txResult?.executions[0].notifications.find((e) => {
-        if (e.contract === eventToCheck.contract && e.eventname === eventToCheck.eventname) {
-            return e
-        }
-        return undefined
-    })
+        return e.contract === eventToCheck.contract && e.eventname === eventToCheck.eventname })
   }
 
   confirmTransaction(
