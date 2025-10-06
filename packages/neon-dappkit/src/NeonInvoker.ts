@@ -41,7 +41,8 @@ export class NeonInvoker implements Neo3Invoker {
     )
     if (rpcResult.state === 'FAULT') throw Error(`Execution state is FAULT. Exception: ${rpcResult.exception}`)
 
-    return { ...rpcResult, stack: rpcResult.stack as RpcResponseStackItem[] }
+    // TODO: set actual notifications. Currently not supported in neon-js
+    return { ...rpcResult, stack: rpcResult.stack as RpcResponseStackItem[], notifications: [] }
   }
 
   async invokeFunction(cimOrBt: ContractInvocationMulti | BuiltTransaction): Promise<string> {

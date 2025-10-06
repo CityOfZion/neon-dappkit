@@ -191,7 +191,7 @@ export type BuiltTransaction = ContractInvocationMulti & {
 export type ArrayResponseArgType = { type: 'Array'; value: RpcResponseStackItem[] }
 export type MapResponseArgType = { type: 'Map'; value: { key: RpcResponseStackItem; value: RpcResponseStackItem }[] }
 export type ByteStringArgType = { type: 'ByteString'; value: string }
-export type InteropInterfaceArgType = { type: 'InteropInterface'; interface: string; id: string }
+export type InteropInterfaceArgType = { type: 'InteropInterface'; interface: string; id: string; value?: never }
 export type PointerArgType = { type: 'Pointer'; value: string }
 export type BufferArgType = { type: 'Buffer'; value: string }
 export type StructArgType = { type: 'Struct'; value: RpcResponseStackItem[] }
@@ -208,12 +208,16 @@ export type RpcResponseStackItem =
   | BufferArgType
   | StructArgType
 
-/**
- * Result from calling invokescript or invokefunction.
- */
-export interface InvokeResult<T extends RpcResponseStackItem = RpcResponseStackItem> {
-  /** The script that is sent for execution on the blockchain as a base64 string. */
-  script: string
+export interface Notification {
+  /** hash of the smart contract that emitted the notification */
+  contract: string
+  /** name of the notification */
+  eventname: string
+  /** the emitted notification contents */
+  state: RpcResponseStackItem
+}
+
+export interface InvokeBase<T extends RpcResponseStackItem = RpcResponseStackItem> {
   /** State of VM on exit. HALT means a successful exit while FAULT means exit with error. */
   state: 'HALT' | 'FAULT'
   /** Amount of gas consumed up to the point of stopping in the VM. If state is FAULT, this value is not representative of the amount of gas it will consume if it somehow succeeds on the blockchain.
@@ -222,7 +226,18 @@ export interface InvokeResult<T extends RpcResponseStackItem = RpcResponseStackI
   gasconsumed: string
   /** A human-readable string clarifying the exception that occurred. Only available when state is "FAULT". */
   exception: string | null
+  /** Result stack of the VM. */
   stack: T[]
+  /** Notifications emitted by the smart contract. */
+  notifications: Notification[]
+}
+
+/**
+ * Result from calling invokescript or invokefunction.
+ */
+export interface InvokeResult extends InvokeBase {
+  /** The script that is sent for execution on the blockchain as a base64 string. */
+  script: string
   /** A ready to send transaction that wraps the script.
    * Only available when signers are provided and the sender's private key is open in the RPC node.
    * Formatted in base64-encoding.

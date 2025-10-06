@@ -1,11 +1,11 @@
 import { ChildProcess, spawn } from 'child_process'
-import { NeonEventListener, NeonInvoker, NeonParser } from '../src/index'
+import { NeonEventListener, NeonInvoker, NeonParser } from '../src'
 import assert from 'assert'
 import {
   ContractInvocationMulti,
   Neo3ApplicationLog,
   Neo3EventListenerCallback,
-  Neo3EventWithState,
+  Notification,
   TypeChecker,
 } from '@cityofzion/neon-dappkit-types'
 import { wallet } from '@cityofzion/neon-core'
@@ -65,8 +65,8 @@ describe('NeonEventListener', function () {
   it('adds an eventListener', async () => {
     const eventName = 'Transfer'
 
-    const eventPromise = new Promise<Neo3EventWithState>((resolve) => {
-      const callBack = (notification: Neo3EventWithState) => {
+    const eventPromise = new Promise<Notification>((resolve) => {
+      const callBack = (notification: Notification) => {
         resolve(notification)
 
         eventListener.removeAllEventListenersOfEvent(gasScriptHash, eventName)
@@ -94,8 +94,8 @@ describe('NeonEventListener', function () {
   it('adds eventListeners on the same event', async () => {
     const eventName = 'Transfer'
 
-    const eventPromise1 = new Promise<Neo3EventWithState>((resolve) => {
-      const callBack1 = (notification: Neo3EventWithState) => {
+    const eventPromise1 = new Promise<Notification>((resolve) => {
+      const callBack1 = (notification: Notification) => {
         resolve(notification)
 
         eventListener.removeAllEventListenersOfEvent(gasScriptHash, eventName)
@@ -104,8 +104,8 @@ describe('NeonEventListener', function () {
       eventListener.addEventListener(gasScriptHash, eventName, callBack1)
     })
 
-    const eventPromise2 = new Promise<Neo3EventWithState>((resolve) => {
-      const callBack2 = (notification: Neo3EventWithState) => {
+    const eventPromise2 = new Promise<Notification>((resolve) => {
+      const callBack2 = (notification: Notification) => {
         resolve(notification)
 
         eventListener.removeAllEventListenersOfEvent(gasScriptHash, eventName)
@@ -166,7 +166,7 @@ describe('NeonEventListener', function () {
   it('adds eventListener that callback throws an error', async () => {
     const eventName = 'Transfer'
 
-    const eventPromise = new Promise<Neo3EventWithState>((resolve, reject) => {
+    const eventPromise = new Promise<Notification>((resolve, reject) => {
       const callBack = () => {
         reject('Error')
         eventListener.removeAllEventListenersOfEvent(gasScriptHash, eventName)
@@ -191,7 +191,7 @@ describe('NeonEventListener', function () {
     const eventName = 'Transfer'
     let called = 0
 
-    const callBack: Neo3EventListenerCallback = (notification: Neo3EventWithState) => {
+    const callBack: Neo3EventListenerCallback = (notification: Notification) => {
       assert(notification)
       called += 1
     }
@@ -221,7 +221,7 @@ describe('NeonEventListener', function () {
     const eventName = 'Transfer'
     let called = 0
 
-    const callBack: Neo3EventListenerCallback = (notification: Neo3EventWithState) => {
+    const callBack: Neo3EventListenerCallback = (notification: Notification) => {
       assert(notification)
       called += 1
     }
@@ -251,7 +251,7 @@ describe('NeonEventListener', function () {
     const eventName = 'Transfer'
     let called = 0
 
-    const callBack: Neo3EventListenerCallback = (notification: Neo3EventWithState) => {
+    const callBack: Neo3EventListenerCallback = (notification: Notification) => {
       assert(notification)
       called += 1
     }
@@ -289,7 +289,7 @@ describe('NeonEventListener', function () {
     assert(applicationLog.txid === txId, 'Transaction ID should be the same')
     assert(applicationLog.executions.length === 1, 'There should be one execution')
     assert(applicationLog.executions[0].trigger === 'Application', 'Trigger should be Application')
-    assert(applicationLog.executions[0].vmstate === 'HALT', 'VMState should be HALT')
+    assert(applicationLog.executions[0].state === 'HALT', 'VMState should be HALT')
     assert(applicationLog.executions[0].gasconsumed !== undefined, 'Gas consumed should be returned')
     assert(applicationLog.executions[0].stack.length === 1, 'Stack should be returned')
     assert(applicationLog.executions[0].stack[0].type === 'Boolean', 'Stack type should be a boolean')
@@ -334,9 +334,11 @@ describe('NeonEventListener', function () {
       executions: [
         {
           trigger: 'Application',
-          vmstate: 'FAULT',
+          state: 'FAULT',
           gasconsumed: '0',
           notifications: [],
+          exception: '',
+          stack: [],
         },
       ],
     }
