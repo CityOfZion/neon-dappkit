@@ -1,6 +1,13 @@
 # Change Log - @cityofzion/neon-dappkit
 
-This log was last generated on Tue, 13 May 2025 15:24:01 GMT and should not be manually modified.
+This log was last generated on Tue, 07 Oct 2025 07:12:02 GMT and should not be manually modified.
+
+## 1.0.0
+Tue, 07 Oct 2025 07:12:02 GMT
+
+### Breaking changes
+
+- update to use latest type changes
 
 ## 0.6.0
 Tue, 13 May 2025 15:24:01 GMT

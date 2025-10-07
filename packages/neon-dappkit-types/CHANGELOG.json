@@ -2,6 +2,18 @@
   "name": "@cityofzion/neon-dappkit-types",
   "entries": [
     {
+      "version": "1.0.0",
+      "tag": "@cityofzion/neon-dappkit-types_v1.0.0",
+      "date": "Tue, 07 Oct 2025 07:12:02 GMT",
+      "comments": {
+        "major": [
+          {
+            "comment": "streamline stack item and notification types in Neo3EventListener"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.5.0",
       "tag": "@cityofzion/neon-dappkit-types_v0.5.0",
       "date": "Tue, 13 May 2025 15:24:01 GMT",
