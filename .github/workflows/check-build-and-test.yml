@@ -31,7 +31,8 @@ jobs:
       - name: Find Lint Issues
         run: node common/scripts/install-run-rush.js lint
       - name: Run Tests
-        run: cd packages/neon-dappkit && pnpm test
+        working-directory: ./packages/neon-dappkit/
+        run: node ../../common/scripts/install-run-rushx.js test
       - uses: actions/upload-artifact@v4
         if: ${{ always() }}
         with:
@@ -40,7 +41,7 @@ jobs:
       - name: Check Code Coverage
         continue-on-error: true
         working-directory: ./packages/neon-dappkit/
-        run: pnpm coverage
+        run: node ../../common/scripts/install-run-rushx.js coverage
       - name: Upload Coverage Summary
         uses: actions/upload-artifact@v4
         with:
