@@ -22,16 +22,14 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NODE_VERSION }}
-      - name: Install PNPM
-        run: npm install -g pnpm
-      - name: Install RushJS
-        run: npm install -g @microsoft/rush
       - name: Verify Change Logs
-        run: rush change --verify
+        run: node common/scripts/install-run-rush.js change --verify
       - name: Install Dependencies
-        run: rush update
+        run: node common/scripts/install-run-rush.js install
       - name: Build Projects
-        run: rush rebuild --verbose
+        run: node common/scripts/install-run-rush.js rebuild --verbose
+      - name: Find Lint Issues
+        run: node common/scripts/install-run-rush.js lint
       - name: Run Tests
         run: cd packages/neon-dappkit && pnpm test
       - uses: actions/upload-artifact@v4
