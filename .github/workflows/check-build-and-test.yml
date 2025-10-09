@@ -32,6 +32,8 @@ jobs:
         run: rush update
       - name: Build Projects
         run: rush rebuild --verbose
+      - name: Find Lint Issues
+        run: rush lint
       - name: Run Tests
         run: cd packages/neon-dappkit && pnpm test
       - uses: actions/upload-artifact@v4
