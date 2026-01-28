@@ -3,7 +3,7 @@ name: Publish neon-dappkit-types and neon-dappkit on NPM
 on: workflow_dispatch
 
 env:
-  NODE_VERSION: 18
+  NODE_VERSION: 24
 
 jobs:
   publish:
@@ -15,11 +15,11 @@ jobs:
       id-token: write
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 2
       - name: Setup Node Version ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v6
         with:
           node-version: ${{ env.NODE_VERSION }}
       - name: Config Git Properties
@@ -37,7 +37,7 @@ jobs:
       - name: Build Projects
         run: rush rebuild
       - name: Publish Projects
-        run: rush publish --apply --target-branch main --publish --npm-auth-token ${{ secrets.NPM_TOKEN }} --add-commit-details --include-all
+        run: rush publish --apply --target-branch main --publish --add-commit-details --include-all
       - name: Upload Docs on Github Pages
         uses: actions/upload-pages-artifact@v3
         with:
