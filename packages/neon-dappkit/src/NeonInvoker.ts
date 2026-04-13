@@ -9,16 +9,16 @@ import {
   TypeChecker,
   CalculateFee,
 } from '@cityofzion/neon-dappkit-types'
-import { tx, u, rpc, sc, api, wallet } from '@cityofzion/neon-js'
-import type * as NeonTypes from '@cityofzion/neon-core'
+import { tx, u, rpc, sc, wallet } from '@cityofzion/neon-core'
+import { NetworkFacade, smartCalculateNetworkFee, type SigningFunction } from '@cityofzion/neon-api'
 
 export type ExtendedArg = Arg | { type: 'Address'; value: string } | { type: 'ScriptHash'; value: string }
 
 export type InitOptions = {
   rpcAddress: string
-  account?: NeonTypes.wallet.Account | NeonTypes.wallet.Account[]
+  account?: wallet.Account | wallet.Account[]
   validBlocks?: number
-  signingCallback?: api.SigningFunction
+  signingCallback?: SigningFunction
 }
 
 export type Options = InitOptions & {
@@ -101,7 +101,7 @@ export class NeonInvoker implements Neo3Invoker {
     return resp.protocol.network
   }
 
-  static convertParams(args: ExtendedArg[] | undefined): NeonTypes.sc.ContractParam[] {
+  static convertParams(args: ExtendedArg[] | undefined): sc.ContractParam[] {
     return (args ?? []).map((a) => {
       if (a.type === undefined) throw new Error('Invalid argument type')
       if (a.value === undefined) throw new Error('Invalid argument value')
@@ -152,7 +152,7 @@ export class NeonInvoker implements Neo3Invoker {
     })
   }
 
-  static buildSigner(optionsAccount: NeonTypes.wallet.Account | undefined, signerEntry?: Signer): NeonTypes.tx.Signer {
+  static buildSigner(optionsAccount: wallet.Account | undefined, signerEntry?: Signer): tx.Signer {
     let scopes = signerEntry?.scopes ?? 'CalledByEntry'
     if (typeof scopes === 'number') {
       scopes = tx.toString(scopes)
@@ -170,20 +170,15 @@ export class NeonInvoker implements Neo3Invoker {
     })
   }
 
-  static buildMultipleSigner(
-    optionAccounts: NeonTypes.wallet.Account[],
-    signers: Signer[] = [],
-  ): NeonTypes.tx.Signer[] {
-    const allSigners: NeonTypes.tx.Signer[] = []
+  static buildMultipleSigner(optionAccounts: wallet.Account[], signers: Signer[] = []): tx.Signer[] {
+    const allSigners: tx.Signer[] = []
     for (let i = 0; i < Math.max(signers.length, optionAccounts.length); i++) {
       allSigners.push(this.buildSigner(optionAccounts?.[i], signers?.[i]))
     }
     return allSigners
   }
 
-  private normalizeAccountArray(
-    acc: NeonTypes.wallet.Account | NeonTypes.wallet.Account[] | undefined,
-  ): NeonTypes.wallet.Account[] {
+  private normalizeAccountArray(acc: wallet.Account | wallet.Account[] | undefined): wallet.Account[] {
     if (!acc) {
       return []
     }
@@ -214,9 +209,9 @@ export class NeonInvoker implements Neo3Invoker {
   }
 
   private async signTransactionByAccounts(
-    transaction: NeonTypes.tx.Transaction,
-    accountArr: NeonTypes.wallet.Account[],
-  ): Promise<NeonTypes.tx.Transaction> {
+    transaction: tx.Transaction,
+    accountArr: wallet.Account[],
+  ): Promise<tx.Transaction> {
     const txClone = new tx.Transaction(transaction)
 
     let signerIndex = 0
@@ -234,7 +229,7 @@ export class NeonInvoker implements Neo3Invoker {
               }),
             )
 
-            const facade = await api.NetworkFacade.fromConfig({
+            const facade = await NetworkFacade.fromConfig({
               node: this.options.rpcAddress,
             })
 
@@ -255,8 +250,8 @@ export class NeonInvoker implements Neo3Invoker {
 
   private async buildTransactionFromCimOrBt(
     cimOrBt: ContractInvocationMulti | BuiltTransaction,
-    accountArr: NeonTypes.wallet.Account[],
-  ): Promise<NeonTypes.tx.Transaction> {
+    accountArr: wallet.Account[],
+  ): Promise<tx.Transaction> {
     const cimHexString = this.buildScriptHex(cimOrBt)
     const signers = NeonInvoker.buildMultipleSigner(accountArr, cimOrBt.signers)
 
@@ -299,10 +294,10 @@ export class NeonInvoker implements Neo3Invoker {
 
   private async getNetworkFee(
     cim: ContractInvocationMulti,
-    rpcClient: NeonTypes.rpc.RPCClient,
-    accountArr: NeonTypes.wallet.Account[],
-    transaction: NeonTypes.tx.Transaction,
-  ): Promise<NeonTypes.u.BigInteger> {
+    rpcClient: rpc.RPCClient,
+    accountArr: wallet.Account[],
+    transaction: tx.Transaction,
+  ): Promise<u.BigInteger> {
     if (cim.networkFeeOverride) {
       return u.BigInteger.fromNumber(cim.networkFeeOverride)
     }
@@ -324,12 +319,12 @@ export class NeonInvoker implements Neo3Invoker {
       )
     }
 
-    const networkFee = await api.smartCalculateNetworkFee(txClone, rpcClient)
+    const networkFee = await smartCalculateNetworkFee(txClone, rpcClient)
 
     return networkFee.add(cim.extraNetworkFee ?? 0)
   }
 
-  private async getSystemFee(cimOrBt: ContractInvocationMulti): Promise<NeonTypes.u.BigInteger> {
+  private async getSystemFee(cimOrBt: ContractInvocationMulti): Promise<u.BigInteger> {
     if (cimOrBt.systemFeeOverride) {
       return u.BigInteger.fromNumber(cimOrBt.systemFeeOverride)
     }

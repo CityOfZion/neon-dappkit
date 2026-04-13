@@ -8,8 +8,7 @@ import {
   RpcResponseStackItem,
   TypeChecker,
 } from '@cityofzion/neon-dappkit-types'
-import { rpc } from '@cityofzion/neon-js'
-import type * as NeonTypes from '@cityofzion/neon-core'
+import { rpc } from '@cityofzion/neon-core'
 
 export type NeonEventListenerOptions = {
   debug?: boolean | undefined
@@ -23,7 +22,7 @@ export class NeonEventListener implements Neo3EventListener {
   private blockPollingLoopActive = false
   private listeners = new Map<string, Map<string, Neo3EventListenerCallback[]>>()
 
-  private readonly rpcClient: NeonTypes.rpc.RPCClient
+  private readonly rpcClient: rpc.RPCClient
 
   constructor(
     rpcUrl: string,
@@ -217,7 +216,7 @@ export class NeonEventListener implements Neo3EventListener {
     return new Promise((resolve) => setTimeout(resolve, ms))
   }
 
-  private neonApplogToNeo3ApplicationLog(log: NeonTypes.rpc.ApplicationLogJson): Neo3ApplicationLog {
+  private neonApplogToNeo3ApplicationLog(log: rpc.ApplicationLogJson): Neo3ApplicationLog {
     const executions = log.executions.map((execution) => {
       return {
         trigger: execution.trigger,

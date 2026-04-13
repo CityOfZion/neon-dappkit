@@ -3,8 +3,7 @@ import { ContractInvocationMulti } from '@cityofzion/neon-dappkit-types'
 import { NeonEventListener, NeonInvoker, NeonParser, TypeChecker } from '../src'
 import assert from 'assert'
 import * as path from 'path'
-import { tx, u } from '@cityofzion/neon-js'
-import { wallet } from '@cityofzion/neon-core'
+import { wallet, tx, u } from '@cityofzion/neon-core'
 import {
   wait,
   neoGoPath,

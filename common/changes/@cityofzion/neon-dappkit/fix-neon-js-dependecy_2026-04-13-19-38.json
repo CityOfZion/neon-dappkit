@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@cityofzion/neon-dappkit",
+      "comment": "Replace neon-js with neon-core and neon-api dependencies",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@cityofzion/neon-dappkit"
+}

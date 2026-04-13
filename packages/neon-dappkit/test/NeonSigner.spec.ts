@@ -1,5 +1,5 @@
 import { NeonSigner, SignMessageVersion } from '../src/index'
-import { wallet } from '@cityofzion/neon-js'
+import { wallet } from '@cityofzion/neon-core'
 import assert from 'assert'
 
 describe('NeonSigner', function () {

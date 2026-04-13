@@ -21,7 +21,7 @@ import {
   RpcResponseStackItem,
   StringArgType,
 } from '@cityofzion/neon-dappkit-types'
-import { u, wallet, sc } from '@cityofzion/neon-js'
+import { u, wallet, sc } from '@cityofzion/neon-core'
 
 const NeonParser: Neo3Parser = {
   abToHex(arr: ArrayBuffer | ArrayLike<number>): string {
@@ -106,7 +106,7 @@ const NeonParser: Neo3Parser = {
       default:
         try {
           return JSON.parse((field as Exclude<RpcResponseStackItem, InteropInterfaceConfigArgType>).value as string)
-        } catch (e) {
+        } catch {
           return (field as Exclude<RpcResponseStackItem, InteropInterfaceConfigArgType>).value
         }
     }
@@ -228,7 +228,7 @@ function parseByteString({ value }: ByteStringArgType, parseConfig?: ParseConfig
 
   try {
     stringValue = NeonParser.base64ToUtf8(valueToParse)
-  } catch (e) {
+  } catch {
     return valueToParse
   }
 
