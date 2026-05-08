@@ -19,6 +19,7 @@ export type InitOptions = {
   account?: NeonTypes.wallet.Account | NeonTypes.wallet.Account[]
   validBlocks?: number
   signingCallback?: api.SigningFunction
+  networkMagic?: number
 }
 
 export type Options = InitOptions & {
@@ -30,6 +31,16 @@ export class NeonInvoker implements Neo3Invoker {
   static TESTNET = 'https://testnet1.neo.coz.io:443'
 
   private constructor(public options: Options) {}
+
+  static async getMagicOfRpcAddress(rpcAddress: string): Promise<number> {
+    const resp = await new rpc.RPCClient(rpcAddress).getVersion()
+    return resp.protocol.network
+  }
+
+  static async init(options: InitOptions): Promise<NeonInvoker> {
+    const networkMagic = options.networkMagic || (await this.getMagicOfRpcAddress(options.rpcAddress))
+    return new NeonInvoker({ ...options, validBlocks: options.validBlocks || 100, networkMagic })
+  }
 
   async testInvoke(cim: ContractInvocationMulti): Promise<InvokeResult> {
     const accountArr = this.normalizeAccountArray(this.options.account)
@@ -89,16 +100,6 @@ export class NeonInvoker implements Neo3Invoker {
     const result = await rpcClient.traverseIterator(sessionId, iteratorId, count)
 
     return result.map((item): RpcResponseStackItem => ({ value: item.value as any, type: item.type as any }))
-  }
-
-  static async init({ validBlocks = 100, ...options }: InitOptions): Promise<NeonInvoker> {
-    const networkMagic = await this.getMagicOfRpcAddress(options.rpcAddress)
-    return new NeonInvoker({ ...options, validBlocks, networkMagic })
-  }
-
-  static async getMagicOfRpcAddress(rpcAddress: string): Promise<number> {
-    const resp = await new rpc.RPCClient(rpcAddress).getVersion()
-    return resp.protocol.network
   }
 
   static convertParams(args: ExtendedArg[] | undefined): NeonTypes.sc.ContractParam[] {

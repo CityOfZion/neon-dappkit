@@ -927,4 +927,14 @@ describe('NeonInvoker', function () {
       `Invalid bytearray value '${invalidValue}' should throw an error`,
     )
   })
+
+  it('Should be able to set a custom network magic in init', async () => {
+    const invoker = await NeonInvoker.init({
+      rpcAddress,
+      account: account1,
+      networkMagic: 1,
+    })
+
+    assert.equal(invoker.options.networkMagic, 1, 'network magic is not 1')
+  })
 })

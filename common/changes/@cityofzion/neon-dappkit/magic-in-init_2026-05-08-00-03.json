@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@cityofzion/neon-dappkit",
+      "comment": "Add network magic as an optional init option",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@cityofzion/neon-dappkit"
+}
